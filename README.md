@@ -1,10 +1,8 @@
-# Proyecto: **Exfiltración de datos por ultrasonido (Prueba de concepto ofensiva)**
+# Proyecto: **Exfiltración de datos por ultrasonido (Implementación inicial funcional ofensiva)**
 
 ## 📌 Propósito del proyecto
 
 Este proyecto tiene como objetivo demostrar cómo un atacante podría **exfiltrar datos (por ejemplo, comandos, texto o archivos pequeños)** usando señales **inaudibles (ultrasonido)**, aprovechando los micrófonos y parlantes comunes de laptops y celulares. Se inspira en ataques reales como **SurfingAttack**, **DolphinAttack** y **DiskFiltration**.
-
-> ⚠️ El proyecto es solo una **prueba de concepto educativa y ética**. Su intención es demostrar vulnerabilidades reales y ayudar a entender cómo funcionan ciertos ataques para luego poder defenderse de ellos.
 
 ---
 
@@ -115,7 +113,7 @@ Este proyecto tiene como objetivo demostrar cómo un atacante podría **exfiltra
 
 ## 🎯 Meta final
 
-Tener una **prueba de concepto funcional** que:
+Tener una **implementación inicial funcional** que:
 
 - Envíe mensajes ocultos vía ultrasonido entre laptop y celular.
 - Sirva como demostración técnica para exposiciones y defensa del proyecto.
@@ -129,7 +127,3 @@ Tener una **prueba de concepto funcional** que:
 - [DolphinAttack paper y videos](https://dolphinattack.com/)
 - Artículos académicos sobre exfiltración acústica y ataques air-gapped.
 - Foros y comunidades de ciberseguridad ofensiva.
-
----
-
-Si quieres, puedo ayudarte a preparar este README en un archivo listo para subir a tu repositorio. ¿Quieres que lo haga?
