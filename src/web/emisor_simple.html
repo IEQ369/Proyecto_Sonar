@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emisor Simple WebAudio</title>
+</head>
+<body style="background:#18131a; color:#ffb86b; font-family:monospace;">
+  <h2>Emisor Simple (Web Audio API)</h2>
+  <input id="mensaje" placeholder="Mensaje a enviar" style="font-size:1.2em;">
+  <button onclick="emitir()">Emitir</button>
+  <div id="estado"></div>
+  <script>
+    const FREQ_1 = 2000; // Puedes cambiar a 20000 para ultrasónico
+    const FREQ_0 = 1000; // Puedes cambiar a 18984 para ultrasónico
+    const BIT_DURATION = 100; // ms
+
+    function textToBinary(text) {
+      return Array.from(text)
+        .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
+        .join('');
+    }
+
+    async function emitir() {
+      const mensaje = document.getElementById('mensaje').value;
+      if (!mensaje) {
+        document.getElementById('estado').textContent = 'Escribe un mensaje';
+        return;
+      }
+      const binario = textToBinary(mensaje);
+      document.getElementById('estado').textContent = 'Transmitiendo: ' + binario;
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      for (let i = 0; i < binario.length; i++) {
+        const freq = binario[i] === '1' ? FREQ_1 : FREQ_0;
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + BIT_DURATION / 1000);
+        await new Promise(r => setTimeout(r, BIT_DURATION));
+      }
+      document.getElementById('estado').textContent = 'Transmisión completada';
+    }
+  </script>
+</body>
+</html>

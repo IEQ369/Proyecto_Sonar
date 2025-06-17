@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Tone</title>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+  <script src="app.js"></script>
+</head>
+<body style="background:#18131a; color:#ffb86b; font-family:monospace;">
+  <h2>Test Tone (1000 Hz, 2 segundos)</h2>
+  <button onclick="playTestTone()">Emitir tono</button>
+  <script>
+    function playTestTone() {
+      const synth = new Tone.Synth().toDestination();
+      Tone.start().then(() => {
+        synth.triggerAttackRelease(1000, 2);
+      });
+    }
+
+    // Prueba mínima con Tone.js
+    async function emitirTonoPrueba() {
+      await Tone.start(); // Necesario en móviles y navegadores modernos
+      const synth = new Tone.Synth().toDestination();
+      synth.triggerAttackRelease(2000, 2); // 2000 Hz, 2 segundos
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test 20kHz</title>
+</head>
+<body style="background:#18131a; color:#ffb86b; font-family:monospace;">
+  <h2>Emitir 20kHz (1 segundo)</h2>
+  <button onclick="emitir()">Emitir 20kHz</button>
+  <script>
+    function emitir() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = 20000;
+      osc.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 1);
+    }
+  </script>
+</body>
+</html> 

@@ -1,30 +1,33 @@
-# Proyecto: **Exfiltración de datos por ultrasonido (Implementación inicial funcional ofensiva)**
+# Proyecto: **Exfiltración de datos por ultrasonido (Implementación ofensiva avanzada)**
 
 ## 📌 Propósito del proyecto
 
-Este proyecto tiene como objetivo demostrar cómo un atacante podría **exfiltrar datos (por ejemplo, comandos, texto o archivos pequeños)** usando señales **inaudibles (ultrasonido)**, aprovechando los micrófonos y parlantes comunes de laptops y celulares. Se inspira en ataques reales como **SurfingAttack**, **DolphinAttack** y **DiskFiltration**.
+Este proyecto demuestra cómo un atacante puede **exfiltrar datos (comandos, texto, archivos pequeños)** usando señales **ultrasónicas inaudibles** (por encima de ~18 kHz), aprovechando micrófonos y parlantes comunes de laptops y celulares. Se inspira en ataques reales como **SurfingAttack**, **DolphinAttack** y **DiskFiltration**, y busca ser una herramienta ofensiva robusta, realista y educativa.
 
 ---
 
 ## 🎯 Objetivos
 
-- ✅ Crear un sistema simple que permita enviar datos codificados desde un **laptop** a un **celular** usando sonidos por encima del umbral auditivo humano (~18-22 kHz).
-- ✅ Codificar los datos en **binario (ASCII)** y reproducirlos como tonos breves por el parlante.
-- ✅ Detectar y decodificar esos tonos en otro dispositivo (por ahora puede grabar, y más adelante procesar).
-- ✅ Mostrar cómo incluso con **hardware común**, es posible implementar técnicas de ciberseguridad ofensiva.
-- ⏳ Referenciar técnicas avanzadas para futuras mejoras, aunque no se implementen en esta etapa.
+- ✅ Crear una herramienta ofensiva en **Python** capaz de transmitir y recibir datos por ultrasonido, resistente a ruido y ambiente real.
+- ✅ Codificar datos en **binario (ASCII)** y transmitirlos como tonos breves (FSK: 1=20kHz, 0=19kHz, ajustable).
+- ✅ Implementar técnicas de **filtrado, sincronización y detección robusta** para ambientes ruidosos.
+- ✅ Permitir configuración avanzada: frecuencias, duración de bit, umbrales, etc.
+- ✅ Documentar y demostrar limitaciones físicas (hardware, beat frequencies, etc.).
+- ✅ Visualización web (solo para demo): espectro FFT en vivo, decodificación y estilo cyberpunk.
+- ⏳ Explorar técnicas avanzadas: multi-frecuencia (FDM), OFDM, corrección de errores, compresión.
 
 ---
 
 ## 🧠 Idea general
 
-1. El atacante usa un **emisor** (ej: laptop) que convierte texto en binario.
-2. Luego reproduce esos bits como tonos **ultrasónicos** (ej: 20 kHz = bit 1, 19 kHz = bit 0).
-3. Un **receptor** (ej: celular) graba ese audio y lo convierte nuevamente a binario.
-4. Ese binario se traduce a **texto legible o comandos** (ASCII).
+1. El atacante usa un **emisor** (laptop) que convierte texto en binario y lo transmite como ultrasonido.
+2. Un **receptor** (laptop/celular) capta el audio, hace FFT en tiempo real y decodifica los bits.
+3. El sistema es configurable y robusto ante ruido, usando técnicas de filtrado y sincronización.
+4. La **visualización web** solo muestra el proceso y el espectro, pero la herramienta real es Python.
 5. El sistema puede ampliarse para:
-   - Enviar **comandos invisibles** a asistentes virtuales.
-   - Exfiltrar contraseñas, tokens, etc., desde una víctima sin cables ni red.
+   - Enviar comandos invisibles a asistentes virtuales.
+   - Exfiltrar contraseñas, tokens, etc., sin cables ni red.
+   - Demostrar técnicas avanzadas (FDM, OFDM, etc.).
 
 ---
 
@@ -32,98 +35,111 @@ Este proyecto tiene como objetivo demostrar cómo un atacante podría **exfiltra
 
 | Componente   | Descripción                                                                   |
 | ------------ | ----------------------------------------------------------------------------- |
-| Emisor       | Laptop que convierte texto a ultrasonido usando Python (con `pydub`, `numpy`) |
-| Receptor     | Celular que graba audio y luego decodifica tonos (por ahora puede ser manual) |
-| Codificación | ASCII a binario, y cada bit representado como una frecuencia                  |
+| Emisor       | Script Python que convierte texto a ultrasonido (FSK, configurable)           |
+| Receptor     | Script Python que graba, filtra, hace FFT y decodifica en tiempo real         |
+| Visualización| Web que muestra el espectro FFT y la decodificación (solo para demo)          |
+| Codificación | ASCII a binario, cada bit/frecuencia configurable, soporte para FDM/OFDM      |
 | Comunicación | Solo sonido (sin red, sin USB, sin Bluetooth)                                 |
 
 ---
 
 ## 🛠️ Tecnología usada
 
-- **Python** (emisor)
-- **pydub, numpy, scipy** para generar y reproducir tonos ultrasónicos.
-- **Celular Android** con grabadora de audio (por ahora).
-- (Más adelante) Python para decodificar grabaciones y análisis.
+- **Python** (emisor y receptor ofensivo)
+  - `sounddevice`, `numpy`, `scipy` para audio y FFT
+  - Filtros digitales, sincronización, detección robusta
+- **JavaScript/Web** (solo visualización)
+  - Web Audio API para FFT y espectro en vivo
+  - Canvas para visualización tipo Spectroid/cyberpunk
+- **Celular/laptop** con micrófono y parlante integrados
 
 ---
 
 ## 🚧 Limitaciones conocidas
 
-- Los **micrófonos y parlantes integrados** tienen limitaciones para captar o emitir ciertas frecuencias ultrasónicas.
-- Por ahora, se requiere una grabadora en el celular (receptor), y el procesamiento es manual.
-- El sistema puede fallar en entornos muy ruidosos o con eco fuerte.
-- Velocidad de transmisión muy baja (ej: ~1 minuto para 200 bytes).
-- Se requiere proximidad física para que la señal se capte correctamente.
+- Los **micrófonos y parlantes integrados** filtran frecuencias ultrasónicas; calibración necesaria.
+- El sistema puede fallar en ambientes muy ruidosos o con eco fuerte.
+- Velocidad limitada por robustez y sigilo (ej: ~1 min para 200 bytes en modo seguro).
+- Multi-frecuencia (FDM/OFDM) puede generar batidos audibles (beat frequencies).
+- La visualización web es solo para demo, no es la herramienta real de ataque.
 
 ---
 
 ## 🧱 Etapas del proyecto
 
-1. ✅ Codificar texto a binario y generar audio ultrasónico en PC.
-2. ✅ Emitir correctamente una secuencia binaria (ej: “HELLO”) como audio.
-3. ✅ Grabar desde el celular para comprobar si se detectan los tonos.
-4. ⏳ Decodificar el audio desde el celular o PC (más adelante).
-5. ⏳ Simular un ataque realista (comando o mensaje oculto).
-6. ⏳ (Opcional) Mostrar cómo un asistente virtual puede ser activado con ultrasonido.
-7. ⏳ Crear defensa que detecte tonos sospechosos (modo pasivo).
+1. ✅ Codificar texto a binario y generar audio ultrasónico en Python.
+2. ✅ Emitir y recibir secuencias binario-ultrasonido.
+3. ✅ Grabar y decodificar en tiempo real (FFT, filtrado, sincronización).
+4. ✅ Calibrar frecuencias según hardware y ambiente.
+5. ⏳ Implementar multi-frecuencia (FDM) y/o OFDM para mayor velocidad.
+6. ⏳ Agregar corrección de errores y compresión.
+7. ⏳ Visualización web avanzada para demo.
+8. ⏳ Documentar teoría y limitaciones (beat frequencies, multiplexación, etc.).
 
 ---
 
 ## 🔍 Inspiraciones y referencias
 
-- **DolphinAttack:** Comandos inaudibles en ultrasonido para asistentes de voz.
-- **SurfingAttack:** Inyección de comandos ultrasónicos para controlar dispositivos.
-- **DiskFiltration:** Exfiltración de datos usando señales acústicas de discos duros.
-- **Proyecto OrbitalCTF de Solst/ICE:** Transferencia ultrasónica de archivos, explorando OFDM y técnicas avanzadas.
-- **BadBIOS 2.0:** Teoría sobre malware que se comunica mediante ultrasonido.
+- **DolphinAttack:** Comandos ultrasónicos para asistentes de voz.
+- **SurfingAttack:** Inyección de comandos ultrasónicos.
+- **DiskFiltration:** Exfiltración acústica desde discos duros.
+- **Solst/ICE OrbitalCTF:** Transferencia ultrasónica, FDM/OFDM, visualización avanzada.
+- **BadBIOS 2.0:** Teoría sobre malware acústico.
+- **Teoría de señales:** FSK, FDM, OFDM, beat frequencies, filtrado digital.
 
 ---
 
-## 🧩 Conceptos técnicos (referencia para futuro desarrollo)
+## 🧩 Conceptos técnicos clave
 
-- **Modulación por desplazamiento de frecuencia (FSK):** Usar diferentes tonos para representar bits 0 y 1.
-- **OFDM (Orthogonal Frequency Division Multiplexing):** Multiplexación en múltiples frecuencias ortogonales para mejorar velocidad y robustez.
-- **Códigos de corrección de errores:** Detectar y corregir errores en transmisión (Reed-Solomon, Hamming, etc.).
-- **Compresión:** Reducir tamaño de datos para acelerar transmisión.
-- **Bandwidth (Ancho de banda):** Cantidad de frecuencias disponibles para enviar datos, limitada en ultrasonido.
-- **Time Division Multiplexing:** Enviar datos en intervalos de tiempo para evitar interferencia.
+- **FSK (Frequency Shift Keying):** Modulación por desplazamiento de frecuencia (1=20kHz, 0=19kHz).
+- **FDM (Frequency Division Multiplexing):** Transmisión simultánea en varias frecuencias (multi-bit).
+- **OFDM (Orthogonal FDM):** Multiplexación ortogonal, base de WiFi/LTE, muy eficiente pero compleja.
+- **Beat frequencies:** Batidos audibles al usar frecuencias cercanas, limitan el sigilo.
+- **Filtrado digital:** Pasa banda para aislar frecuencias de interés y reducir ruido.
+- **Sincronización:** Preámbulo y detección robusta de inicio/fin de mensaje.
+- **Corrección de errores:** Paridad, checksum, Hamming, etc.
+- **Compresión:** Reducir tamaño de datos para mayor velocidad.
+- **Calibración:** Ajustar frecuencias y umbrales según hardware y ambiente.
 
 ---
 
 ## 📚 Glosario
 
-- **Ultrasonido:** Sonido con frecuencia >20 kHz, inaudible para humanos.
-- **ASCII:** Código binario estándar para representar texto y símbolos.
-- **Modulación:** Transformar datos digitales en señales analógicas para transmisión.
-- **Error Correction Code:** Código para detectar y corregir errores en señales.
-- **OFDM:** Técnica para transmitir datos usando múltiples frecuencias simultáneas ortogonales.
+- **Ultrasonido:** Sonido >20 kHz, inaudible para humanos.
+- **ASCII:** Código binario estándar para texto.
+- **Modulación:** Transformar datos digitales en señales analógicas.
+- **Beat frequency:** Frecuencia resultante de la interferencia entre dos tonos cercanos.
+- **OFDM:** Técnica para transmitir datos usando múltiples frecuencias ortogonales.
+- **Filtro pasa banda:** Filtro digital que deja pasar solo un rango de frecuencias.
 
 ---
 
-## ✍️ Notas personales
+## ✍️ Notas y aprendizajes clave
 
-- Proyecto con enfoque **ofensivo** para entender ataques reales en ciberseguridad.
-- Inspirado en investigaciones y proyectos open-source.
-- Enfocado en hardware común, pero considerando parlantes externos para pruebas.
-- Aprendizaje en codificación, audio digital, y seguridad informática.
-- Importante balancear entre complejidad técnica y tiempo disponible para parciales.
+- El ataque realista requiere robustez ante ruido y ambiente, no solo "que funcione".
+- FSK es sigiloso pero lento; FDM/OFDM es rápido pero puede ser audible.
+- La calibración es esencial: cada hardware tiene límites distintos.
+- La visualización web es solo para demo, la herramienta real es Python.
+- Documentar teoría y experimentos en el README ayuda a no perder el rumbo.
+- El proyecto busca ser educativo, ofensivo y reproducible.
 
 ---
 
 ## 🎯 Meta final
 
-Tener una **implementación inicial funcional** que:
+Tener una **herramienta ofensiva robusta en Python** que:
 
-- Envíe mensajes ocultos vía ultrasonido entre laptop y celular.
-- Sirva como demostración técnica para exposiciones y defensa del proyecto.
-- Establezca bases para futuras mejoras o investigaciones.
+- Exfiltre datos vía ultrasonido entre laptop y celular.
+- Sea configurable, resistente a ruido y adaptable a hardware real.
+- Sirva como demo técnica y base para futuras investigaciones.
+- Tenga una visualización web atractiva solo para la presentación.
 
 ---
 
 ## Referencias y recursos
 
-- [Repositorio OrbitalCTF - Solst/ICE](https://github.com/asynchronous-x/orbital-ctf)
+- [Repositorio Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
 - [DolphinAttack paper y videos](https://dolphinattack.com/)
 - Artículos académicos sobre exfiltración acústica y ataques air-gapped.
 - Foros y comunidades de ciberseguridad ofensiva.
+- Comentarios y teoría sobre FSK, FDM, OFDM y beat frequencies en proyectos similares.
