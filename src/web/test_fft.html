@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test FFT - Proyecto Sonar</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: #18131a;
+            color: #ffb86b;
+            font-family: monospace;
+            margin: 20px;
+        }
+
+        canvas {
+            background: #111;
+            border: 1px solid #ff2e9a;
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 800px;
+            height: 200px;
+        }
+
+        .status {
+            background: #1a1a22;
+            border: 1px solid #00ffae;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #ff2e9a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00ffae;
+            color: #222;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test FFT - Proyecto Sonar</h1>
+
+    <div class="status" id="status">
+        Estado: Inicializando...
+    </div>
+
+    <button onclick="startTest()">Iniciar Test FFT</button>
+    <button onclick="stopTest()">Detener Test FFT</button>
+    <button onclick="testAudio()">Test Audio (Beep)</button>
+
+    <canvas id="fftCanvas" width="800" height="200"></canvas>
+
+    <div class="status" id="debug">
+        Debug: Esperando...
+    </div>
+
+    <script>
+        let audioContext = null;
+        let analyser = null;
+        let source = null;
+        let stream = null;
+        let animationId = null;
+        let isRunning = false;
+
+        const canvas = document.getElementById('fftCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusDiv = document.getElementById('status');
+        const debugDiv = document.getElementById('debug');
+
+        function updateStatus(message) {
+            statusDiv.textContent = 'Estado: ' + message;
+            console.log(message);
+        }
+
+        function updateDebug(message) {
+            debugDiv.textContent = 'Debug: ' + message;
+        }
+
+        async function startTest() {
+            try {
+                updateStatus('Verificando soporte de getUserMedia...');
+
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia no soportado');
+                }
+
+                updateStatus('Solicitando permisos de micrófono...');
+
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+
+                updateStatus('Creando AudioContext...');
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                updateStatus('Configurando analizador FFT...');
+
+                source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 2048;
+                source.connect(analyser);
+
+                updateStatus('Iniciando visualización FFT...');
+
+                isRunning = true;
+                drawFFT();
+
+                updateStatus('FFT funcionando correctamente');
+
+            } catch (error) {
+                updateStatus('Error: ' + error.message);
+                console.error('Error en startTest:', error);
+            }
+        }
+
+        function stopTest() {
+            isRunning = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            updateStatus('FFT detenido');
+        }
+
+        function drawFFT() {
+            if (!isRunning || !analyser) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Limpiar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar espectro
+            const barWidth = canvas.width / bufferLength;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height;
+
+                // Color basado en la frecuencia
+                const hue = (i / bufferLength) * 360;
+                ctx.fillStyle = `hsl(${hue}, 70%, 60%)`;
+
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth;
+            }
+
+            // Mostrar información de debug
+            const maxValue = Math.max(...dataArray);
+            const maxIndex = dataArray.indexOf(maxValue);
+            const sampleRate = audioContext ? audioContext.sampleRate : 44100;
+            const freqBinHz = sampleRate / 2 / bufferLength;
+            const maxFreq = maxIndex * freqBinHz;
+
+            updateDebug(`Pico: ${maxValue} en ${maxFreq.toFixed(0)}Hz (bin ${maxIndex})`);
+
+            animationId = requestAnimationFrame(drawFFT);
+        }
+
+        function testAudio() {
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 1000; // 1kHz
+                gainNode.gain.value = 0.1;
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.5);
+
+                updateStatus('Beep de prueba emitido (1kHz, 0.5s)');
+
+            } catch (error) {
+                updateStatus('Error en test de audio: ' + error.message);
+            }
+        }
+
+        // Verificar soporte al cargar
+        window.addEventListener('load', () => {
+            updateStatus('Página cargada. Haz clic en "Iniciar Test FFT"');
+
+            if (!navigator.mediaDevices) {
+                updateStatus('ADVERTENCIA: getUserMedia no disponible');
+            }
+
+            if (!window.AudioContext && !window.webkitAudioContext) {
+                updateStatus('ADVERTENCIA: AudioContext no disponible');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -4,58 +4,120 @@ import base64
 import time
 import argparse
 
+# --- Presentación tipo neofetch ---
+def print_ascii():
+    print(r"""
+   ____                  _             ____                      
+  / __ \___  ____  _____(_)___  ____  / __ \____  ____ _____ ___ 
+ / / / / _ \/ __ \/ ___/ / __ \/ __ \/ /_/ / __ \/ __ `/ __ `__ \
+/ /_/ /  __/ / / / /__/ / /_/ / / / / _, _/ /_/ / /_/ / / / / / /
+\____/\___/_/ /_/\___/_/ .___/_/ /_/_/ |_|\____/\__,_/_/ /_/ /_/ 
+                      /_/                                        
+""")
+    print("Proyecto Sonar // Emisor ultrasónico Base64 (FSK)")
+    print("-----------------------------------------------\n")
+
 # --- Configuración de frecuencias y protocolo ---
 START_FREQ = 17500  # Hz, frecuencia de inicio
-END_FREQ = 21500    # Hz, frecuencia de fin
-BASE_FREQ = 18000   # Hz, frecuencia base para el primer símbolo
+END_FREQ = 20500    # Hz, frecuencia de fin
+SYNC_FREQ = 19000   # Hz, frecuencia de sincronización
 STEP = 100          # Hz, separación entre símbolos
 SYMBOL_DURATION = 0.1  # segundos (100 ms)
+SYNC_DURATION = 0.2    # segundos (200 ms)
 SAMPLE_RATE = 44100
 AMPLITUDE = 0.7
-
-# --- Tabla Base32 estándar (RFC 4648) ---
-BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+BASE64_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 # --- Mapeo símbolo <-> frecuencia ---
 def symbol_to_freq(symbol):
-    idx = BASE32_ALPHABET.index(symbol)
-    return BASE_FREQ + idx * STEP
+    idx = BASE64_ALPHABET.index(symbol)
+    return START_FREQ + STEP + idx * STEP
 
-def freq_to_symbol(freq):
-    idx = int(round((freq - BASE_FREQ) / STEP))
-    if 0 <= idx < len(BASE32_ALPHABET):
-        return BASE32_ALPHABET[idx]
-    return None
+def base64_to_freqs(b64):
+    return [symbol_to_freq(s) for s in b64 if s in BASE64_ALPHABET]
 
-# --- Codificación a Base32 ---
-def text_to_base32(text):
-    # Codifica a bytes, luego a base32 y decodifica a str sin padding
-    b32 = base64.b32encode(text.encode('utf-8')).decode('utf-8').rstrip('=')
-    return b32
+# --- Codificación a Base64 (texto o binario) ---
+def datos_a_base64(datos):
+    if isinstance(datos, str):
+        datos = datos.encode('utf-8')
+    b64 = base64.b64encode(datos).decode('utf-8').rstrip('=')
+    return b64
+
+# --- Checksum simple ---
+def calcular_checksum(texto):
+    return sum(ord(c) for c in texto) % 64
+
+def checksum_to_symbol(checksum):
+    return BASE64_ALPHABET[checksum]
 
 # --- Generación de tono ---
 def generate_tone(frequency, duration, sample_rate=SAMPLE_RATE, amplitude=AMPLITUDE):
     t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
     return amplitude * np.sin(2 * np.pi * frequency * t)
 
-# --- Emisión de la secuencia ---
-def emitir_mensaje(texto):
-    print(f"[INFO] Texto original: {texto}")
-    b32 = text_to_base32(texto)
-    print(f"[INFO] Base32: {b32}")
-    secuencia = [START_FREQ] + [symbol_to_freq(s) for s in b32] + [END_FREQ]
+# --- Emisión de la secuencia (texto o archivo) ---
+def emitir_mensaje_o_archivo(texto=None, archivo=None, duracion=SYMBOL_DURATION, amplitud=AMPLITUDE):
+    if archivo:
+        with open(archivo, 'rb') as f:
+            datos = f.read()
+        print(f"[INFO] Archivo a enviar: {archivo} ({len(datos)} bytes)")
+        b64 = datos_a_base64(datos)
+        checksum = calcular_checksum(datos.decode(errors='ignore'))
+    elif texto is not None:
+        print(f"[INFO] Texto original: {texto}")
+        b64 = datos_a_base64(texto)
+        checksum = calcular_checksum(texto)
+    else:
+        print("[ERROR] Debes especificar un mensaje o un archivo.")
+        return
+    print(f"[INFO] Base64: {b64}")
+    print(f"[INFO] Checksum: {checksum} ({checksum_to_symbol(checksum)})")
+    secuencia = [
+        START_FREQ,
+        SYNC_FREQ,
+        *base64_to_freqs(b64),
+        symbol_to_freq(checksum_to_symbol(checksum)),
+        SYNC_FREQ,
+        END_FREQ
+    ]
     print(f"[INFO] Frecuencias a emitir: {secuencia}")
     audio = np.concatenate([
-        generate_tone(f, SYMBOL_DURATION) for f in secuencia
+        generate_tone(f, SYNC_DURATION if f == SYNC_FREQ else duracion, amplitude=amplitud) for f in secuencia
     ])
-    print("[INFO] Emisión iniciada...")
+    print(f"[INFO] Emisión iniciada... (Duración símbolo: {duracion}s, Amplitud: {amplitud})")
     sd.play(audio, SAMPLE_RATE)
     sd.wait()
     print("[INFO] Emisión finalizada.")
 
+# --- Test de frecuencias ---
+def test_frecuencias(amplitud=AMPLITUDE, duracion=SYMBOL_DURATION):
+    print("[TEST] Emitiendo START...")
+    sd.play(generate_tone(START_FREQ, SYNC_DURATION, amplitude=amplitud), SAMPLE_RATE)
+    sd.wait()
+    print("[TEST] Emitiendo SYNC...")
+    sd.play(generate_tone(SYNC_FREQ, SYNC_DURATION, amplitude=amplitud), SAMPLE_RATE)
+    sd.wait()
+    for i, s in enumerate(BASE64_ALPHABET):
+        freq = symbol_to_freq(s)
+        print(f"[TEST] Emitiendo: {s} ({freq} Hz)")
+        sd.play(generate_tone(freq, duracion, amplitude=amplitud), SAMPLE_RATE)
+        sd.wait()
+    print("[TEST] Emitiendo END...")
+    sd.play(generate_tone(END_FREQ, SYNC_DURATION, amplitude=amplitud), SAMPLE_RATE)
+    sd.wait()
+    print("[TEST] Finalizado.")
+
 # --- Uso desde línea de comandos ---
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Emisor ultrasónico Base32 (FSK)")
-    parser.add_argument('-m', '--mensaje', type=str, required=True, help='Mensaje a emitir')
+    print_ascii()
+    parser = argparse.ArgumentParser(description="Emisor ultrasónico Base64 (FSK)")
+    parser.add_argument('-m', '--mensaje', type=str, help='Mensaje a emitir')
+    parser.add_argument('-f', '--file', type=str, help='Archivo a emitir')
+    parser.add_argument('--dur', type=float, default=SYMBOL_DURATION, help='Duración de cada símbolo (segundos)')
+    parser.add_argument('--amp', type=float, default=AMPLITUDE, help='Amplitud del tono (0-1)')
+    parser.add_argument('--test', action='store_true', help='Emitir test de frecuencias')
     args = parser.parse_args()
-    emitir_mensaje(args.mensaje) 
+    if args.test:
+        test_frecuencias(amplitud=args.amp, duracion=args.dur)
+    else:
+        emitir_mensaje_o_archivo(texto=args.mensaje, archivo=args.file, duracion=args.dur, amplitud=args.amp) 

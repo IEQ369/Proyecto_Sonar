@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Emisor Ultrasónico (HTML puro)</title>
+  <title>Proyecto Sonar // Ultrasonic Transmission</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#18131a; color:#ffb86b; font-family:monospace;">
-  <h2>Emisor Ultrasónico (HTML puro)</h2>
-  <input id="mensaje" placeholder="Mensaje a enviar" style="font-size:1.2em;">
-  <button id="emitir">Emitir</button>
-  <div id="estado"></div>
-  <script>
-    const FREQ_1 = 20000; // 1 = 20kHz
-    const FREQ_0 = 19000; // 0 = 19kHz
-    const BIT_DURATION = 100; // ms
 
-    function textToBinary(text) {
-      return Array.from(text)
-        .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
-        .join('');
-    }
-
-    async function emitir() {
-      const mensaje = document.getElementById('mensaje').value;
-      if (!mensaje) {
-        document.getElementById('estado').textContent = 'Escribe un mensaje';
-        return;
-      }
-      const binario = textToBinary(mensaje);
-      document.getElementById('estado').textContent = 'Transmitiendo: ' + binario;
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      for (let i = 0; i < binario.length; i++) {
-        const freq = binario[i] === '1' ? FREQ_1 : FREQ_0;
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        osc.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + BIT_DURATION / 1000);
-        await new Promise(r => setTimeout(r, BIT_DURATION));
-      }
-      document.getElementById('estado').textContent = 'Transmisión completada';
-    }
-
-    document.getElementById('emitir').onclick = emitir;
-  </script>
+<body>
+  <div class="container">
+    <div class="fft-panel">
+      <canvas id="espectro" width="800" height="180"></canvas>
+    </div>
+    <div class="row">
+      <div class="col col-izq">
+        <div class="panel">
+          <div class="panel-title">Transmisión</div>
+          <input id="mensaje" placeholder="Mensaje a enviar" size="30" autocomplete="off">
+          <label>Frecuencia base (Hz): <input id="base_freq" type="number" value="18000"></label>
+          <label>Paso (Hz): <input id="step" type="number" value="100"></label>
+          <label>Duración símbolo (ms): <input id="dur" type="number" value="100"></label>
+          <label>Amplitud: <input id="amp" type="number" value="1.0" min="0" max="1" step="0.01"></label>
+          <label>Umbral pico: <input id="umbral" type="number" value="100"></label>
+          <button id="resetParams">Restablecer</button>
+          <button id="emitir">Emitir</button>
+          <button id="testFreqs">Test de frecuencias</button>
+          <button id="toggleFFT">Ver espectro</button>
+          <button id="toggleRX">Pausar recepción</button>
+        </div>
+      </div>
+      <div class="col col-der">
+        <div class="panel">
+          <div class="panel-title">Terminal</div>
+          <div class="terminal" id="terminalLog"></div>
+          <div class="transmit-data" id="transmitData"></div>
+          <div id="estado"></div>
+          <div id="base32_rx"></div>
+          <div id="mensaje_rx"></div>
+          <div id="debug"></div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="main.js"></script>
 </body>
+
 </html>

@@ -33,13 +33,13 @@ Este proyecto demuestra cómo un atacante puede **exfiltrar datos (comandos, tex
 
 ## 📦 Componentes del sistema
 
-| Componente   | Descripción                                                                   |
-| ------------ | ----------------------------------------------------------------------------- |
-| Emisor       | Script Python que convierte texto a ultrasonido (FSK, configurable)           |
-| Receptor     | Script Python que graba, filtra, hace FFT y decodifica en tiempo real         |
-| Visualización| Web que muestra el espectro FFT y la decodificación (solo para demo)          |
-| Codificación | ASCII a binario, cada bit/frecuencia configurable, soporte para FDM/OFDM      |
-| Comunicación | Solo sonido (sin red, sin USB, sin Bluetooth)                                 |
+| Componente    | Descripción                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| Emisor        | Script Python que convierte texto a ultrasonido (FSK, configurable)      |
+| Receptor      | Script Python que graba, filtra, hace FFT y decodifica en tiempo real    |
+| Visualización | Web que muestra el espectro FFT y la decodificación (solo para demo)     |
+| Codificación  | ASCII a binario, cada bit/frecuencia configurable, soporte para FDM/OFDM |
+| Comunicación  | Solo sonido (sin red, sin USB, sin Bluetooth)                            |
 
 ---
 

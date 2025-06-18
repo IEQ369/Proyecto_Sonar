@@ -6,9 +6,22 @@ import os
 
 class CustomHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        # Mapeo de extensiones a MIME types
+        mime_types = {
+            '.html': 'text/html',
+            '.css': 'text/css',
+            '.js': 'application/javascript',
+            '.txt': 'text/plain'
+        }
+        
         # Configurar headers de seguridad
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        
+        # Determinar el MIME type basado en la extensión
+        _, ext = os.path.splitext(self.path)
+        content_type = mime_types.get(ext, 'text/plain')
+        self.send_header('Content-type', content_type)
+        
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('X-Frame-Options', 'DENY')
         self.send_header('X-XSS-Protection', '1; mode=block')
