@@ -7,6 +7,8 @@ import time
 import numpy as np
 import sounddevice as sd
 from .frecuencias import *
+import threading
+import os
 
 # Configuración del protocolo
 START_DURATION = 0.12    # segundos
@@ -25,11 +27,86 @@ class ProtocoloUltrasónico:
     def __init__(self, sample_rate=SAMPLE_RATE, volume=VOLUME):
         self.sample_rate = sample_rate
         self.volume = volume
+        self.frecuencia_base = START_FREQUENCY  # Para compatibilidad
         
     def generar_tono(self, frecuencia, duracion):
         """Genera un tono sinusoidal de la frecuencia especificada"""
         t = np.linspace(0, duracion, int(self.sample_rate * duracion), False)
         return self.volume * np.sin(2 * np.pi * frecuencia * t)
+    
+    def visualizar_fft_ascii(self, audio_chunk, frecuencia_esperada=None):
+        """Visualiza el espectro FFT en ASCII art"""
+        # Calcular FFT
+        fft = np.fft.fft(audio_chunk)
+        freqs = np.fft.fftfreq(len(audio_chunk), 1/self.sample_rate)
+        
+        # Solo frecuencias positivas
+        positive_freqs = freqs[:len(freqs)//2]
+        positive_fft = np.abs(fft[:len(fft)//2])
+        
+        # Encontrar la frecuencia dominante
+        if len(positive_fft) > 0:
+            max_idx = np.argmax(positive_fft)
+            freq_dominante = positive_freqs[max_idx]
+            amplitud_max = positive_fft[max_idx]
+        else:
+            freq_dominante = 0
+            amplitud_max = 0
+        
+        # Crear visualización ASCII
+        altura = 10
+        ancho = 60
+        
+        # Limpiar pantalla (Windows)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        
+        print(f"🎵 ESPECTRO FFT ULTRASÓNICO")
+        print(f"═" * 50)
+        print(f"📊 Frecuencia dominante: {freq_dominante:.0f} Hz")
+        print(f"📈 Amplitud máxima: {amplitud_max:.2f}")
+        
+        if frecuencia_esperada:
+            print(f"🎯 Frecuencia esperada: {frecuencia_esperada:.0f} Hz")
+            diferencia = abs(freq_dominante - frecuencia_esperada)
+            print(f"📏 Diferencia: {diferencia:.0f} Hz")
+        
+        print(f"═" * 50)
+        
+        # Crear gráfico ASCII
+        for i in range(altura):
+            linea = ""
+            for j in range(ancho):
+                # Mapear posición a frecuencia
+                freq_idx = int(j * len(positive_freqs) / ancho)
+                if freq_idx < len(positive_fft):
+                    amplitud = positive_fft[freq_idx]
+                    # Normalizar amplitud
+                    amplitud_norm = min(amplitud / (amplitud_max + 1e-10), 1.0)
+                    # Mapear a altura
+                    altura_char = int(amplitud_norm * altura)
+                    
+                    if i >= (altura - altura_char):
+                        if amplitud_norm > 0.8:
+                            linea += "█"
+                        elif amplitud_norm > 0.6:
+                            linea += "▓"
+                        elif amplitud_norm > 0.4:
+                            linea += "▒"
+                        elif amplitud_norm > 0.2:
+                            linea += "░"
+                        else:
+                            linea += " "
+                    else:
+                        linea += " "
+                else:
+                    linea += " "
+            print(linea)
+        
+        # Escala de frecuencias
+        freq_min = positive_freqs[0] if len(positive_freqs) > 0 else 0
+        freq_max = positive_freqs[-1] if len(positive_freqs) > 0 else 0
+        print(f"📏 {freq_min:.0f} Hz {' ' * (ancho-20)} {freq_max:.0f} Hz")
+        print(f"═" * 50)
     
     def transmitir_caracter(self, caracter):
         """Transmite un solo carácter"""
@@ -68,8 +145,50 @@ class ProtocoloUltrasónico:
         
         return audio_completo
     
+    def reproducir_mensaje_con_visualizacion(self, mensaje):
+        """Reproduce un mensaje con visualización FFT en tiempo real"""
+        audio = self.transmitir_mensaje(mensaje)
+        
+        # Dividir audio en chunks para visualización
+        chunk_size = int(self.sample_rate * 0.1)  # 100ms chunks
+        chunks = [audio[i:i+chunk_size] for i in range(0, len(audio), chunk_size)]
+        
+        print(f"🚀 Transmitiendo: '{mensaje}'")
+        print(f"⏱️  Duración estimada: {len(audio)/self.sample_rate:.2f}s")
+        print(f"📦 Chunks de visualización: {len(chunks)}")
+        print("=" * 50)
+        
+        # Reproducir con visualización
+        for i, chunk in enumerate(chunks):
+            # Mostrar información del chunk
+            if i == 0:
+                self.visualizar_fft_ascii(chunk, START_FREQUENCY)
+            elif i == 1:
+                self.visualizar_fft_ascii(chunk, SYNC_FREQUENCY)
+            elif i == len(chunks) - 2:
+                self.visualizar_fft_ascii(chunk, SYNC_FREQUENCY)
+            elif i == len(chunks) - 1:
+                self.visualizar_fft_ascii(chunk, END_FREQUENCY)
+            else:
+                # Para datos, mostrar la frecuencia esperada del carácter
+                char_idx = (i - 2) // 2  # Aproximación
+                if char_idx < len(mensaje):
+                    freq_esperada = char_to_frequency(mensaje[char_idx])
+                    self.visualizar_fft_ascii(chunk, freq_esperada)
+                else:
+                    self.visualizar_fft_ascii(chunk)
+            
+            # Reproducir chunk
+            sd.play(chunk, self.sample_rate)
+            sd.wait()
+            
+            # Pequeña pausa para visualización
+            time.sleep(0.05)
+        
+        print("✅ Transmisión completada!")
+    
     def reproducir_mensaje(self, mensaje):
-        """Reproduce un mensaje directamente"""
+        """Reproduce un mensaje directamente (método original)"""
         audio = self.transmitir_mensaje(mensaje)
         sd.play(audio, self.sample_rate)
         sd.wait()
