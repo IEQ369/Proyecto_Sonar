@@ -14,11 +14,11 @@ def espectro_en_vivo(duracion=10):
     fig, ax = plt.subplots(figsize=(10, 4))
     x = np.fft.rfftfreq(CHUNK, 1/SAMPLE_RATE)
     line, = ax.plot(x, np.zeros_like(x), color='#00ffff')
-    ax.set_xlim(0, 22000)
+    ax.set_xlim(18000, 20000)  # Rango optimizado: 18-20 kHz
     ax.set_ylim(0, 1)
     ax.set_xlabel('Frecuencia (Hz)')
     ax.set_ylabel('Magnitud (normalizada)')
-    ax.set_title('Espectro FFT en vivo (micrófono)')
+    ax.set_title('Espectro FFT en vivo (micrófono) - Rango 18-20 kHz')
     ax.grid(True, color='#222222')
     fig.patch.set_facecolor('black')
     ax.set_facecolor('black')

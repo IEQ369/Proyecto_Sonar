@@ -24,7 +24,8 @@ Este proyecto demuestra cómo un atacante puede **exfiltrar datos (comandos, tex
 2. Un **receptor** (laptop/celular) capta el audio, hace FFT en tiempo real y decodifica los bits.
 3. El sistema es configurable y robusto ante ruido, usando técnicas de filtrado y sincronización.
 4. La **visualización web** solo muestra el proceso y el espectro, pero la herramienta real es Python.
-5. El sistema puede ampliarse para:
+5. **Frecuencias optimizadas:** START (18.5 kHz), END (19.9 kHz), datos (18.6-19.8 kHz) - inaudibles y bien captadas por micrófonos.
+6. El sistema puede ampliarse para:
    - Enviar comandos invisibles a asistentes virtuales.
    - Exfiltrar contraseñas, tokens, etc., sin cables ni red.
    - Demostrar técnicas avanzadas (FDM, OFDM, etc.).
@@ -91,15 +92,16 @@ Este proyecto demuestra cómo un atacante puede **exfiltrar datos (comandos, tex
 
 ## 🧩 Conceptos técnicos clave
 
-- **FSK (Frequency Shift Keying):** Modulación por desplazamiento de frecuencia (1=20kHz, 0=19kHz).
+- **FSK (Frequency Shift Keying):** Modulación por desplazamiento de frecuencia (datos: 18.6-19.8 kHz).
 - **FDM (Frequency Division Multiplexing):** Transmisión simultánea en varias frecuencias (multi-bit).
 - **OFDM (Orthogonal FDM):** Multiplexación ortogonal, base de WiFi/LTE, muy eficiente pero compleja.
 - **Beat frequencies:** Batidos audibles al usar frecuencias cercanas, limitan el sigilo.
 - **Filtrado digital:** Pasa banda para aislar frecuencias de interés y reducir ruido.
-- **Sincronización:** Preámbulo y detección robusta de inicio/fin de mensaje.
+- **Sincronización:** Preámbulo (18.5 kHz) y detección robusta de inicio/fin (19.9 kHz) de mensaje.
 - **Corrección de errores:** Paridad, checksum, Hamming, etc.
 - **Compresión:** Reducir tamaño de datos para mayor velocidad.
 - **Calibración:** Ajustar frecuencias y umbrales según hardware y ambiente.
+- **Rango optimizado:** 18.5-19.9 kHz - inaudible para humanos pero bien captado por micrófonos.
 
 ---
 

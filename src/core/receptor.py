@@ -17,9 +17,9 @@ def print_ascii():
     print("-----------------------------------------------\n")
 
 # --- Configuración de frecuencias y protocolo ---
-START_FREQ = 17500  # Hz, frecuencia de inicio
-END_FREQ = 20500    # Hz, frecuencia de fin
-SYNC_FREQ = 19000   # Hz, frecuencia de sincronización
+START_FREQ = 18500  # Hz, frecuencia de inicio (18.5 kHz - inaudible y bien captado)
+END_FREQ = 19900    # Hz, frecuencia de fin (19.9 kHz - inaudible y bien captado)
+SYNC_FREQ = 19200   # Hz, frecuencia de sincronización (19.2 kHz)
 STEP = 100          # Hz, separación entre símbolos
 SYMBOL_DURATION = 0.1  # segundos (100 ms)
 SYNC_DURATION = 0.2    # segundos (200 ms)
@@ -32,6 +32,7 @@ BASE64_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 # --- Mapeo símbolo <-> frecuencia ---
 def symbol_to_freq(symbol):
     idx = BASE64_ALPHABET.index(symbol)
+    # Datos van de 18,600 Hz a 19,800 Hz (120 símbolos máximo)
     return START_FREQ + STEP + idx * STEP
 
 def freq_to_symbol(freq):
@@ -52,8 +53,8 @@ def detectar_frecuencia(ventana, sample_rate):
     fft = np.fft.rfft(ventana)
     freqs = np.fft.rfftfreq(len(ventana), 1/sample_rate)
     magnitudes = np.abs(fft)
-    # Busca el pico más alto en el rango ultrasónico
-    rango = (freqs >= 17000) & (freqs <= 22000)
+    # Busca el pico más alto en el rango ultrasónico optimizado
+    rango = (freqs >= 18000) & (freqs <= 20000)
     idx_max = np.argmax(magnitudes[rango])
     freq_max = freqs[rango][idx_max]
     return freq_max, np.max(magnitudes[rango])
@@ -182,7 +183,7 @@ def calibrar_frecuencia(duracion=2):
     fft = np.fft.rfft(audio)
     freqs = np.fft.rfftfreq(len(audio), 1/SAMPLE_RATE)
     magnitudes = np.abs(fft)
-    rango = (freqs >= 17000) & (freqs <= 22000)
+    rango = (freqs >= 18000) & (freqs <= 20000)
     idx_max = np.argmax(magnitudes[rango])
     freq_max = freqs[rango][idx_max]
     print(f"[CALIBRACIÓN] Frecuencia pico detectada: {freq_max:.2f} Hz")

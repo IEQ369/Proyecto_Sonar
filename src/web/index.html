@@ -6,19 +6,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
+  <!-- Fuente Unifont o consola pixelada -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
 </head>
 
 <body>
   <div class="container">
     <div class="fft-panel">
-      <canvas id="espectro" width="800" height="180"></canvas>
+      <canvas id="espectro" width="1200" height="180"></canvas>
     </div>
     <div class="row">
       <div class="col col-izq">
         <div class="panel">
           <div class="panel-title">Transmisión</div>
           <input id="mensaje" placeholder="Mensaje a enviar" size="30" autocomplete="off">
-          <label>Frecuencia base (Hz): <input id="base_freq" type="number" value="18000"></label>
+          <label>Frecuencia base (Hz): <input id="base_freq" type="number" value="18600"></label>
           <label>Paso (Hz): <input id="step" type="number" value="100"></label>
           <label>Duración símbolo (ms): <input id="dur" type="number" value="100"></label>
           <label>Amplitud: <input id="amp" type="number" value="1.0" min="0" max="1" step="0.01"></label>
@@ -33,15 +38,14 @@
       <div class="col col-der">
         <div class="panel">
           <div class="panel-title">Terminal</div>
-          <div class="terminal" id="terminalLog"></div>
-          <div class="transmit-data" id="transmitData"></div>
-          <div id="estado"></div>
-          <div id="base32_rx"></div>
-          <div id="mensaje_rx"></div>
-          <div id="debug"></div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          <div class="terminal" id="terminalText"></div>
+          <div class="terminal-logs">
+            <div id="estado"></div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar" id="progressBar" style="width:0%"></div>
+            </div>
           </div>
+          <div class="data-bar" id="base32_rx"></div>
         </div>
       </div>
     </div>

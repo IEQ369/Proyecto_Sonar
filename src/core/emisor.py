@@ -18,9 +18,9 @@ def print_ascii():
     print("-----------------------------------------------\n")
 
 # --- Configuración de frecuencias y protocolo ---
-START_FREQ = 17500  # Hz, frecuencia de inicio
-END_FREQ = 20500    # Hz, frecuencia de fin
-SYNC_FREQ = 19000   # Hz, frecuencia de sincronización
+START_FREQ = 18500  # Hz, frecuencia de inicio (18.5 kHz - inaudible y bien captado)
+END_FREQ = 19900    # Hz, frecuencia de fin (19.9 kHz - inaudible y bien captado)
+SYNC_FREQ = 19200   # Hz, frecuencia de sincronización (19.2 kHz)
 STEP = 100          # Hz, separación entre símbolos
 SYMBOL_DURATION = 0.1  # segundos (100 ms)
 SYNC_DURATION = 0.2    # segundos (200 ms)
@@ -31,6 +31,7 @@ BASE64_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 # --- Mapeo símbolo <-> frecuencia ---
 def symbol_to_freq(symbol):
     idx = BASE64_ALPHABET.index(symbol)
+    # Datos van de 18,600 Hz a 19,800 Hz (120 símbolos máximo)
     return START_FREQ + STEP + idx * STEP
 
 def base64_to_freqs(b64):
