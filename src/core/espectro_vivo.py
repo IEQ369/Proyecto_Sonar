@@ -3,14 +3,13 @@ matplotlib.use('tkagg')
 import numpy as np
 import sounddevice as sd
 import matplotlib.pyplot as plt
-import datetime
 
 SAMPLE_RATE = 44100
 CHUNK = 2048  # Tamaño de ventana para FFT
 
 # --- Visualización en vivo del espectro ---
-def espectro_en_vivo(duracion=10):
-    print(f"[INFO] Mostrando espectro en vivo durante {duracion} segundos...")
+def espectro_en_vivo():
+    print(f"[INFO] Mostrando espectro en vivo. Cierra la ventana para terminar.")
     fig, ax = plt.subplots(figsize=(10, 4))
     x = np.fft.rfftfreq(CHUNK, 1/SAMPLE_RATE)
     line, = ax.plot(x, np.zeros_like(x), color='#00ffff')
@@ -32,26 +31,22 @@ def espectro_en_vivo(duracion=10):
     stream.start()
 
     plt.ion()
-    start_time = datetime.datetime.now()
-    elapsed = 0
-    while elapsed < duracion:
-        audio, _ = stream.read(CHUNK)
-        audio = audio[:, 0]
-        fft = np.abs(np.fft.rfft(audio * np.hanning(len(audio))))
-        if np.max(fft) > 0:
-            fft /= float(np.max(fft))
-        line.set_ydata(fft)
-        ax.set_ylim(0, float(np.max(fft))*1.1 if np.max(fft) > 0 else 1)
-        plt.pause(0.01)
-        elapsed = (datetime.datetime.now() - start_time).total_seconds()
-
-    stream.stop()
-    plt.ioff()
-    plt.close()
+    try:
+        while plt.fignum_exists(fig.number):
+            audio, _ = stream.read(CHUNK)
+            audio = audio[:, 0]
+            fft = np.abs(np.fft.rfft(audio * np.hanning(len(audio))))
+            if np.max(fft) > 0:
+                fft /= float(np.max(fft))
+            line.set_ydata(fft)
+            ax.set_ylim(0, float(np.max(fft))*1.1 if np.max(fft) > 0 else 1)
+            plt.pause(0.005)  # Más fluido
+    except KeyboardInterrupt:
+        print("\n[DETENIDO] Visualización interrumpida por el usuario.")
+    finally:
+        stream.stop()
+        plt.ioff()
+        plt.close()
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Visualización en vivo del espectro FFT (micrófono)")
-    parser.add_argument('-d', '--duracion', type=float, default=10, help='Duración en segundos')
-    args = parser.parse_args()
-    espectro_en_vivo(duracion=args.duracion) 
+    espectro_en_vivo() 

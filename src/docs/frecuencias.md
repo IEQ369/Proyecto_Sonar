@@ -28,6 +28,7 @@ Este documento describe el mapeo completo de caracteres ASCII a frecuencias ultr
 | ` ` (espacio) | 18,700 Hz |
 
 #### Números (0-9)
+18,800 - 19,700
 | Carácter | Frecuencia | Carácter | Frecuencia |
 |----------|------------|----------|------------|
 | `0` | 18,800 Hz | `5` | 19,300 Hz |
@@ -37,6 +38,7 @@ Este documento describe el mapeo completo de caracteres ASCII a frecuencias ultr
 | `4` | 19,200 Hz | `9` | 19,700 Hz |
 
 #### Letras Mayúsculas (A-Z)
+19,900 - 22,300
 | Carácter | Frecuencia | Carácter | Frecuencia | Carácter | Frecuencia |
 |----------|------------|----------|------------|----------|------------|
 | `A` | 19,800 Hz | `J` | 20,700 Hz | `S` | 21,600 Hz |
