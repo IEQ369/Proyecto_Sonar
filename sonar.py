@@ -8,7 +8,8 @@ Basado en ataques reales como DolphinAttack
 import sys
 import time
 import threading
-from src.core.protocolo import ProtocoloUltrasónico, ReceptorUltrasónico
+from src.core.emisor import emitir_mensaje
+from src.core.receptor import escuchar_continuamente
 from src.core.frecuencias import char_to_frequency, frequency_to_char
 import sounddevice as sd
 import numpy as np
@@ -71,10 +72,6 @@ class SistemaSonar:
     """Sistema principal para transmitir y recibir datos por ultrasonido"""
     
     def __init__(self):
-        # Crear el protocolo ultrasónico
-        self.protocolo = ProtocoloUltrasónico()
-        # Crear el receptor
-        self.receptor = ReceptorUltrasónico()
         # Crear barra de progreso
         self.barra_progreso = BarraProgreso()
         self.activo = False
@@ -127,7 +124,6 @@ class SistemaSonar:
             
         print(f"\n[TRANSMITIENDO] Mensaje: '{mensaje}'")
         print(f"[INFO] Frecuencias ultrasónicas (no se escuchan)")
-        print(f"[INFO] Duración estimada: {self.protocolo.calcular_duracion_mensaje(mensaje):.2f} segundos")
         
         # Mostrar qué frecuencias se van a usar
         print("\n[MAPEADO DE FRECUENCIAS]")
@@ -138,7 +134,7 @@ class SistemaSonar:
         confirmar = input("\n¿Transmitir el mensaje? (s/n): ").strip().lower()
         if confirmar == 's':
             try:
-                self.protocolo.reproducir_mensaje(mensaje)
+                emitir_mensaje(mensaje)
                 print("[ÉXITO] Transmisión completada")
             except Exception as e:
                 print(f"[ERROR] Fallo en transmisión: {e}")
@@ -158,12 +154,11 @@ class SistemaSonar:
                 
             print(f"\n[ARCHIVO] Ruta: {archivo}")
             print(f"[INFO] Longitud: {len(contenido)} caracteres")
-            print(f"[INFO] Duración estimada: {self.protocolo.calcular_duracion_mensaje(contenido):.2f} segundos")
             
             confirmar = input("\n¿Transmitir archivo? (s/n): ").strip().lower()
             if confirmar == 's':
                 print("[TRANSMITIENDO] Contenido del archivo...")
-                self.protocolo.reproducir_mensaje(contenido)
+                emitir_mensaje(contenido)
                 print("[ÉXITO] Archivo transmitido")
             else:
                 print("[CANCELADO] Transmisión de archivo abortada")
@@ -187,7 +182,7 @@ class SistemaSonar:
                     
                 if mensaje:
                     print(f"[TRANSMITIENDO] '{mensaje}'")
-                    self.protocolo.reproducir_mensaje(mensaje)
+                    emitir_mensaje(mensaje)
                     print("[ÉXITO] Mensaje enviado")
                     
         except KeyboardInterrupt:
@@ -200,100 +195,46 @@ class SistemaSonar:
         print("Presiona Ctrl+C para detener")
         print("-" * 50)
         
-        # Variables para el receptor
-        mensajes_recibidos = []
-        
-        def procesar_audio(indata, frames, time, status):
-            if status:
-                print(f"\n[ADVERTENCIA] Estado: {status}")
-            
-            resultado = self.receptor.procesar_audio(indata[:, 0])
-            if resultado:
-                # Detener la barra temporalmente para mostrar el mensaje
-                self.barra_progreso.detener()
-                print(f"\n[RECIBIDO] {resultado}")
-                mensajes_recibidos.append(resultado)
-                # Reiniciar la barra
-                self.barra_progreso.iniciar("Escuchando")
-        
         try:
-            with sd.InputStream(callback=procesar_audio, 
-                              channels=1, 
-                              samplerate=self.receptor.sample_rate,
-                              blocksize=1024):
-                print("[ACTIVO] Receptor iniciado")
-                print("[INFO] Escuchando frecuencias ultrasónicas (18.7-22.4 kHz)")
-                print("[INFO] Presiona Ctrl+C para detener")
-                print()
-                
-                # Iniciar barra de progreso
-                self.barra_progreso.iniciar("Escuchando")
-                
-                while True:
-                    time.sleep(0.1)
-                    
+            escuchar_continuamente()
         except KeyboardInterrupt:
-            self.barra_progreso.detener()
             print("\n[DETENIDO] Receptor terminado")
-            
-            # Mostrar resumen de mensajes recibidos
-            if mensajes_recibidos:
-                print(f"\n[RESUMEN] Mensajes recibidos: {len(mensajes_recibidos)}")
-                for i, msg in enumerate(mensajes_recibidos, 1):
-                    print(f"  {i}. {msg}")
-            else:
-                print("\n[INFO] No se recibieron mensajes")
-                
         except Exception as e:
-            self.barra_progreso.detener()
             print(f"\n[ERROR] Error en receptor: {e}")
             
     def configuracion(self):
         """Configuración del sistema"""
         print("\n[CONFIGURACIÓN DEL SISTEMA]")
         print("-" * 40)
-        print(f"Frecuencia de muestreo: {self.protocolo.sample_rate} Hz")
-        print(f"Volumen: {self.protocolo.volume}")
-        print(f"Frecuencia base: {self.protocolo.frecuencia_base} Hz")
+        print(f"Frecuencia de muestreo: 44100 Hz")
+        print(f"Volumen: 0.7")
+        print(f"Frecuencia base: 18500 Hz")
         print(f"Rango ultrasónico: 18.7-22.4 kHz")
         print("-" * 40)
         
         print("\nOpciones:")
-        print("[1] Ajustar volumen")
-        print("[2] Cambiar frecuencia base")
-        print("[3] Volver")
+        print("[1] Información del sistema")
+        print("[2] Volver")
         
         opcion = input("\nSelecciona: ").strip()
         
         if opcion == "1":
-            try:
-                nuevo_volumen = float(input("Nuevo volumen (0.0-1.0): "))
-                if 0.0 <= nuevo_volumen <= 1.0:
-                    self.protocolo.volume = nuevo_volumen
-                    print(f"[ÉXITO] Volumen ajustado a: {nuevo_volumen}")
-                else:
-                    print("[ERROR] Volumen debe estar entre 0.0 y 1.0")
-            except ValueError:
-                print("[ERROR] Valor inválido")
-                
-        elif opcion == "2":
-            try:
-                nueva_freq = int(input("Nueva frecuencia base (Hz): "))
-                if nueva_freq > 0:
-                    self.protocolo.frecuencia_base = nueva_freq
-                    print(f"[ÉXITO] Frecuencia base ajustada a: {nueva_freq} Hz")
-                else:
-                    print("[ERROR] Frecuencia debe ser positiva")
-            except ValueError:
-                print("[ERROR] Valor inválido")
+            print("\n[INFORMACIÓN TÉCNICA]")
+            print("Frecuencia de muestreo: 44100 Hz")
+            print("Volumen por defecto: 0.7")
+            print("Frecuencia START: 18500 Hz")
+            print("Frecuencia SYNC: 18600 Hz")
+            print("Frecuencia END: 22000 Hz")
+            print("Rango de datos: 18700-25500 Hz")
+            input("\nPresiona Enter para continuar...")
                 
     def estado_sistema(self):
         """Muestra el estado actual del sistema"""
         print("\n[ESTADO DEL SISTEMA]")
         print("-" * 40)
-        print(f"Frecuencia de muestreo: {self.protocolo.sample_rate} Hz")
-        print(f"Volumen: {self.protocolo.volume}")
-        print(f"Frecuencia base: {self.protocolo.frecuencia_base} Hz")
+        print(f"Frecuencia de muestreo: 44100 Hz")
+        print(f"Volumen: 0.7")
+        print(f"Frecuencia base: 18500 Hz")
         print(f"Protocolo: Ultrasónico (18.7-22.4 kHz)")
         print(f"Receptor: {'ACTIVO' if self.activo else 'INACTIVO'}")
         print("-" * 40)
