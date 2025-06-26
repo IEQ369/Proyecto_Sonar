@@ -5,8 +5,8 @@ import argparse
 from .frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 
 # --- Configuración de emisión ---
-SYMBOL_DURATION = 0.1  # segundos (100 ms)
-SYNC_DURATION = 0.2    # segundos (200 ms)
+SYMBOL_DURATION = 0.05  # segundos (50 ms)
+SYNC_DURATION = 0.1     # segundos (100 ms)
 SAMPLE_RATE = 44100
 AMPLITUDE = 0.7
 
@@ -16,6 +16,13 @@ def generate_tone(frequency, duration, sample_rate=SAMPLE_RATE, amplitude=AMPLIT
     t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
     return amplitude * np.sin(2 * np.pi * frequency * t)
 
+# --- Cálculo de duración de mensaje ---
+def calcular_duracion_mensaje(mensaje, duracion=SYMBOL_DURATION):
+    """Calcula la duración total de transmisión de un mensaje"""
+    # START + SYNC inicial + datos + SYNC final + END
+    duracion_datos = len(mensaje) * duracion
+    return SYNC_DURATION + SYNC_DURATION + duracion_datos + SYNC_DURATION + SYNC_DURATION
+
 # --- Emisión de mensaje completo ---
 def emitir_mensaje(texto, duracion=SYMBOL_DURATION, amplitud=AMPLITUDE):
     """Emite un mensaje completo usando el protocolo START → SYNC → DATOS → SYNC → END"""
@@ -24,6 +31,7 @@ def emitir_mensaje(texto, duracion=SYMBOL_DURATION, amplitud=AMPLITUDE):
         return
 
     print(f"[INFO] Texto a enviar: {texto}")
+    print(f"[INFO] Duración estimada: {calcular_duracion_mensaje(texto, duracion):.2f} segundos")
     
     # Convertir texto a secuencia de frecuencias
     frecuencias_datos = [char_to_frequency(c) for c in texto]

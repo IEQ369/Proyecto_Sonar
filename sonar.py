@@ -8,7 +8,7 @@ Basado en ataques reales como DolphinAttack
 import sys
 import time
 import threading
-from src.core.emisor import emitir_mensaje
+from src.core.emisor import emitir_mensaje, calcular_duracion_mensaje
 from src.core.receptor import escuchar_continuamente
 from src.core.frecuencias import char_to_frequency, frequency_to_char
 import sounddevice as sd
@@ -27,7 +27,6 @@ def mostrar_banner():
     [SISTEMA DE EXFILTRACIÓN ULTRASÓNICA]
     [FRECUENCIAS: 18.7-22.4 kHz (inaudibles)]
     [PROTOCOLO: INICIO-SYNC-DATOS-SYNC-FIN]
-    [ESTADO: OPERATIVO]
     """
     print(banner)
 
@@ -78,100 +77,38 @@ class SistemaSonar:
         
     def mostrar_menu_principal(self):
         """Muestra el menú principal del sistema"""
-        print("\n" + "="*60)
+        print("\n" + "="*50)
         print("SISTEMA SONAR - MENÚ PRINCIPAL")
-        print("="*60)
-        print("[1] MODO TRANSMISIÓN - Enviar datos por ultrasonido")
-        print("[2] MODO RECEPCIÓN - Escuchar transmisiones")
-        print("[3] CONFIGURACIÓN - Ajustar parámetros")
-        print("[4] ESTADO - Información del sistema")
-        print("[5] SALIR - Terminar programa")
-        print("="*60)
+        print("="*50)
+        print("[1] EMITIR - Enviar mensaje por ultrasonido")
+        print("[2] RECIBIR - Escuchar transmisiones")
+        print("[3] ESTADO - Información del sistema")
+        print("[4] SALIR - Terminar programa")
+        print("="*50)
         
-    def modo_transmision(self):
-        """Modo para transmitir datos por ultrasonido"""
-        print("\n[MODO TRANSMISIÓN ACTIVADO]")
+    def modo_emision(self):
+        """Modo para emitir mensajes por ultrasonido"""
+        print("\n[MODO EMISIÓN]")
         print("Rango de frecuencias: 18.7-22.4 kHz (ultrasónicas)")
-        print("Protocolo: INICIO -> SYNC -> DATOS -> SYNC -> FIN")
-        print("-" * 50)
+        print("-" * 40)
         
         while True:
-            print("\nOpciones de transmisión:")
-            print("[1] Mensaje manual")
-            print("[2] Transmitir archivo")
-            print("[3] Modo continuo")
-            print("[4] Volver al menú principal")
+            print("\nOpciones:")
+            print("[1] Mensaje")
+            print("[2] Volver al menú principal")
             
-            opcion = input("\nSelecciona una opción: ").strip()
+            opcion = input("\nSelecciona: ").strip()
             
             if opcion == "1":
-                self.transmitir_mensaje_manual()
-            elif opcion == "2":
-                self.transmitir_archivo()
-            elif opcion == "3":
                 self.modo_continuo()
-            elif opcion == "4":
+            elif opcion == "2":
                 break
             else:
                 print("[ERROR] Opción inválida")
                 
-    def transmitir_mensaje_manual(self):
-        """Transmite un mensaje que escribes manualmente"""
-        mensaje = input("\nEscribe el mensaje a transmitir: ").strip()
-        if not mensaje:
-            print("[ERROR] Mensaje vacío")
-            return
-            
-        print(f"\n[TRANSMITIENDO] Mensaje: '{mensaje}'")
-        print(f"[INFO] Frecuencias ultrasónicas (no se escuchan)")
-        
-        # Mostrar qué frecuencias se van a usar
-        print("\n[MAPEADO DE FRECUENCIAS]")
-        for char in mensaje:
-            freq = char_to_frequency(char)
-            print(f"  '{char}' -> {freq} Hz")
-        
-        confirmar = input("\n¿Transmitir el mensaje? (s/n): ").strip().lower()
-        if confirmar == 's':
-            try:
-                emitir_mensaje(mensaje)
-                print("[ÉXITO] Transmisión completada")
-            except Exception as e:
-                print(f"[ERROR] Fallo en transmisión: {e}")
-        else:
-            print("[CANCELADO] Transmisión abortada")
-            
-    def transmitir_archivo(self):
-        """Transmite el contenido de un archivo de texto"""
-        archivo = input("\nRuta del archivo a transmitir: ").strip()
-        try:
-            with open(archivo, 'r', encoding='utf-8') as f:
-                contenido = f.read().strip()
-                
-            if not contenido:
-                print("[ERROR] Archivo vacío")
-                return
-                
-            print(f"\n[ARCHIVO] Ruta: {archivo}")
-            print(f"[INFO] Longitud: {len(contenido)} caracteres")
-            
-            confirmar = input("\n¿Transmitir archivo? (s/n): ").strip().lower()
-            if confirmar == 's':
-                print("[TRANSMITIENDO] Contenido del archivo...")
-                emitir_mensaje(contenido)
-                print("[ÉXITO] Archivo transmitido")
-            else:
-                print("[CANCELADO] Transmisión de archivo abortada")
-                
-        except FileNotFoundError:
-            print(f"[ERROR] Archivo no encontrado: {archivo}")
-        except Exception as e:
-            print(f"[ERROR] Error al leer archivo: {e}")
-            
     def modo_continuo(self):
-        """Modo para transmitir mensajes continuamente"""
-        print("\n[MODO CONTINUO]")
-        print("Transmite mensajes continuamente hasta que pares")
+        """Modo para emitir mensajes continuamente"""
+        print("\n[MENSAJE]")
         print("Escribe 'salir' para terminar o Ctrl+C para interrumpir")
         
         try:
@@ -181,62 +118,38 @@ class SistemaSonar:
                     break
                     
                 if mensaje:
-                    print(f"[TRANSMITIENDO] '{mensaje}'")
+                    print(f"[EMITIENDO] '{mensaje}'")
+                    print(f"[INFO] Duración: {calcular_duracion_mensaje(mensaje):.2f} segundos")
                     emitir_mensaje(mensaje)
-                    print("[ÉXITO] Mensaje enviado")
+                    print("[ÉXITO] Enviado")
                     
         except KeyboardInterrupt:
-            print("\n[DETENIDO] Modo continuo interrumpido")
+            print("\n[DETENIDO]")
             
     def modo_recepcion(self):
         """Modo para recibir datos por ultrasonido"""
-        print("\n[MODO RECEPCIÓN ACTIVADO]")
+        print("\n[MODO RECEPCIÓN]")
         print("Escuchando frecuencias ultrasónicas...")
         print("Presiona Ctrl+C para detener")
-        print("-" * 50)
+        print("-" * 40)
         
         try:
             escuchar_continuamente()
         except KeyboardInterrupt:
-            print("\n[DETENIDO] Receptor terminado")
+            print("\n[DETENIDO]")
         except Exception as e:
-            print(f"\n[ERROR] Error en receptor: {e}")
+            print(f"\n[ERROR] {e}")
             
-    def configuracion(self):
-        """Configuración del sistema"""
-        print("\n[CONFIGURACIÓN DEL SISTEMA]")
-        print("-" * 40)
-        print(f"Frecuencia de muestreo: 44100 Hz")
-        print(f"Volumen: 0.7")
-        print(f"Frecuencia base: 18500 Hz")
-        print(f"Rango ultrasónico: 18.7-22.4 kHz")
-        print("-" * 40)
-        
-        print("\nOpciones:")
-        print("[1] Información del sistema")
-        print("[2] Volver")
-        
-        opcion = input("\nSelecciona: ").strip()
-        
-        if opcion == "1":
-            print("\n[INFORMACIÓN TÉCNICA]")
-            print("Frecuencia de muestreo: 44100 Hz")
-            print("Volumen por defecto: 0.7")
-            print("Frecuencia START: 18500 Hz")
-            print("Frecuencia SYNC: 18600 Hz")
-            print("Frecuencia END: 22000 Hz")
-            print("Rango de datos: 18700-25500 Hz")
-            input("\nPresiona Enter para continuar...")
-                
     def estado_sistema(self):
         """Muestra el estado actual del sistema"""
         print("\n[ESTADO DEL SISTEMA]")
         print("-" * 40)
         print(f"Frecuencia de muestreo: 44100 Hz")
         print(f"Volumen: 0.7")
-        print(f"Frecuencia base: 18500 Hz")
-        print(f"Protocolo: Ultrasónico (18.7-22.4 kHz)")
-        print(f"Receptor: {'ACTIVO' if self.activo else 'INACTIVO'}")
+        print(f"Frecuencia START: 18500 Hz")
+        print(f"Frecuencia SYNC: 18600 Hz")
+        print(f"Frecuencia END: 22000 Hz")
+        print(f"Rango de datos: 18700-25500 Hz")
         print("-" * 40)
         
         # Verificar dispositivos de audio
@@ -255,19 +168,17 @@ class SistemaSonar:
         
         while True:
             self.mostrar_menu_principal()
-            opcion = input("\nSelecciona una opción: ").strip()
+            opcion = input("\nSelecciona: ").strip()
             
             if opcion == "1":
-                self.modo_transmision()
+                self.modo_emision()
             elif opcion == "2":
                 self.modo_recepcion()
             elif opcion == "3":
-                self.configuracion()
-            elif opcion == "4":
                 self.estado_sistema()
                 input("\nPresiona Enter para continuar...")
-            elif opcion == "5":
-                print("\n[TERMINADO] Sistema apagado")
+            elif opcion == "4":
+                print("\n[TERMINADO]")
                 break
             else:
                 print("[ERROR] Opción inválida")
@@ -280,7 +191,7 @@ def main():
         sonar = SistemaSonar()
         sonar.ejecutar()
     except KeyboardInterrupt:
-        print("\n\n[INTERRUMPIDO] Sistema terminado por el usuario")
+        print("\n\n[INTERRUMPIDO]")
     except Exception as e:
         print(f"\n[ERROR FATAL] {e}")
         sys.exit(1)

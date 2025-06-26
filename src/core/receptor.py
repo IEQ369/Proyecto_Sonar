@@ -4,7 +4,7 @@ from scipy.signal import find_peaks
 from .frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
 
 # --- Configuración de recepción ---
-SYMBOL_DURATION = 0.1  # segundos (100 ms)
+SYMBOL_DURATION = 0.05  # segundos (50 ms)
 SAMPLE_RATE = 44100
 FREQ_TOLERANCE = 50  # Hz, tolerancia para detección robusta
 LOCKOUT_WINDOWS = 2  # Ventanas a ignorar tras detectar un símbolo

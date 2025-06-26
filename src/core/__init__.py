@@ -25,6 +25,7 @@ __all__ = [
     # Emisor
     'emitir_mensaje',
     'generate_tone',
+    'calcular_duracion_mensaje',
     
     # Receptor
     'escuchar_continuamente',
