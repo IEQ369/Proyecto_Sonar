@@ -1,122 +1,137 @@
 import numpy as np
 import sounddevice as sd
-from scipy.signal import find_peaks
-from .frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
+import sys
+import os
 
-# --- Configuración de recepción ---
-SYMBOL_DURATION = 0.05  # segundos (50 ms)
+# Agregar el directorio padre al path para imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from core.frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
+except ImportError:
+    from frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
+
+# --- Configuración simple ---
+SYMBOL_DURATION = 0.05  # 50 ms - igual que el emisor
 SAMPLE_RATE = 44100
-FREQ_TOLERANCE = 50  # Hz, tolerancia para detección robusta
-LOCKOUT_WINDOWS = 2  # Ventanas a ignorar tras detectar un símbolo
+FREQ_TOLERANCE = 100  # Hz
+MIN_ULTRASONIC_FREQ = 18000  # Hz
+MAX_ULTRASONIC_FREQ = 23000  # Hz
+MIN_SIGNAL_DB = -35  # dB
 
-# --- Detección de frecuencia dominante en una ventana ---
+def amplitud_to_db(amplitud):
+    """Convierte amplitud lineal a dB"""
+    if isinstance(amplitud, (list, np.ndarray)):
+        return np.where(amplitud <= 0, -100.0, 20 * np.log10(amplitud))
+    else:
+        if amplitud <= 0:
+            return -100.0
+        return 20 * np.log10(amplitud)
+
 def detectar_frecuencia(ventana, sample_rate):
-    """Detecta la frecuencia dominante en una ventana de audio"""
+    """Detecta la frecuencia dominante ultrasónica"""
     fft = np.fft.rfft(ventana)
     freqs = np.fft.rfftfreq(len(ventana), 1/sample_rate)
     magnitudes = np.abs(fft)
     
-    # Busca el pico más alto en el rango ultrasónico optimizado
-    rango = (freqs >= 18000) & (freqs <= 26000)
-    if np.any(rango):
-        idx_max = np.argmax(magnitudes[rango])
-        freq_max = freqs[rango][idx_max]
-        return freq_max, np.max(magnitudes[rango])
+    # Filtrar frecuencias ultrasónicas
+    rango_ultrasonico = (freqs >= MIN_ULTRASONIC_FREQ) & (freqs <= MAX_ULTRASONIC_FREQ)
+    
+    if not np.any(rango_ultrasonico):
+        return 0, 0
+    
+    magnitudes_ultrasonicas = magnitudes[rango_ultrasonico]
+    freqs_ultrasonicas = freqs[rango_ultrasonico]
+    
+    if len(magnitudes_ultrasonicas) == 0:
+        return 0, 0
+    
+    max_idx = np.argmax(magnitudes_ultrasonicas)
+    max_freq = freqs_ultrasonicas[max_idx]
+    max_magnitude = magnitudes_ultrasonicas[max_idx]
+    max_db = amplitud_to_db(max_magnitude)
+    
+    if max_db > MIN_SIGNAL_DB:
+        return max_freq, max_db
+    
     return 0, 0
 
-# --- Escucha continua hasta cancelar ---
 def escuchar_continuamente():
-    """Escucha continuamente frecuencias ultrasónicas hasta que se cancele"""
-    print("[INFO] Iniciando modo de escucha continua.")
-    print("[INFO] Presiona Ctrl+C para detener.")
-    print("[INFO] Escuchando frecuencias ultrasónicas...")
+    """Receptor ultrasónico - solo traducción"""
+    print("[RECEPTOR] Iniciado - esperando mensajes...")
     
-    stream = sd.InputStream(channels=1, samplerate=SAMPLE_RATE, blocksize=int(SYMBOL_DURATION * SAMPLE_RATE))
-    stream.start()
+    try:
+        stream = sd.InputStream(
+            channels=1, 
+            samplerate=SAMPLE_RATE, 
+            blocksize=int(SYMBOL_DURATION * SAMPLE_RATE),
+            dtype=np.float32
+        )
+        stream.start()
+    except Exception as e:
+        print(f"[ERROR] {e}")
+        return
 
     ventana_size = int(SYMBOL_DURATION * SAMPLE_RATE)
     estado = {
         'started': False,
-        'lockout': 0,
         'sync_detected': False,
-        'rx_text': '',
-        'rx_last_char': None,
-        'buffer_chars': []
+        'rx_text': ''
     }
-    buffer_size = 20  # Tamaño del buffer para mostrar últimos caracteres
 
     try:
-        i = 0
         while True:
-            ventana, _ = stream.read(ventana_size)
+            ventana, overflowed = stream.read(ventana_size)
             ventana = ventana.flatten()
             
-            if procesar_ventana(ventana, i, estado, buffer_size):
-                # Mensaje completo recibido
-                procesar_mensaje_recibido(estado['rx_text'])
-                estado['started'] = False
-                estado['sync_detected'] = False
-                estado['rx_text'] = ''
-                estado['buffer_chars'].clear()
-            i += 1
+            freq, pico_db = detectar_frecuencia(ventana, SAMPLE_RATE)
+            
+            if freq > 0:
+                # Procesar protocolo
+                if procesar_protocolo(freq, estado):
+                    # Mensaje completo recibido
+                    if estado['rx_text']:
+                        print(f"\n[MENSAJE] {estado['rx_text']}")
+                    estado['rx_text'] = ''
 
     except KeyboardInterrupt:
-        print("\n[INFO] Recepción interrumpida por el usuario.")
+        print("\n[RECEPTOR] Detenido")
+    except Exception as e:
+        print(f"\n[ERROR] {e}")
     finally:
         stream.stop()
         stream.close()
 
-def procesar_mensaje_recibido(rx_text):
-    """Procesa un mensaje recibido"""
-    if len(rx_text) == 0:
-        return
+def procesar_protocolo(freq, estado):
+    """Procesa el protocolo START → SYNC → DATOS → SYNC → END"""
     
-    print(f"\n[RECIBIDO] {rx_text}")
-
-def procesar_ventana(ventana, i, estado, buffer_size):
-    """Procesa una ventana de audio y actualiza el estado de la recepción"""
-    if estado['lockout'] > 0:
-        estado['lockout'] -= 1
-        return False
-
-    freq, pico = detectar_frecuencia(ventana, SAMPLE_RATE)
-    
-    # Detectar START
+    # START
     if not estado['started'] and abs(freq - START_FREQUENCY) < FREQ_TOLERANCE:
+        print("[START]")
         estado['started'] = True
         estado['sync_detected'] = False
         estado['rx_text'] = ''
-        estado['rx_last_char'] = None
-        estado['lockout'] = 0
-        estado['buffer_chars'].clear()
-        print(f"\n[RX] START detectado ({freq:.0f} Hz)")
         return False
     
-    # Detectar SYNC
+    # SYNC
     if estado['started'] and not estado['sync_detected'] and abs(freq - SYNC_FREQUENCY) < FREQ_TOLERANCE:
+        print("[SYNC]")
         estado['sync_detected'] = True
-        print(f"[RX] SYNC detectado ({freq:.0f} Hz)")
         return False
     
-    # Detectar END
+    # END
     if estado['started'] and abs(freq - END_FREQUENCY) < FREQ_TOLERANCE:
-        print(f"[RX] END detectado ({freq:.0f} Hz)")
+        print("[END]")
+        estado['started'] = False
+        estado['sync_detected'] = False
         return True
     
-    # Detectar caracteres de datos
+    # DATOS
     if estado['started'] and estado['sync_detected'] and is_data_frequency(freq):
         char = frequency_to_char(freq)
-        if char and char != estado['rx_last_char']:
+        if char:
             estado['rx_text'] += char
-            estado['rx_last_char'] = char
-            estado['lockout'] = LOCKOUT_WINDOWS
-            
-            # Actualizar buffer de caracteres
-            estado['buffer_chars'].append(char)
-            if len(estado['buffer_chars']) > buffer_size:
-                estado['buffer_chars'].pop(0)
-            
-            print(f"[RX] '{char}' ({freq:.0f} Hz) | Buffer: {''.join(estado['buffer_chars'])}")
+            print(f"[{char}]", end='', flush=True)
     
     return False
 

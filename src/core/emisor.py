@@ -2,7 +2,16 @@ import numpy as np
 import sounddevice as sd
 import time
 import argparse
-from .frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
+import sys
+import os
+
+# Agregar el directorio padre al path para imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from core.frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
+except ImportError:
+    from frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 
 # --- Configuración de emisión ---
 SYMBOL_DURATION = 0.05  # segundos (50 ms)
