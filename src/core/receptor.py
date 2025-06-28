@@ -16,14 +16,17 @@ except ImportError:
 SYMBOL_DURATION = 0.1       # 100 ms - más tiempo para mejor detección
 SYNC_DURATION = 0.1         # 100 ms - igual que emisor
 SAMPLE_RATE = 44100
-FREQ_TOLERANCE = 50         # Hz - tolerancia razonable
+FREQ_TOLERANCE = 45         # Hz
 MIN_ULTRASONIC_FREQ = 18000 # Hz
 MAX_ULTRASONIC_FREQ = 26000 # Hz
-MIN_SIGNAL_DB = -90         # dB - umbral muy bajo para captar señales ultrasónicas débiles
+MIN_SIGNAL_DB = -80         # dB (ajustable)
 
 # Configuración simplificada
 DEBOUNCE_TIME = 0.1         # 100ms debounce - sincronizado con emisor
 DEBOUNCE_FREQ = 20          # Hz - ignorar frecuencias muy cercanas
+
+START_DETECTIONS_REQUIRED = 2
+END_DETECTIONS_REQUIRED = 2
 
 FRECUENCIAS_PROTOCOLO = get_all_frequencies() + [START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY]
 
@@ -77,7 +80,9 @@ class ReceptorUltrasonico:
             'sync_detected': False,
             'rx_text': '',
             'last_detection_time': 0,
-            'last_detected_freq': 0
+            'last_detected_freq': 0,
+            'start_counter': 0,
+            'end_counter': 0
         }
         self.stream = None
         
@@ -118,11 +123,14 @@ class ReceptorUltrasonico:
         
         # START
         if not self.estado['started'] and abs(freq - START_FREQUENCY) < FREQ_TOLERANCE:
-            print(f"[START] Detectado en {freq:.0f} Hz")
-            self.estado['started'] = True
-            self.estado['sync_detected'] = False
-            self.estado['rx_text'] = ''
-            return False
+            self.estado['start_counter'] += 1
+            if self.estado['start_counter'] >= START_DETECTIONS_REQUIRED:
+                print(f"[START] Detectado en {freq:.0f} Hz")
+                self.estado['started'] = True
+                self.estado['sync_detected'] = False
+                self.estado['rx_text'] = ''
+                self.estado['start_counter'] = 0
+                return False
         
         # SYNC
         if self.estado['started'] and not self.estado['sync_detected'] and abs(freq - SYNC_FREQUENCY) < FREQ_TOLERANCE:
@@ -132,10 +140,12 @@ class ReceptorUltrasonico:
         
         # END
         if self.estado['started'] and abs(freq - END_FREQUENCY) < FREQ_TOLERANCE:
-            print(f"[END] Detectado en {freq:.0f} Hz")
-            mensaje_completo = self.estado['rx_text']
-            self.resetear_estado()
-            return True, mensaje_completo
+            self.estado['end_counter'] += 1
+            if self.estado['end_counter'] >= END_DETECTIONS_REQUIRED:
+                print(f"[END] Detectado en {freq:.0f} Hz")
+                mensaje_completo = self.estado['rx_text']
+                self.resetear_estado()
+                return True, mensaje_completo
         
         # DATOS
         if self.estado['started'] and self.estado['sync_detected'] and is_data_frequency(freq):
@@ -156,6 +166,8 @@ class ReceptorUltrasonico:
         self.estado['rx_text'] = ''
         self.estado['last_detection_time'] = 0
         self.estado['last_detected_freq'] = 0
+        self.estado['start_counter'] = 0
+        self.estado['end_counter'] = 0
     
     def escuchar_continuamente(self):
         """Receptor ultrasónico simplificado y optimizado"""

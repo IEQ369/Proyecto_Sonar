@@ -14,10 +14,13 @@ except ImportError:
     from frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 
 # --- Configuración de emisión ---
-SYMBOL_DURATION = 0.1  # segundos (100 ms) - más tiempo para mejor detección
-SYNC_DURATION = 0.1     # segundos (100 ms)
+SYMBOL_DURATION = 0.07  # segundos (70 ms)
+MARKER_DURATION = 0.12  # segundos (120 ms)
+CHARACTER_GAP = 0.03    # segundos (30 ms)
 SAMPLE_RATE = 44100
 AMPLITUDE = 1.0
+PARALLEL_OFFSET = 40     # Hz (opcional, para robustez)
+USE_PARALLEL = False     # Cambia a True si quieres probar tono paralelo
 
 # --- Generación de tono ---
 def generate_tone(frequency, duration, sample_rate=SAMPLE_RATE, amplitude=AMPLITUDE):
@@ -86,3 +89,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     emitir_mensaje(args.mensaje)
+
+# Al emitir cada símbolo de datos:
+if USE_PARALLEL:
+    # Emitir tono paralelo con offset
+    # (Implementa aquí la lógica si lo deseas)
+    pass
+# Logging claro en cada etapa: print(f"[EMISOR] START, SYNC, DATO, END...")
