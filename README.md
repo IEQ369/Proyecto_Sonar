@@ -117,6 +117,7 @@ Emisor:
 
 ## Referencias
 
+- [https://en.wikipedia.org/wiki/BadBIOS]
 - [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
 - [DolphinAttack Research](https://github.com/walac/dolphin-attack)
 - [SurfingAttack](https://surfingattack.github.io/)
