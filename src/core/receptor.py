@@ -1,8 +1,10 @@
 import numpy as np
 import sounddevice as sd
+import scipy.signal as signal
 import sys
 import os
 import time
+from collections import deque
 
 # Agregar el directorio padre al path para imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,220 +14,364 @@ try:
 except ImportError:
     from frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency, get_all_frequencies
 
-# --- Configuración sincronizada con emisor ---
-SYMBOL_DURATION = 0.1       # 100 ms - más tiempo para mejor detección
-SYNC_DURATION = 0.1         # 100 ms - igual que emisor
-SAMPLE_RATE = 44100
-FREQ_TOLERANCE = 45         # Hz
-MIN_ULTRASONIC_FREQ = 18000 # Hz
-MAX_ULTRASONIC_FREQ = 26000 # Hz
-MIN_SIGNAL_DB = -80         # dB (ajustable)
+# Configuración optimizada para ultrasonido
+SAMPLE_RATE = 96000
+WINDOW_MS = 100  # Ventana más pequeña para mejor resolución temporal
+WINDOW_SIZE = int(SAMPLE_RATE * (WINDOW_MS / 1000))
+OVERLAP = 0.5  # 50% overlap para mejor resolución
+HOP_SIZE = int(WINDOW_SIZE * (1 - OVERLAP))
 
-# Configuración simplificada
-DEBOUNCE_TIME = 0.1         # 100ms debounce - sincronizado con emisor
-DEBOUNCE_FREQ = 20          # Hz - ignorar frecuencias muy cercanas
+# Rango ultrasónico y tolerancias
+MIN_ULTRASONIC_FREQ = 18000
+MAX_ULTRASONIC_FREQ = 26000
+FREQ_TOLERANCE = 50  # Hz
 
-START_DETECTIONS_REQUIRED = 2
-END_DETECTIONS_REQUIRED = 2
+# Parámetros de detección robusta
+MIN_SNR_DB = 8  # SNR mínimo para considerar señal válida
+PERSISTENCE_FRAMES = 4  # Frames consecutivos para confirmar detección
+DEBOUNCE_FRAMES = 6  # Frames para debounce entre detecciones
+HISTORY_SIZE = 10  # Historial para promedio móvil
 
-FRECUENCIAS_PROTOCOLO = get_all_frequencies() + [START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY]
+# Filtro pasa-banda Butterworth 8º orden (más selectivo)
+sos = signal.butter(8, [MIN_ULTRASONIC_FREQ, MAX_ULTRASONIC_FREQ], 
+                   btype='bandpass', fs=SAMPLE_RATE, output='sos')
 
-def amplitud_to_db(amplitud):
-    """Convierte amplitud lineal a dB"""
-    if isinstance(amplitud, (list, np.ndarray)):
-        return np.where(amplitud <= 0, -100.0, 20 * np.log10(amplitud))
-    else:
-        if amplitud <= 0:
-            return -100.0
-        return 20 * np.log10(amplitud)
-
-def detectar_frecuencia_simple(ventana, sample_rate):
-    """Detecta la frecuencia dominante ultrasónica de forma simple y rápida"""
-    # Aplicar ventana de Hann
-    ventana_hann = ventana * np.hanning(len(ventana))
-    
-    # FFT simple
-    fft = np.fft.rfft(ventana_hann)
-    freqs = np.fft.rfftfreq(len(ventana_hann), 1/sample_rate)
-    magnitudes = np.abs(fft)
-    
-    # Filtrar frecuencias ultrasónicas
-    rango_ultrasonico = (freqs >= MIN_ULTRASONIC_FREQ) & (freqs <= MAX_ULTRASONIC_FREQ)
-    
-    if not np.any(rango_ultrasonico):
-        return 0, 0
-    
-    magnitudes_ultrasonicas = magnitudes[rango_ultrasonico]
-    freqs_ultrasonicas = freqs[rango_ultrasonico]
-    
-    if len(magnitudes_ultrasonicas) == 0:
-        return 0, 0
-    
-    # Encontrar el pico más alto
-    max_idx = np.argmax(magnitudes_ultrasonicas)
-    max_freq = freqs_ultrasonicas[max_idx]
-    max_magnitude = magnitudes_ultrasonicas[max_idx]
-    max_db = amplitud_to_db(max_magnitude)
-    
-    # Verificar que el pico sea significativo (umbral muy bajo)
-    if max_db > MIN_SIGNAL_DB:
-        return max_freq, max_db
-    
-    return 0, 0
-
-class ReceptorUltrasonico:
-    def __init__(self):
+class ReceptorUltrasonicoRobusto:
+    def __init__(self, modo_diagnostico=False):
+        self.modo_diagnostico = modo_diagnostico
+        self.stream = None
         self.estado = {
             'started': False,
             'sync_detected': False,
             'rx_text': '',
-            'last_detection_time': 0,
-            'last_detected_freq': 0,
             'start_counter': 0,
             'end_counter': 0
         }
-        self.stream = None
         
+        # Historiales para detección robusta
+        self.freq_history = deque(maxlen=HISTORY_SIZE)
+        self.db_history = deque(maxlen=HISTORY_SIZE)
+        self.detection_history = deque(maxlen=PERSISTENCE_FRAMES)
+        
+        # Umbral dinámico
+        self.noise_floor = -60
+        self.snr_threshold = MIN_SNR_DB
+        
+        # Control de debounce
+        self.last_detection_time = 0
+        self.debounce_frames = 0
+        
+        # Estadísticas
+        self.frame_count = 0
+        self.detection_count = 0
+        
+    def medir_ruido_fondo(self, duracion=3):
+        """Medición robusta del ruido de fondo con múltiples muestras"""
+        print(f"[INFO] Midiendo ruido de fondo durante {duracion}s...")
+        
+        frames_needed = int(duracion * SAMPLE_RATE / HOP_SIZE)
+        noise_samples = []
+        
+        stream = sd.InputStream(
+            channels=1, 
+            samplerate=SAMPLE_RATE, 
+            blocksize=HOP_SIZE,
+            dtype=np.float32
+        )
+        stream.start()
+        
+        try:
+            for _ in range(frames_needed):
+                data, _ = stream.read(HOP_SIZE)
+                data = data.flatten()
+                
+                # Aplicar filtro
+                filtered = signal.sosfilt(sos, data)
+                
+                # FFT con ventana de Hann
+                windowed = filtered * signal.windows.hann(len(filtered))
+                fft = np.fft.rfft(windowed)
+                freqs = np.fft.rfftfreq(len(windowed), 1/SAMPLE_RATE)
+                
+                # Solo rango ultrasónico
+                mask = (freqs >= MIN_ULTRASONIC_FREQ) & (freqs <= MAX_ULTRASONIC_FREQ)
+                if np.any(mask):
+                    magnitudes = np.abs(fft[mask])
+                    noise_level = 20 * np.log10(np.mean(magnitudes) + 1e-10)
+                    noise_samples.append(noise_level)
+                    
+        finally:
+            stream.stop()
+            stream.close()
+        
+        if noise_samples:
+            self.noise_floor = np.percentile(noise_samples, 95)  # 95th percentile
+            print(f"[INFO] Ruido de fondo: {self.noise_floor:.1f} dB")
+            print(f"[INFO] Umbral de detección: {self.noise_floor + self.snr_threshold:.1f} dB")
+        else:
+            print("[WARN] No se pudo medir ruido de fondo")
+            self.noise_floor = -50
+    
     def iniciar_stream(self):
-        """Inicia el stream de audio"""
+        """Iniciar stream de audio con configuración optimizada"""
         try:
             self.stream = sd.InputStream(
-                channels=1, 
-                samplerate=SAMPLE_RATE, 
-                blocksize=int(SYMBOL_DURATION * SAMPLE_RATE),
-                dtype=np.float32
+                channels=1,
+                samplerate=SAMPLE_RATE,
+                blocksize=HOP_SIZE,
+                dtype=np.float32,
+                latency='low'
             )
             self.stream.start()
+            print(f"[INFO] Stream iniciado - Sample rate: {self.stream.samplerate} Hz")
             return True
         except Exception as e:
-            print(f"[ERROR] No se pudo iniciar el stream: {e}")
+            print(f"[ERROR] No se pudo iniciar stream: {e}")
             return False
     
     def cerrar_stream(self):
-        """Cierra el stream de audio"""
         if self.stream:
             self.stream.stop()
             self.stream.close()
     
-    def procesar_protocolo_simple(self, freq):
-        """Procesa el protocolo de forma simple y directa"""
-        tiempo_actual = time.time()
+    def procesar_frame(self, data):
+        """Procesamiento robusto de un frame de audio"""
+        # Aplicar filtro pasa-banda
+        filtered = signal.sosfilt(sos, data)
         
-        # Debounce simple
-        if (abs(freq - self.estado['last_detected_freq']) < DEBOUNCE_FREQ and 
-            tiempo_actual - self.estado['last_detection_time'] < DEBOUNCE_TIME):
-            return False
+        # Ventana de Hann para reducir leakage
+        windowed = filtered * signal.windows.hann(len(filtered))
         
-        # Actualizar tiempo y frecuencia de última detección
-        if freq > 0:
-            self.estado['last_detection_time'] = tiempo_actual
-            self.estado['last_detected_freq'] = freq
+        # FFT
+        fft = np.fft.rfft(windowed)
+        freqs = np.fft.rfftfreq(len(windowed), 1/SAMPLE_RATE)
         
-        # START
+        # Solo rango ultrasónico
+        mask = (freqs >= MIN_ULTRASONIC_FREQ) & (freqs <= MAX_ULTRASONIC_FREQ)
+        if not np.any(mask):
+            return 0, -100, 0
+        
+        magnitudes = np.abs(fft[mask])
+        freqs_rango = freqs[mask]
+        
+        # Encontrar pico principal
+        peak_idx = np.argmax(magnitudes)
+        peak_freq = freqs_rango[peak_idx]
+        peak_magnitude = magnitudes[peak_idx]
+        
+        # Calcular SNR
+        noise_level = np.mean(magnitudes)
+        snr = peak_magnitude / (noise_level + 1e-10)
+        snr_db = 20 * np.log10(snr)
+        
+        # Magnitud en dB
+        peak_db = 20 * np.log10(peak_magnitude + 1e-10)
+        
+        return peak_freq, peak_db, snr_db
+    
+    def detectar_frecuencia_robusta(self, freq, db, snr):
+        """Detección robusta con persistencia temporal y SNR"""
+        # Actualizar historiales
+        self.freq_history.append(freq)
+        self.db_history.append(db)
+        
+        # Verificar SNR mínimo
+        if snr < self.snr_threshold:
+            self.detection_history.append(False)
+            return False, 0
+        
+        # Verificar umbral de magnitud
+        if db < (self.noise_floor + self.snr_threshold):
+            self.detection_history.append(False)
+            return False, 0
+        
+        # Verificar persistencia temporal
+        recent_detections = sum(self.detection_history)
+        if recent_detections >= PERSISTENCE_FRAMES - 1:
+            # Frecuencia estable en el tiempo
+            freq_std = np.std(list(self.freq_history)[-3:]) if len(self.freq_history) >= 3 else 0
+            if freq_std < 100:  # Frecuencia estable
+                self.detection_history.append(True)
+                return True, freq
+            else:
+                self.detection_history.append(False)
+                return False, 0
+        else:
+            self.detection_history.append(True)
+            return False, 0
+    
+    def aplicar_debounce(self, freq):
+        """Debounce temporal mejorado"""
+        current_time = time.time()
+        
+        # Verificar si es la misma frecuencia
+        if abs(freq - self.last_detection_time) < FREQ_TOLERANCE:
+            self.debounce_frames += 1
+        else:
+            self.debounce_frames = 0
+            self.last_detection_time = freq
+        
+        return self.debounce_frames >= DEBOUNCE_FRAMES
+    
+    def procesar_protocolo(self, freq):
+        """Procesamiento del protocolo de comunicación"""
         if not self.estado['started'] and abs(freq - START_FREQUENCY) < FREQ_TOLERANCE:
             self.estado['start_counter'] += 1
-            if self.estado['start_counter'] >= START_DETECTIONS_REQUIRED:
-                print(f"[START] Detectado en {freq:.0f} Hz")
+            if self.estado['start_counter'] >= 2:
+                print(f"\n[START] Detectado en {freq:.0f} Hz")
                 self.estado['started'] = True
                 self.estado['sync_detected'] = False
                 self.estado['rx_text'] = ''
                 self.estado['start_counter'] = 0
                 return False
         
-        # SYNC
-        if self.estado['started'] and not self.estado['sync_detected'] and abs(freq - SYNC_FREQUENCY) < FREQ_TOLERANCE:
+        elif self.estado['started'] and not self.estado['sync_detected'] and abs(freq - SYNC_FREQUENCY) < FREQ_TOLERANCE:
             print(f"[SYNC] Detectado en {freq:.0f} Hz")
             self.estado['sync_detected'] = True
             return False
         
-        # END
-        if self.estado['started'] and abs(freq - END_FREQUENCY) < FREQ_TOLERANCE:
+        elif self.estado['started'] and abs(freq - END_FREQUENCY) < FREQ_TOLERANCE:
             self.estado['end_counter'] += 1
-            if self.estado['end_counter'] >= END_DETECTIONS_REQUIRED:
-                print(f"[END] Detectado en {freq:.0f} Hz")
-                mensaje_completo = self.estado['rx_text']
+            if self.estado['end_counter'] >= 2:
+                print(f"\n[END] Detectado en {freq:.0f} Hz")
+                mensaje = self.estado['rx_text']
+                print(f"\n{'='*60}")
+                print(f"MENSAJE RECIBIDO: '{mensaje}'")
+                print(f"Longitud: {len(mensaje)} caracteres")
+                print(f"{'='*60}\n")
                 self.resetear_estado()
-                return True, mensaje_completo
+                return True, mensaje
         
-        # DATOS
-        if self.estado['started'] and self.estado['sync_detected'] and is_data_frequency(freq):
+        elif self.estado['started'] and self.estado['sync_detected'] and is_data_frequency(freq):
             char = frequency_to_char(freq)
-            if char and char != ' ':
+            if char:
                 self.estado['rx_text'] += char
-                print(f"[{char}]", end='', flush=True)
-            elif char == ' ':
-                self.estado['rx_text'] += ' '
-                print("[SPACE]", end='', flush=True)
+                print(char, end='', flush=True)
         
         return False
     
     def resetear_estado(self):
-        """Resetea el estado del receptor"""
-        self.estado['started'] = False
-        self.estado['sync_detected'] = False
-        self.estado['rx_text'] = ''
-        self.estado['last_detection_time'] = 0
-        self.estado['last_detected_freq'] = 0
-        self.estado['start_counter'] = 0
-        self.estado['end_counter'] = 0
+        """Resetear estado del receptor"""
+        self.estado = {
+            'started': False,
+            'sync_detected': False,
+            'rx_text': '',
+            'start_counter': 0,
+            'end_counter': 0
+        }
+        self.freq_history.clear()
+        self.db_history.clear()
+        self.detection_history.clear()
+        self.debounce_frames = 0
     
-    def escuchar_continuamente(self):
-        """Receptor ultrasónico simplificado y optimizado"""
+    def modo_diagnostico_continuo(self):
+        """Modo de diagnóstico para validar hardware"""
         print("=" * 60)
-        print("RECEPTOR ULTRASONICO SIMPLIFICADO")
+        print("MODO DIAGNÓSTICO - VALIDACIÓN DE HARDWARE")
         print("=" * 60)
-        print(f"[CONFIG] Umbral: {MIN_SIGNAL_DB} dB")
-        print(f"[CONFIG] Rango: {MIN_ULTRASONIC_FREQ}-{MAX_ULTRASONIC_FREQ} Hz")
-        print(f"[CONFIG] Tolerancia: ±{FREQ_TOLERANCE} Hz")
-        print(f"[CONFIG] Debounce: {DEBOUNCE_TIME*1000:.0f}ms")
-        print("=" * 60)
-        print("[INFO] Esperando mensajes... (Ctrl+C para salir)")
+        print("Este modo muestra el espectro ultrasónico en tiempo real")
+        print("para validar que el micrófono capta ultrasonidos correctamente.")
+        print("Presiona Ctrl+C para salir")
         print("=" * 60)
         
         if not self.iniciar_stream():
             return
         
-        ventana_size = int(SYMBOL_DURATION * SAMPLE_RATE)
-        
         try:
             while True:
-                ventana, overflowed = self.stream.read(ventana_size)
+                if self.stream is None:
+                    break
+                
+                data, overflowed = self.stream.read(HOP_SIZE)
                 if overflowed:
                     print("[WARN] Overflow detectado")
                 
-                ventana = ventana.flatten()
+                data = data.flatten()
+                freq, db, snr = self.procesar_frame(data)
                 
-                # Detectar frecuencia de forma simple
-                freq, pico_db = detectar_frecuencia_simple(ventana, SAMPLE_RATE)
+                self.frame_count += 1
                 
-                if freq > 0:
-                    # Procesar protocolo
-                    resultado = self.procesar_protocolo_simple(freq)
-                    
-                    if isinstance(resultado, tuple) and resultado[0]:
-                        # Mensaje completo recibido
-                        mensaje = resultado[1]
-                        if mensaje:
-                            print(f"\n\n{'='*60}")
-                            print(f"MENSAJE RECIBIDO:")
-                            print(f"Texto: '{mensaje}'")
-                            print(f"Longitud: {len(mensaje)} caracteres")
-                            print(f"{'='*60}\n")
-                        else:
-                            print("\n[WARN] Mensaje vacío recibido")
+                # Mostrar estadísticas cada 50 frames
+                if self.frame_count % 50 == 0:
+                    print(f"\n[STATS] Frames: {self.frame_count}, Detecciones: {self.detection_count}")
+                    print(f"[STATS] Ruido de fondo: {self.noise_floor:.1f} dB")
+                
+                # Mostrar picos significativos
+                if db > (self.noise_floor + 5):
+                    print(f"[PICO] {freq:.0f} Hz @ {db:.1f} dB (SNR: {snr:.1f} dB)")
+                    self.detection_count += 1
+                
+                # Pequeña pausa para no saturar la consola
+                time.sleep(0.01)
                 
         except KeyboardInterrupt:
             print("\n[DETENIDO]")
-        except Exception as e:
-            print(f"\n[ERROR] {e}")
+        finally:
+            self.cerrar_stream()
+    
+    def escuchar_continuamente(self):
+        """Modo principal de escucha"""
+        print("=" * 60)
+        print("RECEPTOR ULTRASONICO ROBUSTO")
+        print("=" * 60)
+        print(f"[CONFIG] Sample rate: {SAMPLE_RATE} Hz")
+        print(f"[CONFIG] Ventana: {WINDOW_MS} ms ({WINDOW_SIZE} muestras)")
+        print(f"[CONFIG] Overlap: {OVERLAP*100:.0f}%")
+        print(f"[CONFIG] Rango: {MIN_ULTRASONIC_FREQ}-{MAX_ULTRASONIC_FREQ} Hz")
+        print(f"[CONFIG] SNR mínimo: {MIN_SNR_DB} dB")
+        print(f"[CONFIG] Persistencia: {PERSISTENCE_FRAMES} frames")
+        print("=" * 60)
+        
+        # Medir ruido de fondo
+        self.medir_ruido_fondo()
+        
+        if not self.iniciar_stream():
+            return
+        
+        print("[INFO] Esperando mensajes... (Ctrl+C para salir)")
+        print("=" * 60)
+        
+        try:
+            while True:
+                if self.stream is None:
+                    break
+                
+                data, overflowed = self.stream.read(HOP_SIZE)
+                if overflowed:
+                    print("[WARN] Overflow detectado")
+                
+                data = data.flatten()
+                freq, db, snr = self.procesar_frame(data)
+                
+                # Detección robusta
+                detectado, freq_confirmada = self.detectar_frecuencia_robusta(freq, db, snr)
+                
+                if detectado and self.aplicar_debounce(freq_confirmada):
+                    print(f"[DETECTADO] {freq_confirmada:.0f} Hz @ {db:.1f} dB (SNR: {snr:.1f} dB)")
+                    
+                    # Procesar protocolo
+                    resultado = self.procesar_protocolo(freq_confirmada)
+                    if isinstance(resultado, tuple) and resultado[0]:
+                        # Mensaje completo recibido
+                        pass
+                
+        except KeyboardInterrupt:
+            print("\n[DETENIDO]")
         finally:
             self.cerrar_stream()
 
-def escuchar_continuamente():
-    """Función wrapper para compatibilidad"""
-    receptor = ReceptorUltrasonico()
-    receptor.escuchar_continuamente()
+def escuchar_continuamente(modo_diagnostico=False):
+    receptor = ReceptorUltrasonicoRobusto(modo_diagnostico)
+    if modo_diagnostico:
+        receptor.modo_diagnostico_continuo()
+    else:
+        receptor.escuchar_continuamente()
 
-# --- Uso desde línea de comandos ---
 if __name__ == "__main__":
-    escuchar_continuamente()
+    import argparse
+    parser = argparse.ArgumentParser(description='Receptor ultrasónico robusto')
+    parser.add_argument('--diagnostico', action='store_true', 
+                       help='Modo diagnóstico para validar hardware')
+    args = parser.parse_args()
+    
+    escuchar_continuamente(args.diagnostico)
