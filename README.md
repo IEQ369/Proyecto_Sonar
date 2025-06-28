@@ -15,13 +15,15 @@ Herramienta ofensiva para exfiltración de datos usando señales ultrasónicas i
 ### Hardware
 - Micrófono capaz de capturar frecuencias >20 kHz
 - Parlante capaz de emitir frecuencias >20 kHz
-- Computadora con Python 3.8+
+- Computadora con Python 3.11.4 (recomendado)
 
 ### Software
 ```bash
 numpy>=1.19.0
 scipy>=1.7.0
 sounddevice>=0.4.3
+matplotlib>=3.7.1
+pydub>=0.25.1
 ```
 
 ## Instalación
@@ -53,7 +55,7 @@ python src/core/receptor.py --modo debug
 ### Parámetros Disponibles
 ```
 Emisor:
-  -m  Texto a transmitir
+  -m  "Texto a transmitir"
 
 ```
 
