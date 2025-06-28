@@ -54,14 +54,7 @@ python src/core/receptor.py --modo debug
 ```
 Emisor:
   --mensaje TEXT     Texto a transmitir
-  --volumen FLOAT   Volumen de emisión (0-1)
-  --freq-min INT    Frecuencia mínima (default: 18000)
-  --freq-max INT    Frecuencia máxima (default: 26000)
 
-Receptor:
-  --modo [normal|debug]   Modo de operación
-  --umbral FLOAT         Umbral de detección en dB
-  --ventana INT          Tamaño de ventana FFT en ms
 ```
 
 ## Características Principales
@@ -76,7 +69,7 @@ Receptor:
 ## Tecnología Usada
 
 ### Core
-- Python 3.8+
+- Python 3.11.4
 - numpy/scipy para procesamiento de señal
 - sounddevice para captura/emisión de audio
 - Filtros Butterworth y análisis FFT
