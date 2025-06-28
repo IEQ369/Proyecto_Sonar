@@ -15,20 +15,22 @@ Herramienta ofensiva para exfiltración de datos usando señales ultrasónicas i
 ### Hardware
 - Micrófono capaz de capturar frecuencias >20 kHz
 - Parlante capaz de emitir frecuencias >20 kHz
-- Computadora con Python 3.8+
+- Computadora con Python 3.11.4 (recomendado)
 
 ### Software
 ```bash
 numpy>=1.19.0
 scipy>=1.7.0
 sounddevice>=0.4.3
+matplotlib>=3.7.1
+pydub>=0.25.1
 ```
 
 ## Instalación
 
 ```bash
 # Clonar el repositorio
-git clone [URL_del_repositorio]
+git clone https://github.com/IEQ369/Proyecto_Sonar.git
 cd proyecto-sonar
 
 # Instalar dependencias
@@ -42,7 +44,7 @@ python test_ultrasonido_hardware.py
 
 ### Emisor (Funcional)
 ```bash
-python src/core/emisor.py --mensaje "texto secreto" --volumen 0.1
+python src/core/emisor.py -m "texto secreto"
 ```
 
 ### Receptor (En desarrollo)
@@ -53,15 +55,8 @@ python src/core/receptor.py --modo debug
 ### Parámetros Disponibles
 ```
 Emisor:
-  --mensaje TEXT     Texto a transmitir
-  --volumen FLOAT   Volumen de emisión (0-1)
-  --freq-min INT    Frecuencia mínima (default: 18000)
-  --freq-max INT    Frecuencia máxima (default: 26000)
+  -m  "Texto a transmitir"
 
-Receptor:
-  --modo [normal|debug]   Modo de operación
-  --umbral FLOAT         Umbral de detección en dB
-  --ventana INT          Tamaño de ventana FFT en ms
 ```
 
 ## Características Principales
@@ -76,7 +71,7 @@ Receptor:
 ## Tecnología Usada
 
 ### Core
-- Python 3.8+
+- Python 3.11.4
 - numpy/scipy para procesamiento de señal
 - sounddevice para captura/emisión de audio
 - Filtros Butterworth y análisis FFT
@@ -122,6 +117,7 @@ Receptor:
 
 ## Referencias
 
+- [BadBios: mito Malware](https://en.wikipedia.org/wiki/BadBIOS)
 - [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
 - [DolphinAttack Research](https://github.com/walac/dolphin-attack)
 - [SurfingAttack](https://surfingattack.github.io/)
@@ -129,14 +125,11 @@ Receptor:
 
 ## Autores
 
-- [Nombre del Autor]
-- Universidad [Nombre]
-- Proyecto para [Curso/Materia]
+- Isai Espinoza Quiroga
+- Universidad Mayor de San Simon
+- Proyecto para Scesi
 
 ## Licencia
 
 Este proyecto es exclusivamente para fines educativos y de investigación académica. No está permitido su uso en sistemas reales sin autorización explícita.
-
----
-
-**Nota**: Este proyecto está activamente en desarrollo. El receptor está siendo mejorado para lograr una detección más robusta de señales ultrasónicas.
+**Nota**: Este proyecto está en desarrollo. El receptor está siendo mejorado para lograr una detección más robusta de señales ultrasónicas
