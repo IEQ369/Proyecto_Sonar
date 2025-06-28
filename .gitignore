@@ -172,4 +172,25 @@ ENV/
 
 # Sistema operativo
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Carpetas a ignorar
+chirp/
+venv/
+__pycache__/
+*.pyc
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+
+# Archivos temporales y de prueba
+test_*.py
+*_test.py
+assistant_*.py
+archivo_*.txt 
