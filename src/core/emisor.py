@@ -14,7 +14,7 @@ except ImportError:
     from frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 
 # --- Configuración de emisión ---
-SYMBOL_DURATION = 0.05  # segundos (50 ms)
+SYMBOL_DURATION = 0.1  # segundos (100 ms) - más tiempo para mejor detección
 SYNC_DURATION = 0.1     # segundos (100 ms)
 SAMPLE_RATE = 44100
 AMPLITUDE = 0.7
