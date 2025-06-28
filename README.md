@@ -28,7 +28,7 @@ sounddevice>=0.4.3
 
 ```bash
 # Clonar el repositorio
-git clone [URL_del_repositorio]
+git clone https://github.com/IEQ369/Proyecto_Sonar.git
 cd proyecto-sonar
 
 # Instalar dependencias
