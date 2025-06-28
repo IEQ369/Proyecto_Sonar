@@ -42,7 +42,7 @@ python test_ultrasonido_hardware.py
 
 ### Emisor (Funcional)
 ```bash
-python src/core/emisor.py --mensaje "texto secreto" --volumen 0.1
+python src/core/emisor.py -m "texto secreto"
 ```
 
 ### Receptor (En desarrollo)
@@ -53,7 +53,7 @@ python src/core/receptor.py --modo debug
 ### Parámetros Disponibles
 ```
 Emisor:
-  --mensaje TEXT     Texto a transmitir
+  -m  Texto a transmitir
 
 ```
 
