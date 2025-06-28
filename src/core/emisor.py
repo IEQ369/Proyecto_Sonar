@@ -17,7 +17,7 @@ except ImportError:
 SYMBOL_DURATION = 0.1  # segundos (100 ms) - más tiempo para mejor detección
 SYNC_DURATION = 0.1     # segundos (100 ms)
 SAMPLE_RATE = 44100
-AMPLITUDE = 0.7
+AMPLITUDE = 1.0
 
 # --- Generación de tono ---
 def generate_tone(frequency, duration, sample_rate=SAMPLE_RATE, amplitude=AMPLITUDE):

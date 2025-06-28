@@ -8,9 +8,9 @@ import time
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from core.frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
+    from core.frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency, get_all_frequencies
 except ImportError:
-    from frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency
+    from frecuencias import frequency_to_char, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, is_data_frequency, get_all_frequencies
 
 # --- Configuración sincronizada con emisor ---
 SYMBOL_DURATION = 0.1       # 100 ms - más tiempo para mejor detección
@@ -19,11 +19,13 @@ SAMPLE_RATE = 44100
 FREQ_TOLERANCE = 50         # Hz - tolerancia razonable
 MIN_ULTRASONIC_FREQ = 18000 # Hz
 MAX_ULTRASONIC_FREQ = 26000 # Hz
-MIN_SIGNAL_DB = -50         # dB - umbral más alto para evitar ruido
+MIN_SIGNAL_DB = -90         # dB - umbral muy bajo para captar señales ultrasónicas débiles
 
 # Configuración simplificada
-DEBOUNCE_TIME = 0.05        # 50ms debounce
+DEBOUNCE_TIME = 0.1         # 100ms debounce - sincronizado con emisor
 DEBOUNCE_FREQ = 20          # Hz - ignorar frecuencias muy cercanas
+
+FRECUENCIAS_PROTOCOLO = get_all_frequencies() + [START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY]
 
 def amplitud_to_db(amplitud):
     """Convierte amplitud lineal a dB"""
@@ -62,7 +64,7 @@ def detectar_frecuencia_simple(ventana, sample_rate):
     max_magnitude = magnitudes_ultrasonicas[max_idx]
     max_db = amplitud_to_db(max_magnitude)
     
-    # Verificar que el pico sea significativo
+    # Verificar que el pico sea significativo (umbral muy bajo)
     if max_db > MIN_SIGNAL_DB:
         return max_freq, max_db
     
@@ -198,17 +200,12 @@ class ReceptorUltrasonico:
                             print(f"Longitud: {len(mensaje)} caracteres")
                             print(f"{'='*60}\n")
                         else:
-                            print(f"\n[WARN] Mensaje vacío recibido")
-                
-                # Pequeña pausa para no saturar CPU
-                time.sleep(0.001)
+                            print("\n[WARN] Mensaje vacío recibido")
                 
         except KeyboardInterrupt:
-            print(f"\n\n{'='*60}")
-            print("RECEPTOR DETENIDO")
-            print(f"{'='*60}")
+            print("\n[DETENIDO]")
         except Exception as e:
-            print(f"\n[ERROR] Error inesperado: {e}")
+            print(f"\n[ERROR] {e}")
         finally:
             self.cerrar_stream()
 
