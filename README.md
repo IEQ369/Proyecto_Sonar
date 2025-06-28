@@ -129,9 +129,9 @@ Receptor:
 
 ## Autores
 
-- [Nombre del Autor]
-- Universidad [Nombre]
-- Proyecto para [Curso/Materia]
+- Isai Espinoza Quiroga
+- Universidad Mayor de San Simon
+- Proyecto para Scesi
 
 ## Licencia
 
