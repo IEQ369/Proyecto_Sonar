@@ -129,7 +129,4 @@ Emisor:
 ## Licencia
 
 Este proyecto es exclusivamente para fines educativos y de investigación académica. No está permitido su uso en sistemas reales sin autorización explícita.
-
----
-
-**Nota**: Este proyecto está activamente en desarrollo. El receptor está siendo mejorado para lograr una detección más robusta de señales ultrasónicas.
+**Nota**: Este proyecto está en desarrollo. El receptor está siendo mejorado para lograr una detección más robusta de señales ultrasónicas
