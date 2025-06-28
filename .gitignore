@@ -147,4 +147,29 @@ Thumbs.db
 **/__pycache__/
 **/*.pyc
 **/*.pyo
-**/*.pyd 
+**/*.pyd
+
+# Carpetas específicas del proyecto
+chirp/
+venv/
+
+# Archivos de Python
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales
+.env
+.venv
+env/
+ENV/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db 

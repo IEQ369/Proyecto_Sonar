@@ -17,6 +17,7 @@ except ImportError:
 SYMBOL_DURATION = 0.07  # segundos (70 ms)
 MARKER_DURATION = 0.12  # segundos (120 ms)
 CHARACTER_GAP = 0.03    # segundos (30 ms)
+SYNC_DURATION = 0.12    # segundos (120 ms para señales de sincronización)
 SAMPLE_RATE = 44100
 AMPLITUDE = 1.0
 PARALLEL_OFFSET = 40     # Hz (opcional, para robustez)
