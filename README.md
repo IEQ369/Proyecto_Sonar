@@ -36,8 +36,8 @@ cd proyecto-sonar
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Verificar hardware (opcional)
-python test_ultrasonido_hardware.py
+# Verificar
+python sonar.py
 ```
 
 ## Uso Básico
