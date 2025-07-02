@@ -1,135 +1,110 @@
-# Exfiltración de Datos por Ultrasonido
+# Proyecto Sonar - Sistema de Comunicación Ultrasónica
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/Status-In_Development-orange.svg)](STATUS)
-[![License](https://img.shields.io/badge/License-Educational-green.svg)](LICENSE)
+Este proyecto implementa un sistema de comunicación ultrasónica que permite la transmisión de datos utilizando frecuencias inaudibles (>18 kHz). El sistema incluye un emisor basado en Python y un receptor web que utiliza la Web Audio API para una mejor detección en tiempo real.
 
-## Descripción
+## Estructura del Proyecto
 
-Herramienta ofensiva para exfiltración de datos usando señales ultrasónicas inaudibles (>18 kHz). Permite transmitir comandos, texto y archivos pequeños entre laptops aprovechando hardware de audio común (micrófonos y parlantes integrados).
+```
+├── src/
+│   ├── core/           # Componentes principales
+│   │   ├── emisor.py       # Emisor ultrasónico
+│   │   ├── frecuencias.py  # Definiciones de frecuencias
+│   │   └── receptor.py     # Receptor Python (legacy)
+│   │
+│   └── web/            # Interfaz web del receptor
+│       ├── frontend/       # Cliente web
+│       │   ├── css/           # Estilos
+│       │   ├── js/            # JavaScript
+│       │   └── index.html     # Página principal
+│       └── backend/        # Servidor Flask
+│           └── app.py         # Aplicación Flask
+│
+├── requirements.txt    # Dependencias Python
+└── README.md          # Este archivo
+```
 
-**Estado Actual**: Proyecto en desarrollo como parte de trabajo académico universitario. El emisor está funcional, pero el receptor presenta dificultades en la detección robusta de señales ultrasónicas. Se está trabajando en mejorar la recepción mediante técnicas avanzadas de procesamiento de señal y posible integración con tecnologías web.
+## Características
+
+- Transmisión de datos mediante frecuencias ultrasónicas (18-22 kHz)
+- Receptor web con visualización en tiempo real del espectro
+- Interfaz moderna y responsiva
+- Procesamiento de señal optimizado para MEMS
+- Detección robusta con análisis SNR y persistencia temporal
 
 ## Requisitos
 
 ### Hardware
-- Micrófono capaz de capturar frecuencias >20 kHz
-- Parlante capaz de emitir frecuencias >20 kHz
-- Computadora con Python 3.11.4 (recomendado)
+- Micrófono compatible con frecuencias ultrasónicas (MEMS recomendado)
+- Altavoces capaces de reproducir frecuencias >18 kHz
+- Tarjeta de sonido con soporte para 48 kHz o superior
 
 ### Software
-```bash
-numpy>=1.19.0
-scipy>=1.7.0
-sounddevice>=0.4.3
-matplotlib>=3.7.1
-pydub>=0.25.1
-```
+- Python 3.8 o superior
+- Navegador web moderno con soporte para Web Audio API
 
 ## Instalación
 
+1. Clonar el repositorio:
 ```bash
-# Clonar el repositorio
-git clone https://github.com/IEQ369/Proyecto_Sonar.git
-cd proyecto-sonar
+git clone [URL_DEL_REPOSITORIO]
+cd Proyecto_Sonar
+```
 
-# Instalar dependencias
+2. Instalar dependencias:
+```bash
 pip install -r requirements.txt
-
-# Verificar hardware (opcional)
-python test_ultrasonido_hardware.py
 ```
 
-## Uso Básico
+## Uso
 
-### Emisor (Funcional)
+### Iniciar el Receptor Web
+
+1. Navegar al directorio del proyecto:
 ```bash
-python src/core/emisor.py -m "texto secreto"
+cd src/web/backend
 ```
 
-### Receptor (En desarrollo)
+2. Iniciar el servidor Flask:
 ```bash
-python src/core/receptor.py --modo debug
+python app.py
 ```
 
-### Parámetros Disponibles
+3. Abrir el navegador y acceder a:
 ```
-Emisor:
-  -m  "Texto a transmitir"
-
+http://localhost:5000
 ```
 
-## Características Principales
+### Enviar Datos (Emisor)
 
-- Transmisión de datos usando frecuencias ultrasónicas (18-26 kHz)
-- Mapeo ASCII a frecuencias únicas para cada carácter
-- Filtrado y detección con FFT
-- Configurable: frecuencias, duración, umbrales
-- No requiere red ni cables, solo audio
-- Inspirado en ataques reales (SurfingAttack, DolphinAttack)
+Desde otro terminal, ejecutar el emisor:
+```bash
+python src/core/emisor.py "mensaje de prueba"
+```
 
-## Tecnología Usada
+## Protocolo de Comunicación
 
-### Core
-- Python 3.11.4
-- numpy/scipy para procesamiento de señal
-- sounddevice para captura/emisión de audio
-- Filtros Butterworth y análisis FFT
+- Frecuencia de inicio: 18500 Hz
+- Frecuencia de sincronización: 18600 Hz
+- Frecuencia de fin: 22000 Hz
+- Rango de datos: 18700-21900 Hz (incrementos de 100 Hz)
 
-### Visualización (Planeada)
-- JavaScript/Web Audio API
-- HTML5/CSS3
-- Visualización espectral en tiempo real
+## Recomendaciones de Uso
 
-## Limitaciones Actuales
+1. Utilizar en un ambiente con poco ruido ambiental
+2. Mantener una distancia óptima entre emisor y receptor (1-2 metros)
+3. Evitar obstáculos entre dispositivos
+4. Ajustar el volumen del emisor según sea necesario
 
-### Hardware
-- Atenuación significativa de frecuencias ultrasónicas en hardware común
-- Requiere calibración específica según el equipo
-- Sensibilidad variable entre diferentes micrófonos
+## Limitaciones Conocidas
 
-### Software
-- **Receptor**: Dificultades en la detección robusta de señales
-- **Procesamiento**: Falsos positivos en ambientes ruidosos
-- **Rendimiento**: Velocidad limitada (~1 min/200 bytes)
-- **Interferencia**: Posibles batidos audibles en multi-frecuencia
+- El rendimiento puede variar según el hardware de audio
+- Algunas frecuencias pueden no ser reproducibles en ciertos dispositivos
+- La calidad de la transmisión depende del ruido ambiental
 
-### Ambiente
-- Sensible a ruido ambiental y eco
-- Rendimiento variable según condiciones acústicas
-- Distancia de transmisión limitada
+## Contribuir
 
-## Roadmap
-
-### Fase Actual
-- [x] Implementación básica del emisor
-- [x] Protocolo de comunicación inicial
-- [x] Filtrado pasa-banda
-- [ ] Detección robusta en receptor
-- [ ] Integración con visualización web
-
-### Próximas Etapas
-- Mejorar algoritmos de detección
-- Implementar técnicas avanzadas (FDM/OFDM)
-- Agregar corrección de errores
-- Optimizar para ambientes ruidosos
-- Completar interfaz de visualización
-
-## Referencias
-
-- [BadBios: mito Malware](https://en.wikipedia.org/wiki/BadBIOS)
-- [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
-- [DolphinAttack Research](https://github.com/walac/dolphin-attack)
-- [SurfingAttack](https://surfingattack.github.io/)
-- [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-
-## Autores
-
-- Isai Espinoza Quiroga
-- Universidad Mayor de San Simon
-- Proyecto para Scesi
+Las contribuciones son bienvenidas. Por favor, crear un issue o pull request para sugerencias y mejoras.
 
 ## Licencia
 
-Este proyecto es exclusivamente para fines educativos y de investigación académica. No está permitido su uso en sistemas reales sin autorización explícita.
-**Nota**: Este proyecto está en desarrollo. El receptor está siendo mejorado para lograr una detección más robusta de señales ultrasónicas
+Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.

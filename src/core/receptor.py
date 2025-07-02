@@ -100,7 +100,7 @@ class ReceptorUltrasonicoRobusto:
                     noise_level = 20 * np.log10(np.mean(magnitudes) + 1e-10)
                     noise_samples.append(noise_level)
                     
-        finally:
+    finally:
             stream.stop()
             stream.close()
         
@@ -108,7 +108,7 @@ class ReceptorUltrasonicoRobusto:
             self.noise_floor = np.percentile(noise_samples, 95)  # 95th percentile
             print(f"[INFO] Ruido de fondo: {self.noise_floor:.1f} dB")
             print(f"[INFO] Umbral de detección: {self.noise_floor + self.snr_threshold:.1f} dB")
-        else:
+    else:
             print("[WARN] No se pudo medir ruido de fondo")
             self.noise_floor = -50
     
@@ -127,8 +127,8 @@ class ReceptorUltrasonicoRobusto:
             return True
         except Exception as e:
             print(f"[ERROR] No se pudo iniciar stream: {e}")
-            return False
-    
+        return False
+
     def cerrar_stream(self):
         if self.stream:
             self.stream.stop()
@@ -224,12 +224,10 @@ class ReceptorUltrasonicoRobusto:
                 self.estado['rx_text'] = ''
                 self.estado['start_counter'] = 0
                 return False
-        
         elif self.estado['started'] and not self.estado['sync_detected'] and abs(freq - SYNC_FREQUENCY) < FREQ_TOLERANCE:
             print(f"[SYNC] Detectado en {freq:.0f} Hz")
             self.estado['sync_detected'] = True
             return False
-        
         elif self.estado['started'] and abs(freq - END_FREQUENCY) < FREQ_TOLERANCE:
             self.estado['end_counter'] += 1
             if self.estado['end_counter'] >= 2:
@@ -241,13 +239,14 @@ class ReceptorUltrasonicoRobusto:
                 print(f"{'='*60}\n")
                 self.resetear_estado()
                 return True, mensaje
-        
         elif self.estado['started'] and self.estado['sync_detected'] and is_data_frequency(freq):
             char = frequency_to_char(freq)
             if char:
                 self.estado['rx_text'] += char
                 print(char, end='', flush=True)
         
+        return False
+    
         return False
     
     def resetear_estado(self):

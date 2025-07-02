@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONAR // TRANSMISIÓN DE DATOS ULTRASÓNICOS</title>
+    <!-- Fuente monospace de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <!-- Estilos locales -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v=css_version) }}" />
+    <!-- Favicon (puedes agregar uno en static si lo deseas) -->
+    <!-- <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.ico') }}" /> -->
+</head>
+
+<body>
+    <div id="root">
+        <div class="visualizer-container">
+            <div class="section-title">&gt; ANÁLISIS DE FRECUENCIA (SONAR)</div>
+            <div class="frequency-visualizer" style="position:relative;">
+                <canvas id="fft-canvas"></canvas>
+                <button id="start-fft-btn" class="start-fft-btn">INICIAR VISUALIZACIÓN</button>
+            </div>
+            <div id="status-indicator" class="status-indicator">ESPERANDO<span class="terminal-cursor">_</span></div>
+        </div>
+        <!-- Aquí puedes renderizar tu frontend o incluir más componentes -->
+    </div>
+    <!-- Scripts principales del sistema -->
+    <script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/audioProcessor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/test_mic.js') }}"></script>
+</body>
+
+</html>

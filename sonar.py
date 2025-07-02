@@ -9,7 +9,7 @@ import sys
 import time
 import threading
 from src.core.emisor import emitir_mensaje, calcular_duracion_mensaje
-from src.core.receptor import escuchar_continuamente
+# from src.core.receptor import escuchar_continuamente
 from src.core.frecuencias import char_to_frequency, frequency_to_char
 import sounddevice as sd
 import numpy as np
@@ -134,7 +134,8 @@ class SistemaSonar:
         print("-" * 40)
         
         try:
-            escuchar_continuamente()
+            # escuchar_continuamente()
+            pass
         except KeyboardInterrupt:
             print("\n[DETENIDO]")
         except Exception as e:

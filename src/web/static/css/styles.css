@@ -1,0 +1,373 @@
+/* Cyberpunk Terminal Theme */
+:root {
+    --bg-color: #000000;
+    --text-color: #e6e6fa;
+    --accent-color: #ff2b6d;
+    --secondary-accent: #00f0ff;
+    --terminal-green: #00ff41;
+    --panel-bg: #0c0c14;
+    --mono-font: 'Courier New', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #000;
+    color: #e6e6fa;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--bg-color);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1,
+h2 {
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 5px;
+    font-family: var(--mono-font);
+}
+
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.mode-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border: 2px solid var(--accent-color);
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--accent-color);
+    transition: all 0.3s ease;
+    font-family: var(--mono-font);
+    box-shadow: 0 0 8px var(--accent-color), 0 0 2px var(--secondary-accent);
+}
+
+.mode-btn.active,
+.mode-btn:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 0 16px var(--accent-color), 0 0 4px var(--secondary-accent);
+}
+
+.panel {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.panel.active {
+    display: block;
+    opacity: 1;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border: 2px solid var(--secondary-accent);
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--secondary-accent);
+    transition: all 0.3s ease;
+    font-family: var(--mono-font);
+    box-shadow: 0 0 8px var(--secondary-accent);
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: var(--secondary-accent);
+    color: #000;
+    box-shadow: 0 0 16px var(--secondary-accent);
+}
+
+.btn:disabled {
+    background-color: #222;
+    color: #888;
+    border-color: #333;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.visualization {
+    background-color: var(--panel-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #0ff2, 0 0 8px #ff2b6d44;
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-accent);
+}
+
+#spectrogram {
+    width: 100%;
+    height: 300px;
+    background-color: #000;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 20px #00f0ff44, 0 0 8px #ff2b6d44;
+    border: 2px solid var(--terminal-green);
+}
+
+.frequency-info {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--terminal-green);
+    font-family: var(--mono-font);
+    text-shadow: 0 0 8px var(--terminal-green);
+}
+
+.messages {
+    background-color: var(--panel-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ff2b6d44;
+    border: 2px solid var(--accent-color);
+}
+
+h2 {
+    color: var(--secondary-accent);
+    border-bottom: 2px solid var(--secondary-accent);
+}
+
+.message-log {
+    height: 200px;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #111;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-accent);
+    color: var(--terminal-green);
+    font-family: var(--mono-font);
+    font-size: 1rem;
+}
+
+.message-log p {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #222;
+    background: #000a;
+    border-radius: 3px;
+    box-shadow: 0 0 4px #00ff4155;
+}
+
+.message-log p:last-child {
+    border-bottom: none;
+}
+
+.input-section {
+    background-color: var(--panel-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00f0ff44;
+    border: 2px solid var(--secondary-accent);
+}
+
+#messageInput {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--secondary-accent);
+    border-radius: 5px;
+    font-size: 1rem;
+    resize: vertical;
+    background: #000;
+    color: var(--text-color);
+    font-family: var(--mono-font);
+}
+
+.status-section {
+    background-color: var(--panel-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ff2b6d44;
+    border: 2px solid var(--accent-color);
+}
+
+.status-display {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #111;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    color: var(--terminal-green);
+    font-family: var(--mono-font);
+    text-shadow: 0 0 8px var(--terminal-green);
+}
+
+.progress-container {
+    width: 100%;
+    height: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--secondary-accent);
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--accent-color);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .visualization {
+        padding: 1rem;
+    }
+
+    #spectrogram {
+        height: 200px;
+    }
+
+    .mode-selector {
+        flex-direction: column;
+    }
+
+    .mode-btn {
+        width: 100%;
+    }
+}
+
+/* === ESTILO VISUALIZADOR FFT (inspirado en chirp) === */
+.frequency-visualizer {
+    background: #181a1b;
+    border-radius: 8px;
+    box-shadow: 0 0 12px #00f0ff44;
+    margin-bottom: 1.5rem;
+    min-height: 180px;
+    transition: box-shadow 0.3s;
+}
+
+.frequency-visualizer canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: box-shadow 0.3s ease;
+}
+
+.frequency-visualizer canvas.transmit-active {
+    box-shadow: 0 0 15px rgba(0, 255, 80, 0.3),
+        inset 0 0 25px rgba(0, 255, 80, 0.2);
+    border: 1px solid rgba(0, 255, 120, 0.4);
+}
+
+@keyframes transmitPulse {
+    0% {
+        box-shadow: 0 0 15px rgba(0, 255, 80, 0.3), inset 0 0 25px rgba(0, 255, 80, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 80, 0.5), inset 0 0 35px rgba(0, 255, 80, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(0, 255, 80, 0.3), inset 0 0 25px rgba(0, 255, 80, 0.2);
+    }
+}
+
+.frequency-visualizer canvas.transmit-active {
+    animation: transmitPulse 2s infinite ease-in-out;
+}
+
+.visualizer-container {
+    background: #111;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 24px #00f0ff22, 0 0 8px #ff2b6d44;
+    margin: 2rem auto;
+    max-width: 1200px;
+}
+
+.section-title {
+    color: #00f0ff;
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.status-indicator {
+    color: #00ff41;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.2rem;
+    margin-top: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.start-fft-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.3rem;
+    font-family: 'Courier Prime', monospace;
+    color: #00f0ff;
+    background: #111c;
+    border: 2px solid #00f0ff;
+    border-radius: 8px;
+    box-shadow: 0 0 24px #00f0ff88, 0 0 8px #ff2b6d44;
+    cursor: pointer;
+    text-shadow: 0 0 8px #00f0ff;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    animation: pulse-cyber 1.5s infinite alternate;
+}
+
+.start-fft-btn:hover {
+    background: #00f0ff33;
+    color: #fff;
+    box-shadow: 0 0 32px #00f0ffcc, 0 0 12px #ff2b6d88;
+}
+
+@keyframes pulse-cyber {
+    0% {
+        box-shadow: 0 0 24px #00f0ff88, 0 0 8px #ff2b6d44;
+    }
+
+    100% {
+        box-shadow: 0 0 48px #00f0ffcc, 0 0 16px #ff2b6d88;
+    }
+}
