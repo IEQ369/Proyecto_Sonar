@@ -6,6 +6,7 @@
     --terminal-green: #00ff41;
     --panel-bg: #0c0c14;
     --mono-font: 'Courier New', monospace;
+    --border-color: #1f1f3a;
 }
 
 * {
@@ -14,10 +15,11 @@
     padding: 0;
 }
 
-body {
-    background: #000;
-    color: #e6e6fa;
-    font-family: 'Courier New', monospace;
+body, html {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color);
+    font-family: var(--mono-font);
+    font-size: 15px;
     line-height: 1.6;
     min-height: 100vh;
 }
@@ -258,21 +260,17 @@ h2 {
 
 /* === ESTILO VISUALIZADOR FFT (inspirado en chirp) === */
 .frequency-visualizer {
-    background: #181a1b;
-    border-radius: 8px;
-    box-shadow: 0 0 12px #00f0ff44;
-    margin-bottom: 1.5rem;
-    min-height: 180px;
-    transition: box-shadow 0.3s;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0;
+    padding: 0;
 }
 
 .frequency-visualizer canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transition: box-shadow 0.3s ease;
+    background: #000 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    border: none;
 }
 
 .frequency-visualizer canvas.transmit-active {
@@ -300,64 +298,63 @@ h2 {
 }
 
 .visualizer-container {
-    background: #111;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 24px #00f0ff22, 0 0 8px #ff2b6d44;
-    margin: 2rem auto;
+    background: transparent !important;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none !important;
+    margin: 2rem auto 1.2rem auto;
     max-width: 1200px;
 }
 
 .section-title {
-    color: #00f0ff;
-    font-size: 1.5rem;
+    color: var(--accent-color);
+    font-size: 1.1rem;
     margin-bottom: 1.2rem;
-    font-family: 'Courier Prime', 'Courier New', monospace;
+    font-family: var(--mono-font);
     letter-spacing: 1px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .status-indicator {
-    color: #00ff41;
-    font-family: 'Courier Prime', monospace;
-    font-size: 1.2rem;
+    color: #888;
+    font-family: var(--mono-font);
+    font-size: 1rem;
     margin-top: 1.2rem;
     letter-spacing: 1px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .start-fft-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    padding: 1.2rem 2.5rem;
-    font-size: 1.3rem;
-    font-family: 'Courier Prime', monospace;
-    color: #00f0ff;
-    background: #111c;
-    border: 2px solid #00f0ff;
-    border-radius: 8px;
-    box-shadow: 0 0 24px #00f0ff88, 0 0 8px #ff2b6d44;
+    display: block;
+    margin: 2rem auto 0 auto;
+    padding: 0.7rem 2.2rem;
+    font-size: 1.08rem;
+    font-family: var(--mono-font);
+    color: var(--accent-color);
+    background: transparent;
+    border: 1.5px solid var(--accent-color);
+    border-radius: 0;
+    box-shadow: none;
     cursor: pointer;
-    text-shadow: 0 0 8px #00f0ff;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    animation: pulse-cyber 1.5s infinite alternate;
+    text-shadow: none;
+    letter-spacing: 1px;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    animation: blink-btn 1.2s steps(2, start) infinite;
+}
+
+@keyframes blink-btn {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
 }
 
 .start-fft-btn:hover {
-    background: #00f0ff33;
+    background: var(--accent-color);
     color: #fff;
-    box-shadow: 0 0 32px #00f0ffcc, 0 0 12px #ff2b6d88;
-}
-
-@keyframes pulse-cyber {
-    0% {
-        box-shadow: 0 0 24px #00f0ff88, 0 0 8px #ff2b6d44;
-    }
-
-    100% {
-        box-shadow: 0 0 48px #00f0ffcc, 0 0 16px #ff2b6d88;
-    }
+    border: 1.5px solid var(--accent-color);
 }
 
 .panels-row {
@@ -372,35 +369,39 @@ h2 {
 }
 
 .panel {
-    background: #23243a !important;
-    border: 4px solid #ff184c !important;
-    min-width: 380px;
-    max-width: 440px;
+    background: var(--panel-bg) !important;
+    border: 2px solid var(--accent-color) !important;
+    min-width: 600px;
+    max-width: 600px;
     min-height: 270px;
-    color: #fff;
+    color: var(--text-color);
     z-index: 10;
-    box-shadow: 0 0 24px #ff184c88, 0 0 8px #00f0ff44;
+    box-shadow: none !important;
     margin-bottom: 0;
+    font-family: var(--mono-font);
+    font-size: 1rem;
 }
 
 .panel-header {
-    background: #ff184c;
+    background: var(--accent-color);
     color: #fff;
-    font-family: 'Courier Prime', monospace;
-    font-size: 1.1rem;
+    font-family: var(--mono-font);
+    font-size: 1rem;
     padding: 0.7rem 1.2rem;
-    border-radius: 8px 8px 0 0;
+    border-radius: 0;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    border-bottom: 2px solid #ff184c;
+    border-bottom: 1px solid var(--accent-color);
+    box-shadow: none;
 }
 
 .panel-body {
-    padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    padding: 1.2rem 1.2rem 1.2rem 1.2rem;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    background: transparent;
 }
 
 @media (max-width: 1000px) {
@@ -418,30 +419,32 @@ h2 {
 }
 
 .messages-log {
-    background: #000 !important;
-    color: #00f0ff;
-    font-family: 'Courier Prime', monospace;
-    font-size: 1.1rem;
-    border-radius: 6px;
+    background: #111 !important;
+    color: var(--text-color);
+    font-family: var(--mono-font);
+    font-size: 0.98rem;
+    border-radius: 3px;
     padding: 1.2rem 1rem;
-    min-height: 120px;
-    box-shadow: 0 0 8px #00f0ff44;
+    min-height: 80px;
+    box-shadow: none;
     margin-bottom: 0.5rem;
     white-space: pre-line;
+    border: 1px solid var(--border-color);
 }
 
 .message-input {
     width: 100%;
-    min-height: 70px;
+    min-height: 60px;
     background: #000 !important;
     color: #fff;
-    border: 2px solid #ff184c;
-    border-radius: 6px;
-    font-family: 'Courier Prime', monospace;
-    font-size: 1.1rem;
+    border: 1.5px solid var(--accent-color) !important;
+    border-radius: 3px;
+    font-family: var(--mono-font);
+    font-size: 0.98rem;
     margin-bottom: 1.1rem;
     padding: 0.8rem 1rem;
     resize: vertical;
+    box-shadow: none !important;
 }
 
 /* --- Estilo historial tipo Chirp --- */
@@ -449,19 +452,19 @@ h2 {
     display: flex;
     align-items: center;
     font-family: var(--mono-font);
-    font-size: 1rem;
+    font-size: 0.98rem;
     background: transparent;
     margin-bottom: 4px;
     padding: 2px 0 2px 8px;
-    border-radius: 3px;
-    border-left: 4px solid #ff184c;
+    border-radius: 2px;
+    border-left: 2px solid var(--accent-color);
     color: var(--text-color);
     box-shadow: none;
     transition: background 0.2s;
 }
 
 .msg-log-entry .msg-time {
-    color: #aaa;
+    color: #888;
     margin-right: 0.5em;
     font-size: 0.95em;
 }
@@ -473,11 +476,11 @@ h2 {
 }
 
 .msg-log-entry.received {
-    border-left: 4px solid #ff184c;
+    border-left: 2px solid var(--accent-color);
 }
 
 .msg-log-entry.sent {
-    border-left: 4px solid #00ff41;
+    border-left: 2px solid #00ff41;
     color: #00ff41;
 }
 
@@ -492,3 +495,51 @@ h2 {
     font-family: var(--mono-font);
     font-size: 1rem;
 }
+
+/* Historial de mensajes scrollable, no expande el panel */
+.messages-history-scroll {
+    max-height: 140px;
+    overflow-y: auto;
+    background: #181828;
+    border-radius: 3px;
+    border: 1px solid #222;
+    padding: 0.5em 0.5em 0.5em 0.2em;
+    font-family: var(--mono-font);
+    font-size: 0.98rem;
+    margin-top: 0.5em;
+    box-shadow: none;
+}
+
+.transmit-btn {
+    display: block;
+    width: 100%;
+    margin: 1.1rem 0 0 0;
+    padding: 0.7rem 0;
+    font-size: 1.08rem;
+    font-family: var(--mono-font);
+    color: var(--accent-color);
+    background: transparent;
+    border: 1.5px solid var(--accent-color);
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+    text-shadow: none;
+    letter-spacing: 1px;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.transmit-btn:hover {
+    background: var(--accent-color);
+    color: #fff;
+    border: 1.5px solid var(--accent-color);
+}
+
+/* Cambia el color de las barras del visualizador FFT a morado cyberpunk */
+.frequency-visualizer canvas {
+    background: #000 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    border: none;
+}
+
+/* Sobrescribe el color de las barras en JS usando un gradiente morado */

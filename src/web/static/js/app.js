@@ -20,11 +20,11 @@ class Visualizer {
         this.canvas.height = 220 * window.devicePixelRatio; // Altura fija tipo Chirp
         this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
         this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-        // Crear gradiente cian-azul brillante
+        // Crear gradiente morado cyberpunk
         this.gradient = this.ctx.createLinearGradient(0, this.canvas.height, 0, 0);
-        this.gradient.addColorStop(0, '#00f0ff');
-        this.gradient.addColorStop(0.5, '#00bfff');
-        this.gradient.addColorStop(1, '#1e90ff');
+        this.gradient.addColorStop(0, '#6e1fff'); // Morado oscuro
+        this.gradient.addColorStop(0.5, '#a259f7'); // Morado medio
+        this.gradient.addColorStop(1, '#e040fb'); // Morado claro
     }
 
     start() {
@@ -80,7 +80,7 @@ class Visualizer {
         this.ctx.strokeStyle = 'rgba(255,255,255,0.18)';
         this.ctx.lineWidth = 1;
         this.ctx.font = '13px monospace';
-        this.ctx.fillStyle = '#fff';
+        this.ctx.fillStyle = '#e040fb'; // Morado claro cyberpunk
         this.ctx.textAlign = 'center';
         for (let freq = minFreq; freq <= maxFreq; freq += step) {
             const x = ((freq - minFreq) / freqRange) * width;
@@ -145,6 +145,19 @@ let lastSymbolTime = 0;
 let lastDetectedFreq = 0;
 let lastPanelMsg = '';
 
+// --- Mejoras de robustez para la decodificación ultrasónica ---
+// Buffer circular para frecuencias detectadas
+let freqHistory = [];
+const HISTORY_SIZE = 5;
+function updateFreqHistory(freq) {
+    freqHistory.push(freq);
+    if (freqHistory.length > HISTORY_SIZE) freqHistory.shift();
+}
+function isStableFrequency(targetFreq) {
+    // Verifica si la mayoría de los últimos frames detectaron la misma frecuencia
+    return freqHistory.filter(f => Math.abs(f - targetFreq) < PROTO.TOLERANCE).length > HISTORY_SIZE / 2;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const visualizer = new Visualizer('fft-canvas');
     visualizer.start();
@@ -182,15 +195,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioCtx.createMediaStreamSource(stream);
                 const analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 1024;
+                analyser.fftSize = 4096; // Mejor resolución
                 source.connect(analyser);
-
                 let lastUltrasound = 0;
                 let lastMsg = '';
                 const SIGNAL_THRESHOLD = 135;
                 const minFreq = 18000;
-                const maxFreq = 22000;
-
+                const maxFreq = 22200;
                 function processFrame() {
                     requestAnimationFrame(processFrame);
                     // FFT para visualizador
@@ -204,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         sampleRate: audioCtx.sampleRate,
                         fftSize: analyser.fftSize
                     });
-
                     // Detección para receptor
                     if (!messagesLog) return;
                     const binSize = audioCtx.sampleRate / analyser.fftSize;
@@ -225,12 +235,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     const avg = sum / count;
                     const freqPeak = maxIdx * binSize;
-                    let color = '#aaa';
-                    let label = 'señal débil';
-                    if (maxMag > SIGNAL_THRESHOLD && maxMag > avg + 15 && freqPeak > minFreq) {
-                        color = '#0f0';
-                        label = 'ultrasonido detectado';
-                        lastUltrasound = Date.now();
+                    // Mostrar frecuencia dominante y magnitud en el panel
+                    if (panelMsg) {
+                        panelMsg.textContent = `Freq: ${freqPeak.toFixed(1)} Hz | Mag: ${maxMag}`;
                     }
                     // --- Decodificación de protocolo ---
                     // Detectar frecuencia dominante en el rango de datos y control
@@ -245,39 +252,35 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     const protoBinSize = audioCtx.sampleRate / analyser.fftSize;
                     protoDetectedFreq = protoMaxIdx * protoBinSize;
+                    updateFreqHistory(protoDetectedFreq);
                     // Solo considerar si la magnitud es suficiente (umbral bajado para mayor sensibilidad)
-                    if (protoMaxMag < 40 || protoDetectedFreq < 18000) return; // umbral bajado de 80 a 40
+                    if (protoMaxMag < 40 || protoDetectedFreq < 18000) return;
                     // Logs de depuración
-                    console.log('Estado:', rxState, 'Freq:', protoDetectedFreq.toFixed(1), 'Mag:', protoMaxMag);
                     // Decodificación de estado
                     const now = performance.now();
-                    console.log('[DEBUG] Estado:', rxState, '| Freq:', protoDetectedFreq.toFixed(1), '| Mag:', protoMaxMag, '| Buffer actual:', rxBuffer);
                     function freqNear(target) {
                         return Math.abs(protoDetectedFreq - target) <= PROTO.TOLERANCE;
                     }
                     if (rxState === 'IDLE') {
-                        if (freqNear(PROTO.START)) {
+                        if (freqNear(PROTO.START) && isStableFrequency(PROTO.START)) {
                             rxState = 'SYNC';
                             rxBuffer = '';
                             lastChar = '';
                             lastSymbolTime = now;
                             if (panelMsg) panelMsg.textContent = '[SYNC]';
-                            console.log('[PROTOCOLO] START detectado, esperando SYNC...');
                         }
                     } else if (rxState === 'SYNC') {
-                        if (freqNear(PROTO.SYNC)) {
+                        if (freqNear(PROTO.SYNC) && isStableFrequency(PROTO.SYNC)) {
                             rxState = 'DATA';
                             lastSymbolTime = now;
                             if (panelMsg) panelMsg.textContent = '[DATA]';
-                            console.log('[PROTOCOLO] SYNC detectado, decodificando datos...');
                         }
                     } else if (rxState === 'DATA') {
                         // Detectar END
-                        if (freqNear(PROTO.END)) {
+                        if (freqNear(PROTO.END) && isStableFrequency(PROTO.END)) {
                             rxState = 'END';
                             lastSymbolTime = now;
                             if (panelMsg) panelMsg.textContent = '[END]';
-                            console.log('[PROTOCOLO] END detectado, mensaje completo:', rxBuffer);
                             addToMessageLog(rxBuffer, 'received');
                             if (panelMsg) panelMsg.textContent = '[RECIBIDO] ' + rxBuffer;
                             rxState = 'IDLE';
@@ -287,34 +290,27 @@ document.addEventListener('DOMContentLoaded', function () {
                             return;
                         }
                         // Detectar SYNC final (opcional, solo loguear)
-                        if (freqNear(PROTO.SYNC)) {
-                            console.log('[PROTOCOLO] SYNC final detectado, esperando END...');
-                            // No cambiar de estado, solo loguear
+                        if (freqNear(PROTO.SYNC) && isStableFrequency(PROTO.SYNC)) {
                             lastSymbolTime = now;
                             return;
                         }
                         // Detectar carácter
                         for (const [char, freq] of Object.entries(CHAR_FREQUENCIES)) {
-                            if (Math.abs(protoDetectedFreq - freq) <= PROTO.TOLERANCE) {
+                            if (Math.abs(protoDetectedFreq - freq) <= PROTO.TOLERANCE && isStableFrequency(freq)) {
                                 // Evitar repeticiones por frames consecutivos
                                 if (char !== lastChar || now - lastSymbolTime > 60) {
                                     rxBuffer += char;
                                     lastChar = char;
                                     lastSymbolTime = now;
                                     if (panelMsg) panelMsg.textContent = rxBuffer;
-                                    // Log de carácter decodificado
-                                    console.log('[DETECCIÓN] Carácter decodificado:', char, '| Buffer:', rxBuffer, '| Freq detectada:', protoDetectedFreq.toFixed(1), '| Mag:', protoMaxMag);
                                 }
                                 break;
                             }
                         }
                     } else if (rxState === 'END') {
-                        if (freqNear(PROTO.END)) {
-                            // Mensaje completo
+                        if (freqNear(PROTO.END) && isStableFrequency(PROTO.END)) {
                             addToMessageLog(rxBuffer, 'received');
                             if (panelMsg) panelMsg.textContent = '[RECIBIDO] ' + rxBuffer;
-                            // Log de mensaje recibido
-                            console.log('Mensaje recibido:', rxBuffer);
                             rxState = 'IDLE';
                             rxBuffer = '';
                             lastChar = '';
@@ -334,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 startListeningEffect();
             }).catch(err => {
                 alert('No se pudo acceder al micrófono: ' + err);
-                console.error('Error al solicitar el micrófono:', err);
                 startBtn.style.display = '';
                 if (messagesLog) messagesLog.innerHTML = '<span class="msg-time">[00:00:00]</span> esperando datos...';
                 stopListeningEffect();
@@ -351,32 +346,35 @@ document.addEventListener('DOMContentLoaded', function () {
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                const val = input.value.trim();
-                if (val) {
-                    status.textContent = 'enviando...';
-                    fetch('/emit', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: val })
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                status.textContent = 'mensaje enviado';
-                                input.value = '';
-                                addToMessageLog(val, 'sent'); // Agrega al historial como enviado
-                            } else {
-                                status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
-                            }
-                        })
-                        .catch(err => {
-                            status.textContent = 'error de red';
-                        });
-                }
+                sendMessage();
             }
         });
     }
 });
+
+function sendMessage() {
+    const val = input.value.trim().toUpperCase();
+    if (val) {
+        status.textContent = 'enviando...';
+        fetch('/emit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: val })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    status.textContent = 'mensaje enviado';
+                    input.value = '';
+                } else {
+                    status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
+                }
+            })
+            .catch(err => {
+                status.textContent = 'error de red';
+            });
+    }
+}
 
 // Función para agregar mensaje al historial tipo Chirp
 function addToMessageLog(msg, type = 'received') {
@@ -406,3 +404,4 @@ function addToMessageLog(msg, type = 'received') {
         log.appendChild(entry);
     }
 }
+window.addToMessageLog = addToMessageLog;

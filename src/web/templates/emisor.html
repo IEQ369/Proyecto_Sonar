@@ -1,38 +1,71 @@
 <div class="panel panel-right">
-    <div class="panel-header">&gt; transmit</div>
+    <div class="panel-header" style="color:#000">&gt; TRANSMITIR</div>
     <div class="panel-body">
-        <textarea id="messageInput" class="message-input" placeholder="Enter mensaje..."></textarea>
-        <div id="emisor-status" style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;">
-        </div>
+        <textarea id="messageInput" class="message-input" placeholder="Escribe un mensaje..."></textarea>
+        <button id="transmit-btn" class="transmit-btn">TRANSMITIR</button>
+        <div id="emisor-status" style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;"></div>
     </div>
 </div>
 <script>
     const input = document.getElementById('messageInput');
     const status = document.getElementById('emisor-status');
+    const transmitBtn = document.getElementById('transmit-btn');
+
+    // Limpia listeners previos si existen
+    input.onkeydown = null;
+    transmitBtn.onclick = null;
+    input.oninput = null;
+
+    function safeAddToMessageLog(msg, type) {
+        if (typeof window.addToMessageLog === 'function') {
+            window.addToMessageLog(msg, type);
+        } else {
+            setTimeout(() => safeAddToMessageLog(msg, type), 50);
+        }
+    }
+
+    function sendMessage() {
+        const val = input.value.trim();
+        if (val) {
+            status.textContent = 'enviando...';
+            transmitBtn.disabled = true;
+            fetch('/emit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: val.toUpperCase() })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        status.textContent = 'mensaje enviado';
+                        input.value = '';
+                        safeAddToMessageLog(val.toUpperCase(), 'sent');
+                    } else {
+                        status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
+                    }
+                })
+                .catch(err => {
+                    status.textContent = 'error de red';
+                })
+                .finally(() => {
+                    transmitBtn.disabled = false;
+                });
+        }
+    }
     input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            const val = input.value.trim();
-            if (val) {
-                status.textContent = 'enviando...';
-                fetch('/emit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: val })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            status.textContent = 'mensaje enviado';
-                            input.value = '';
-                        } else {
-                            status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
-                        }
-                    })
-                    .catch(err => {
-                        status.textContent = 'error de red';
-                    });
-            }
+            sendMessage();
         }
+    });
+    transmitBtn.addEventListener('click', function () {
+        sendMessage();
+    });
+    // Mostrar siempre en mayúsculas mientras se escribe
+    input.addEventListener('input', function () {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        input.value = input.value.toUpperCase();
+        input.setSelectionRange(start, end);
     });
 </script>
