@@ -1,0 +1,38 @@
+<div class="panel panel-right">
+    <div class="panel-header">&gt; transmit</div>
+    <div class="panel-body">
+        <textarea id="messageInput" class="message-input" placeholder="Enter mensaje..."></textarea>
+        <div id="emisor-status" style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;">
+        </div>
+    </div>
+</div>
+<script>
+    const input = document.getElementById('messageInput');
+    const status = document.getElementById('emisor-status');
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const val = input.value.trim();
+            if (val) {
+                status.textContent = 'enviando...';
+                fetch('/emit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: val })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            status.textContent = 'mensaje enviado';
+                            input.value = '';
+                        } else {
+                            status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
+                        }
+                    })
+                    .catch(err => {
+                        status.textContent = 'error de red';
+                    });
+            }
+        }
+    });
+</script>

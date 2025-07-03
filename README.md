@@ -1,110 +1,162 @@
-# Proyecto Sonar - Sistema de Comunicación Ultrasónica
+# Proyecto: Exfiltración de datos por ultrasonido (Implementación ofensiva avanzada)
 
-Este proyecto implementa un sistema de comunicación ultrasónica que permite la transmisión de datos utilizando frecuencias inaudibles (>18 kHz). El sistema incluye un emisor basado en Python y un receptor web que utiliza la Web Audio API para una mejor detección en tiempo real.
+## Propósito del proyecto
 
-## Estructura del Proyecto
+Este proyecto demuestra cómo un atacante puede exfiltrar datos (comandos, texto, archivos pequeños) usando señales ultrasónicas inaudibles (por encima de ~18 kHz), aprovechando micrófonos y parlantes comunes de laptops y celulares. Se inspira en ataques reales como SurfingAttack, DolphinAttack y DiskFiltration, y busca ser una herramienta ofensiva robusta, realista y educativa. **En esta implementación, cada carácter ASCII se mapea directamente a una frecuencia ultrasónica única, sin codificación binaria.**
 
-```
-├── src/
-│   ├── core/           # Componentes principales
-│   │   ├── emisor.py       # Emisor ultrasónico
-│   │   ├── frecuencias.py  # Definiciones de frecuencias
-│   │   └── receptor.py     # Receptor Python (legacy)
-│   │
-│   └── web/            # Interfaz web del receptor
-│       ├── frontend/       # Cliente web
-│       │   ├── css/           # Estilos
-│       │   ├── js/            # JavaScript
-│       │   └── index.html     # Página principal
-│       └── backend/        # Servidor Flask
-│           └── app.py         # Aplicación Flask
-│
-├── requirements.txt    # Dependencias Python
-└── README.md          # Este archivo
-```
+---
 
-## Características
+## Objetivos
 
-- Transmisión de datos mediante frecuencias ultrasónicas (18-22 kHz)
-- Receptor web con visualización en tiempo real del espectro
-- Interfaz moderna y responsiva
-- Procesamiento de señal optimizado para MEMS
-- Detección robusta con análisis SNR y persistencia temporal
+- Crear una herramienta ofensiva en Python capaz de transmitir y recibir datos por ultrasonido, resistente a ruido y ambiente real.
+- Mapear cada carácter (ASCII) directamente a una frecuencia ultrasónica (no binario, no FSK clásico).
+- Implementar técnicas de filtrado, sincronización y detección robusta para ambientes ruidosos.
+- Permitir configuración avanzada: frecuencias, duración de símbolo, umbrales, etc.
+- Documentar y demostrar limitaciones físicas (hardware, beat frequencies, etc.).
+- Visualización web (solo para demo): espectro FFT en vivo, decodificación y estilo cyberpunk.
+- Explorar técnicas avanzadas: multi-frecuencia (FDM), OFDM, corrección de errores, compresión.
 
-## Requisitos
+---
 
-### Hardware
-- Micrófono compatible con frecuencias ultrasónicas (MEMS recomendado)
-- Altavoces capaces de reproducir frecuencias >18 kHz
-- Tarjeta de sonido con soporte para 48 kHz o superior
+## Idea general
 
-### Software
-- Python 3.8 o superior
-- Navegador web moderno con soporte para Web Audio API
+1. El atacante usa un emisor (laptop) que convierte cada carácter del texto en una frecuencia ultrasónica única y lo transmite.
+2. Un receptor (laptop) capta el audio, hace FFT en tiempo real y decodifica los caracteres detectando la frecuencia dominante en cada símbolo.
+3. El sistema es configurable y robusto ante ruido, usando técnicas de filtrado y sincronización.
+4. La visualización web solo muestra el proceso y el espectro, pero la herramienta real es Python.
+5. Frecuencias optimizadas: START (18.5 kHz), END (19.9 kHz), datos (18.7-25.5 kHz) - inaudibles y bien captadas por micrófonos.
+6. El sistema puede ampliarse para:
+   - Enviar comandos invisibles a asistentes virtuales.
+   - Exfiltrar contraseñas, tokens, etc., sin cables ni red.
+   - Demostrar técnicas avanzadas (FDM, OFDM, etc.).
 
-## Instalación
+---
 
-1. Clonar el repositorio:
-```bash
-git clone [URL_DEL_REPOSITORIO]
-cd Proyecto_Sonar
-```
+## Componentes del sistema
 
-2. Instalar dependencias:
-```bash
-pip install -r requirements.txt
-```
+| Componente    | Descripción                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| Emisor        | Script Python que convierte texto a frecuencias ultrasónicas (mapeo directo ASCII→frecuencia, configurable) |
+| Receptor      | Script Python que graba, filtra, hace FFT y decodifica en tiempo real    |
+| Visualización | Web que muestra el espectro FFT y la decodificación (solo para demo)     |
+| Codificación  | Mapeo directo de caracteres a frecuencias ultrasónicas, soporte para FDM/OFDM |
+| Comunicación  | Solo sonido (sin red, sin USB, sin Bluetooth)                            |
 
-## Uso
+---
 
-### Iniciar el Receptor Web
+## Tecnología usada
 
-1. Navegar al directorio del proyecto:
-```bash
-cd src/web/backend
-```
+- Python (emisor y receptor ofensivo)
+  - sounddevice, numpy, scipy para audio y FFT
+  - Filtros digitales, sincronización, detección robusta
+- JavaScript/Web (solo visualización)
+  - Web Audio API para FFT y espectro en vivo
+  - Canvas para visualización tipo Spectroid/cyberpunk
+- Celular/laptop con micrófono y parlante integrados
 
-2. Iniciar el servidor Flask:
-```bash
-python app.py
-```
+---
 
-3. Abrir el navegador y acceder a:
-```
-http://localhost:5000
-```
+## Limitaciones conocidas
 
-### Enviar Datos (Emisor)
+- Los micrófonos y parlantes integrados filtran frecuencias ultrasónicas; calibración necesaria.
+- El sistema puede fallar en ambientes muy ruidosos o con eco fuerte.
+- Velocidad limitada por robustez y sigilo (ej: ~1 min para 200 bytes en modo seguro).
+- Multi-frecuencia (FDM/OFDM) puede generar batidos audibles (beat frequencies).
+- La visualización web es solo para demo, no es la herramienta real de ataque.
 
-Desde otro terminal, ejecutar el emisor:
-```bash
-python src/core/emisor.py "mensaje de prueba"
-```
+---
 
-## Protocolo de Comunicación
+## Etapas del proyecto
 
-- Frecuencia de inicio: 18500 Hz
-- Frecuencia de sincronización: 18600 Hz
-- Frecuencia de fin: 22000 Hz
-- Rango de datos: 18700-21900 Hz (incrementos de 100 Hz)
+1. Codificar texto a binario y generar audio ultrasónico en Python.
+2. Emitir y recibir secuencias binario-ultrasonido.
+3. Grabar y decodificar en tiempo real (FFT, filtrado, sincronización).
+4. Calibrar frecuencias según hardware y ambiente.
+5. Implementar multi-frecuencia (FDM) y/o OFDM para mayor velocidad.
+6. Agregar corrección de errores y compresión.
+7. Visualización web avanzada para demo.
+8. Documentar teoría y limitaciones (beat frequencies, multiplexación, etc.).
 
-## Recomendaciones de Uso
+---
 
-1. Utilizar en un ambiente con poco ruido ambiental
-2. Mantener una distancia óptima entre emisor y receptor (1-2 metros)
-3. Evitar obstáculos entre dispositivos
-4. Ajustar el volumen del emisor según sea necesario
+## Inspiraciones y referencias
 
-## Limitaciones Conocidas
+- DolphinAttack: Comandos ultrasónicos para asistentes de voz.
+- SurfingAttack: Inyección de comandos ultrasónicos.
+- DiskFiltration: Exfiltración acústica desde discos duros.
+- Solst/ICE OrbitalCTF: Transferencia ultrasónica, FDM/OFDM, visualización avanzada.
+- BadBIOS 2.0: Teoría sobre malware acústico.
+- Teoría de señales: FSK, FDM, OFDM, beat frequencies, filtrado digital.
 
-- El rendimiento puede variar según el hardware de audio
-- Algunas frecuencias pueden no ser reproducibles en ciertos dispositivos
-- La calidad de la transmisión depende del ruido ambiental
+---
 
-## Contribuir
+## Conceptos técnicos clave
 
-Las contribuciones son bienvenidas. Por favor, crear un issue o pull request para sugerencias y mejoras.
+- Mapeo directo ASCII→frecuencia: Cada carácter se transmite como un tono ultrasónico único (ejemplo: 'A' = 19800 Hz, 'B' = 19900 Hz, etc.).
+- Sin codificación binaria ni FSK clásico: No se usan bits ni modulación 1/0, sino frecuencias únicas por símbolo.
+- FDM (Frequency Division Multiplexing): Transmisión simultánea en varias frecuencias (multi-bit, futuro).
+- OFDM (Orthogonal FDM): Multiplexación ortogonal, base de WiFi/LTE, muy eficiente pero compleja.
+- Beat frequencies: Batidos audibles al usar frecuencias cercanas, limitan el sigilo.
+- Filtrado digital: Pasa banda para aislar frecuencias de interés y reducir ruido.
+- Sincronización: Preámbulo (18.5 kHz) y detección robusta de inicio/fin (19.9 kHz) de mensaje.
+- Corrección de errores: Paridad, checksum, Hamming, etc.
+- Compresión: Reducir tamaño de datos para mayor velocidad.
+- Calibración: Ajustar frecuencias y umbrales según hardware y ambiente.
+- Rango optimizado: 18.5-25.5 kHz - inaudible para humanos pero bien captado por micrófonos.
 
-## Licencia
+---
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.
+## Glosario
+
+- Ultrasonido: Sonido >20 kHz, inaudible para humanos.
+- ASCII: Código binario estándar para texto.
+- Modulación: Transformar datos digitales en señales analógicas.
+- Beat frequency: Frecuencia resultante de la interferencia entre dos tonos cercanos.
+- OFDM: Técnica para transmitir datos usando múltiples frecuencias ortogonales.
+- Filtro pasa banda: Filtro digital que deja pasar solo un rango de frecuencias.
+
+---
+
+## Notas y aprendizajes clave
+
+- El ataque realista requiere robustez ante ruido y ambiente, no solo "que funcione".
+- FSK es sigiloso pero lento; FDM/OFDM es rápido pero puede ser audible.
+- La calibración es esencial: cada hardware tiene límites distintos.
+- La visualización web es solo para demo, la herramienta real es Python.
+- Documentar teoría y experimentos en el README ayuda a no perder el rumbo.
+- El proyecto busca ser educativo, ofensivo y reproducible.
+
+---
+
+## Meta final
+
+Tener una herramienta ofensiva robusta en Python que:
+
+- Exfiltre datos vía ultrasonido entre laptop y celular.
+- Sea configurable, resistente a ruido y adaptable a hardware real.
+- Sirva como demo técnica y base para futuras investigaciones.
+- Tenga una visualización web atractiva solo para la presentación.
+
+---
+
+## Referencias y recursos
+
+- [Repositorio Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
+- [DolphinAttack paper y videos](https://dolphinattack.com/)
+- Artículos académicos sobre exfiltración acústica y ataques air-gapped.
+- Foros y comunidades de ciberseguridad ofensiva.
+- Comentarios y teoría sobre FSK, FDM, OFDM y beat frequencies en proyectos similares.
+
+## Referencias
+
+- [SurfingAttack: Interactive Hidden Attack on Voice Assistants Using Ultrasonic Guided Wave](https://surfingattack.github.io/)  
+  Yan, Qiben et al. NDSS Symposium 2020.  
+  [PDF](https://surfingattack.github.io/surfingattack-ndss20.pdf)
+
+- [DolphinAttack: Inaudible Voice Commands](https://dolphinattack.com/)
+
+- [Chirp: Sound-based Data Transfer (GitHub)](https://github.com/solst-ice/chirp)
+
+- [BadBIOS: mito Malware (Wikipedia)](https://en.wikipedia.org/wiki/BadBIOS)
+
+- [Web Audio API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)

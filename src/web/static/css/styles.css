@@ -1,4 +1,3 @@
-/* Cyberpunk Terminal Theme */
 :root {
     --bg-color: #000000;
     --text-color: #e6e6fa;
@@ -71,17 +70,6 @@ h2 {
     background-color: var(--accent-color);
     color: #fff;
     box-shadow: 0 0 16px var(--accent-color), 0 0 4px var(--secondary-accent);
-}
-
-.panel {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.panel.active {
-    display: block;
-    opacity: 1;
 }
 
 .controls {
@@ -370,4 +358,137 @@ h2 {
     100% {
         box-shadow: 0 0 48px #00f0ffcc, 0 0 16px #ff2b6d88;
     }
+}
+
+.panels-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1.2rem;
+    margin-top: 1.2rem;
+    justify-content: center;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.panel {
+    background: #23243a !important;
+    border: 4px solid #ff184c !important;
+    min-width: 380px;
+    max-width: 440px;
+    min-height: 270px;
+    color: #fff;
+    z-index: 10;
+    box-shadow: 0 0 24px #ff184c88, 0 0 8px #00f0ff44;
+    margin-bottom: 0;
+}
+
+.panel-header {
+    background: #ff184c;
+    color: #fff;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px 8px 0 0;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #ff184c;
+}
+
+.panel-body {
+    padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+@media (max-width: 1000px) {
+    .panels-row {
+        flex-direction: column;
+        max-width: 98vw;
+        gap: 1.5rem;
+    }
+
+    .panel {
+        min-width: unset;
+        max-width: unset;
+        width: 95vw;
+    }
+}
+
+.messages-log {
+    background: #000 !important;
+    color: #00f0ff;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    padding: 1.2rem 1rem;
+    min-height: 120px;
+    box-shadow: 0 0 8px #00f0ff44;
+    margin-bottom: 0.5rem;
+    white-space: pre-line;
+}
+
+.message-input {
+    width: 100%;
+    min-height: 70px;
+    background: #000 !important;
+    color: #fff;
+    border: 2px solid #ff184c;
+    border-radius: 6px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.1rem;
+    margin-bottom: 1.1rem;
+    padding: 0.8rem 1rem;
+    resize: vertical;
+}
+
+/* --- Estilo historial tipo Chirp --- */
+.msg-log-entry {
+    display: flex;
+    align-items: center;
+    font-family: var(--mono-font);
+    font-size: 1rem;
+    background: transparent;
+    margin-bottom: 4px;
+    padding: 2px 0 2px 8px;
+    border-radius: 3px;
+    border-left: 4px solid #ff184c;
+    color: var(--text-color);
+    box-shadow: none;
+    transition: background 0.2s;
+}
+
+.msg-log-entry .msg-time {
+    color: #aaa;
+    margin-right: 0.5em;
+    font-size: 0.95em;
+}
+
+.msg-log-entry .msg-type {
+    margin-right: 0.5em;
+    font-weight: bold;
+    font-size: 0.98em;
+}
+
+.msg-log-entry.received {
+    border-left: 4px solid #ff184c;
+}
+
+.msg-log-entry.sent {
+    border-left: 4px solid #00ff41;
+    color: #00ff41;
+}
+
+/* Panel receptor scrollable */
+#messages-log {
+    max-height: 220px;
+    overflow-y: auto;
+    background: #111;
+    border-radius: 5px;
+    border: 1px solid var(--accent-color);
+    padding: 0.5em 0.5em 0.5em 0.2em;
+    font-family: var(--mono-font);
+    font-size: 1rem;
 }

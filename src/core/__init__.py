@@ -8,7 +8,7 @@ __author__ = "Qwerty"
 __description__ = "Sistema ultrasónico para exfiltración de datos"
 
 # Importar módulos principales
-from .frecuencias import *
+from .frecuencias_lite import *
 from .emisor import *
 
 # Exportar funciones principales para uso directo
@@ -25,8 +25,4 @@ __all__ = [
     'emitir_mensaje',
     'generate_tone',
     'calcular_duracion_mensaje',
-    
-    # Receptor
-    'escuchar_continuamente',
-    'detectar_frecuencia'
-] 
+]

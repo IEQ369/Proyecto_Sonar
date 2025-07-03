@@ -9,9 +9,9 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from core.frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
+    from core.frecuencias_lite import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 except ImportError:
-    from frecuencias import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
+    from frecuencias_lite import char_to_frequency, START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY
 
 # --- Configuración de emisión ---
 SYMBOL_DURATION = 0.07  # segundos (70 ms)

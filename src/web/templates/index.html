@@ -26,12 +26,14 @@
             <div id="status-indicator" class="status-indicator">ESPERANDO<span class="terminal-cursor">_</span></div>
         </div>
         <!-- Aquí puedes renderizar tu frontend o incluir más componentes -->
+        <div class="panels-row">
+            {% include 'receptor.html' %}
+            {% include 'emisor.html' %}
+        </div>
     </div>
     <!-- Scripts principales del sistema -->
-    <script src="{{ url_for('static', filename='js/visualizer.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/audioProcessor.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/test_mic.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/test_mic.js') }}"></script> -->
 </body>
 
 </html>
