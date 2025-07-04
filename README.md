@@ -140,3 +140,59 @@ Emisor:
 - [BadBIOS: mito Malware (Wikipedia)](https://en.wikipedia.org/wiki/BadBIOS)
 
 - [Web Audio API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+
+## Técnicas de Robustez y Visualización Implementadas
+
+### Emisor
+- Fade in/out en cada tono
+- Tonos paralelos (Parallel Tones)
+- Control de volumen por tono
+- Duraciones precisas por símbolo y marcador
+- Secuencia de protocolo clara (START, SYNC, DATOS, END)
+- Mapeo de caracteres amplio y configurable (A-Z, 0-9, espacio)
+- Configurabilidad de parámetros
+- Logs de depuración en consola
+
+### Receptor
+- Detección de frecuencia dominante
+- Tolerancia de frecuencia configurable
+- Umbral de magnitud configurable
+- Buffer de historia de frecuencias
+- Debounce y lockout avanzados
+- Detección de tonos paralelos (confianza extra)
+- Reconocimiento de marcadores de protocolo
+- Timeouts y reinicio automático
+- Logs de depuración y visualización de estado
+
+### FFT y Visualización
+- Tamaño de FFT pequeño (fftSize bajo)
+- SmoothingTimeConstant bajo
+- Actualización con requestAnimationFrame
+- Canvas responsivo y optimizado para móvil
+- Visualización clara del pico dominante (cian brillante)
+- Visualización de la frecuencia dominante y su magnitud
+- Visualización de la segunda frecuencia más fuerte
+- Optimización del bucle de dibujo
+
+## Problemas, hallazgos y soluciones
+
+### Problema: Baja detectabilidad de frecuencias altas
+Durante las pruebas, se observó que ciertas frecuencias (especialmente las más altas, como J, K, P, X, Y, Z, Ñ) no eran detectadas correctamente por el receptor, incluso usando el mismo hardware (altavoz y micrófono) que sí funcionaba con apps móviles de generación de tonos.
+
+### Hipótesis y pruebas realizadas
+- Se ajustó la amplificación visual en el FFT para compensar la atenuación, pero el problema persistía.
+- Se revisó el protocolo, la tolerancia y el umbral de detección, sin mejoras significativas.
+- Se comparó la señal generada por la Web Audio API con la de apps móviles y se notó que "sonaban" diferente, aunque ambas usaban onda senoidal.
+
+### Hallazgo clave
+El tipo de onda generado por el emisor web era fundamental. Las ondas senoidales puras se atenúan mucho en frecuencias ultrasónicas y el micrófono no las detecta bien. Sin embargo, las ondas cuadradas (o de sierra), al tener más armónicos, son mucho más detectables por el micrófono, incluso si la frecuencia fundamental se atenúa.
+
+### Solución aplicada
+- Se cambió el tipo de onda del emisor web de 'sine' (senoidal) a 'square' (cuadrada), logrando una mejora drástica en la detectabilidad de todas las frecuencias, especialmente las altas.
+- Se ajustó la amplitud para evitar distorsión.
+- Se documentó la importancia de probar diferentes tipos de onda y sample rates para máxima robustez.
+
+### Recomendaciones
+- Para máxima detectabilidad, usar onda cuadrada o de sierra y amplitud alta (sin distorsión).
+- Probar siempre el sistema con diferentes tipos de onda y sample rates.
+- Documentar todos los problemas y hallazgos para futuras referencias y mejoras.

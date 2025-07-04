@@ -10,9 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <!-- Estilos locales -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css', v=css_version) }}" />
+    <link rel="stylesheet" href="/static/css/styles.css" />
     <!-- Favicon (puedes agregar uno en static si lo deseas) -->
-    <!-- <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.ico') }}" /> -->
+    <!-- <link rel="icon" type="image/svg+xml" href="/static/favicon.ico" /> -->
 </head>
 
 <body>
@@ -20,19 +20,84 @@
         <div class="visualizer-container">
             <div class="section-title" style="text-align:center;">&gt; ANÁLISIS DE FRECUENCIA (SONAR)</div>
             <div class="frequency-visualizer" style="position:relative;">
-                <canvas id="fft-canvas"></canvas>
                 <button id="start-fft-btn" class="start-fft-btn">INICIAR VISUALIZACIÓN</button>
+                <canvas id="fft-canvas"></canvas>
             </div>
         </div>
         <!-- Aquí puedes renderizar tu frontend o incluir más componentes -->
         <div class="panels-row">
-            {% include 'receptor.html' %}
-            {% include 'emisor.html' %}
+            <div class="panel panel-left">
+                <div class="panel-header" style="color:#000">&gt; RECEPCIÓN DE DATOS</div>
+                <div class="panel-body">
+                    <div id="messages-log" class="messages-log">
+                        <span class="msg-time">[00:00:00]</span> esperando datos...
+                    </div>
+                    <div id="messages-history" class="messages-history-scroll"></div>
+                </div>
+            </div>
+            <div class="panel panel-right">
+                <div class="panel-header" style="color:#000">&gt; TRANSMITIR</div>
+                <div class="panel-body">
+                    <textarea id="messageInput" class="message-input" placeholder="Escribe un mensaje..."></textarea>
+                    <button id="transmit-btn" class="transmit-btn">TRANSMITIR</button>
+                    <div id="emisor-status"
+                        style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;"></div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Scripts principales del sistema -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <!-- <script src="{{ url_for('static', filename='js/test_mic.js') }}"></script> -->
+    <script type="module" src="/static/js/app.js"></script>
+    <!-- <script src="/static/js/test_mic.js"></script> -->
+    <script type="module">
+        import { emitirUltrasonico } from '/static/js/emisor_ultrasonico.js';
+
+        const input = document.getElementById('messageInput');
+        const status = document.getElementById('emisor-status');
+        const transmitBtn = document.getElementById('transmit-btn');
+
+        // Limpia listeners previos si existen
+        input.onkeydown = null;
+        transmitBtn.onclick = null;
+        input.oninput = null;
+
+        function safeAddToMessageLog(msg, type) {
+            if (typeof window.addToMessageLog === 'function') {
+                window.addToMessageLog(msg, type);
+            } else {
+                setTimeout(() => safeAddToMessageLog(msg, type), 50);
+            }
+        }
+
+        async function sendMessage() {
+            const val = input.value.trim().toUpperCase();
+            if (val) {
+                status.textContent = 'enviando...';
+                transmitBtn.disabled = true;
+                await emitirUltrasonico(val);
+                status.textContent = 'mensaje enviado';
+                input.value = '';
+                safeAddToMessageLog(val, 'sent');
+                transmitBtn.disabled = false;
+            }
+        }
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        transmitBtn.addEventListener('click', function () {
+            sendMessage();
+        });
+        // Mostrar siempre en mayúsculas mientras se escribe
+        input.addEventListener('input', function () {
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            input.value = input.value.toUpperCase();
+            input.setSelectionRange(start, end);
+        });
+    </script>
 </body>
 
 </html>

@@ -14,17 +14,20 @@ class Visualizer {
     }
 
     setupCanvas() {
-        // Hacer que el canvas ocupe todo el ancho del contenedor
         const parent = this.canvas.parentElement;
-        this.canvas.width = parent.offsetWidth * window.devicePixelRatio;
-        this.canvas.height = 220 * window.devicePixelRatio; // Altura fija tipo Chirp
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+        if (window.innerWidth <= 600) {
+            this.canvas.width = window.innerWidth * window.devicePixelRatio;
+            this.canvas.height = 180 * window.devicePixelRatio;
+        } else {
+            this.canvas.width = parent.offsetWidth * window.devicePixelRatio;
+            this.canvas.height = 220 * window.devicePixelRatio;
+        }
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-        // Crear gradiente morado cyberpunk
         this.gradient = this.ctx.createLinearGradient(0, this.canvas.height, 0, 0);
-        this.gradient.addColorStop(0, '#6e1fff'); // Morado oscuro
-        this.gradient.addColorStop(0.5, '#a259f7'); // Morado medio
-        this.gradient.addColorStop(1, '#e040fb'); // Morado claro
+        this.gradient.addColorStop(0, '#6e1fff');
+        this.gradient.addColorStop(0.5, '#a259f7');
+        this.gradient.addColorStop(1, '#e040fb');
     }
 
     start() {
@@ -49,28 +52,55 @@ class Visualizer {
         const maxBin = Math.ceil(maxFreq / binSize);
         const width = this.canvas.width / window.devicePixelRatio;
         const height = this.canvas.height / window.devicePixelRatio;
-        const numBars = Math.min(256, maxBin - minBin); // Muchas barras delgadas
+        const numBars = Math.min(256, maxBin - minBin);
         const barWidth = width / numBars;
 
-        // Limpiar el canvas
-        this.clear();
-
-        // Dibujar las barras FFT
+        let maxBarIdx = 0;
+        let maxBarMag = 0;
+        let secondIdx = -1;
+        let secondMag = 0;
         for (let i = 0; i < numBars; i++) {
             const bin = minBin + Math.floor(i * (maxBin - minBin) / numBars);
             const magnitude = data[bin];
+            if (magnitude > maxBarMag) {
+                secondMag = maxBarMag;
+                secondIdx = maxBarIdx;
+                maxBarMag = magnitude;
+                maxBarIdx = i;
+            } else if (magnitude > secondMag) {
+                secondMag = magnitude;
+                secondIdx = i;
+            }
+        }
+
+        this.clear();
+
+        for (let i = 0; i < numBars; i++) {
+            const bin = minBin + Math.floor(i * (maxBin - minBin) / numBars);
+            let magnitude = data[bin];
+            const freq = bin * binSize;
             const barHeight = (magnitude / 255) * (height - 30);
             const x = i * barWidth;
-            // Gradiente brillante
-            this.ctx.fillStyle = this.gradient;
-            this.ctx.shadowColor = '#00f0ff';
-            this.ctx.shadowBlur = 8;
+            if (i === maxBarIdx) {
+                // Pico dominante: cian brillante
+                this.ctx.fillStyle = '#00fff7';
+                this.ctx.shadowColor = '#00fff7';
+                this.ctx.shadowBlur = 16;
+            } else if (i === secondIdx) {
+                // Segundo pico: magenta brillante
+                this.ctx.fillStyle = '#e040fb';
+                this.ctx.shadowColor = '#e040fb';
+                this.ctx.shadowBlur = 12;
+            } else {
+                this.ctx.fillStyle = this.gradient;
+                this.ctx.shadowColor = '#00f0ff';
+                this.ctx.shadowBlur = 8;
+            }
             this.ctx.fillRect(x, height - barHeight, barWidth * 0.8, barHeight);
             this.ctx.shadowBlur = 0;
         }
-
-        // Dibujar líneas y etiquetas de frecuencia tipo Chirp
         this.drawFrequencyLines(minFreq, maxFreq, width, height);
+        this.drawMarkers(minFreq, maxFreq, width, height);
     }
 
     drawFrequencyLines(minFreq, maxFreq, width, height) {
@@ -96,6 +126,33 @@ class Visualizer {
         this.ctx.restore();
     }
 
+    drawMarkers(minFreq, maxFreq, width, height) {
+        // Líneas de marcadores de protocolo (START, SYNC, END) al estilo Chirp: finas, semitransparentes, con etiquetas pequeñas
+        const markerFreqs = [
+            { freq: START_FREQUENCY, label: 'START' },
+            { freq: SYNC_FREQUENCY, label: 'SYNC' },
+            { freq: END_FREQUENCY, label: 'END' }
+        ];
+        this.ctx.save();
+        this.ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        this.ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        this.ctx.lineWidth = 1;
+        this.ctx.font = 'bold 11px monospace';
+        this.ctx.textAlign = 'center';
+        markerFreqs.forEach(marker => {
+            if (marker.freq >= minFreq && marker.freq <= maxFreq) {
+                const x = Math.round((marker.freq - minFreq) / (maxFreq - minFreq) * width);
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, 0);
+                this.ctx.lineTo(x, height);
+                this.ctx.stroke();
+                // Etiqueta encima de la línea
+                this.ctx.fillText(marker.label, x, 13);
+            }
+        });
+        this.ctx.restore();
+    }
+
     setTransmitMode(active) {
         this.transmitMode = !!active;
         if (this.transmitMode) {
@@ -106,36 +163,23 @@ class Visualizer {
     }
 }
 
+// Instancia global del visualizador
+const visualizer = new Visualizer('fft-canvas');
+
 // --- Lógica de decodificación de protocolo ultrasónico ---
 // Mapeo de frecuencias (debe coincidir con frecuencias.py)
+import { START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, MIN_DATA_FREQUENCY, MAX_DATA_FREQUENCY, FREQUENCY_STEP, CHAR_FREQUENCIES, charToFrequency, frequencyToChar, SYMBOL_DURATION, CHARACTER_GAP } from './protocolo_ultrasonico.js';
+import { emitirUltrasonico } from './emisor_ultrasonico.js';
+
 const PROTO = {
-    START: 18500,
-    SYNC: 18600,
-    END: 19700, // Fin de transmisión
-    MIN_DATA: 18700,
-    MAX_DATA: 19600,
-    STEP: 100,
-    TOLERANCE: 80 // Hz
+    START: START_FREQUENCY,
+    SYNC: SYNC_FREQUENCY,
+    END: END_FREQUENCY,
+    MIN_DATA: MIN_DATA_FREQUENCY,
+    MAX_DATA: MAX_DATA_FREQUENCY,
+    STEP: FREQUENCY_STEP,
+    TOLERANCE: 100 // Hz
 };
-
-// Letras y números (A-Z, 0-9) en el rango funcional - MAPEO ÚNICO
-const CHAR_FREQUENCIES = {
-    // Letras A-Z (26 letras)
-    'A': 18700, 'B': 18800, 'C': 18900, 'D': 19000, 'E': 19100,
-    'F': 19200, 'G': 19300, 'H': 19400, 'I': 19500, 'J': 19600,
-    'K': 19700, 'L': 19800, 'M': 19900, 'N': 20000, 'O': 20100,
-    'P': 20200, 'Q': 20300, 'R': 20400, 'S': 20500, 'T': 20600,
-    'U': 20700, 'V': 20800, 'W': 20900, 'X': 21000, 'Y': 21100,
-    'Z': 21200,
-
-    // Números 0-9 (10 números)
-    '0': 21300, '1': 21400, '2': 21500, '3': 21600, '4': 21700,
-    '5': 21800, '6': 21900, '7': 22000, '8': 22100, '9': 22200
-};
-const FREQ_TO_CHAR = {};
-for (const [char, freq] of Object.entries(CHAR_FREQUENCIES)) {
-    FREQ_TO_CHAR[freq] = char;
-}
 
 // Estado del receptor
 let rxState = 'IDLE'; // IDLE, SYNC, DATA, END
@@ -158,9 +202,20 @@ function isStableFrequency(targetFreq) {
     return freqHistory.filter(f => Math.abs(f - targetFreq) < PROTO.TOLERANCE).length > HISTORY_SIZE / 2;
 }
 
+// Definir duración de símbolo para lockout (debe coincidir con el emisor)
+const SYMBOL_LOCKOUT_MS = (SYMBOL_DURATION + CHARACTER_GAP) * 1000; // ms
+
 document.addEventListener('DOMContentLoaded', function () {
-    const visualizer = new Visualizer('fft-canvas');
     visualizer.start();
+
+    // Test de la función frequencyToChar
+    console.log('=== TEST PROTOCOLO ===');
+    console.log('J (19600 Hz):', frequencyToChar(19600));
+    console.log('K (19700 Hz):', frequencyToChar(19700));
+    console.log('Z (21200 Hz):', frequencyToChar(21200));
+    console.log('Ñ (22400 Hz):', frequencyToChar(22400));
+    console.log('Frecuencia inexistente (20000 Hz):', frequencyToChar(20000));
+    console.log('=====================');
 
     const startBtn = document.getElementById('start-fft-btn');
     const messagesLog = document.getElementById('messages-log');
@@ -195,13 +250,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioCtx.createMediaStreamSource(stream);
                 const analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 4096; // Mejor resolución
+                analyser.fftSize = 2048; // Más rápido y fluido
+                analyser.smoothingTimeConstant = 0.2; // Cambios más en tiempo real
                 source.connect(analyser);
                 let lastUltrasound = 0;
                 let lastMsg = '';
                 const SIGNAL_THRESHOLD = 135;
                 const minFreq = 18000;
-                const maxFreq = 22200;
+                const maxFreq = 22500;
                 function processFrame() {
                     requestAnimationFrame(processFrame);
                     // FFT para visualizador
@@ -211,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     visualizer.drawSpectrum({
                         data: Array.from(dataArray),
                         minFreq: 0,
-                        maxFreq: audioCtx.sampleRate / 2,
+                        maxFreq: 22500,
                         sampleRate: audioCtx.sampleRate,
                         fftSize: analyser.fftSize
                     });
@@ -222,6 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     const maxBin = Math.ceil(maxFreq / binSize);
                     let maxMag = 0;
                     let maxIdx = -1;
+                    let secondMag = 0;
+                    let secondIdx = -1;
                     let sum = 0;
                     let count = 0;
                     for (let i = minBin; i <= maxBin; i++) {
@@ -229,15 +287,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         sum += mag;
                         count++;
                         if (mag > maxMag) {
+                            secondMag = maxMag;
+                            secondIdx = maxIdx;
                             maxMag = mag;
                             maxIdx = i;
+                        } else if (mag > secondMag) {
+                            secondMag = mag;
+                            secondIdx = i;
                         }
                     }
                     const avg = sum / count;
                     const freqPeak = maxIdx * binSize;
+                    const freqSecond = secondIdx * binSize;
                     // Mostrar frecuencia dominante y magnitud en el panel
                     if (panelMsg) {
-                        panelMsg.textContent = `Freq: ${freqPeak.toFixed(1)} Hz | Mag: ${maxMag}`;
+                        panelMsg.textContent = `Freq: ${freqPeak.toFixed(1)} Hz | Mag: ${maxMag}` + (secondMag > 0 ? ` | 2nd: ${freqSecond.toFixed(1)} Hz (${secondMag})` : '');
                     }
                     // --- Decodificación de protocolo ---
                     // Detectar frecuencia dominante en el rango de datos y control
@@ -253,9 +317,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     const protoBinSize = audioCtx.sampleRate / analyser.fftSize;
                     protoDetectedFreq = protoMaxIdx * protoBinSize;
                     updateFreqHistory(protoDetectedFreq);
-                    // Solo considerar si la magnitud es suficiente (umbral bajado para mayor sensibilidad)
-                    if (protoMaxMag < 40 || protoDetectedFreq < 18000) return;
-                    // Logs de depuración
+                    // Solo considerar si la magnitud es suficiente (umbral ajustado para frecuencias altas)
+                    if (protoMaxMag < 20 || protoDetectedFreq < 18000) return;
+                    // Confianza extra si el segundo pico está cerca del paralelo
+                    const PARALLEL_OFFSET = 35;
+                    let parallelConfidence = false;
+                    if (
+                        secondMag > 0 &&
+                        Math.abs(freqSecond - (freqPeak + PARALLEL_OFFSET)) < 7 &&
+                        secondMag > 0.3 * maxMag
+                    ) {
+                        parallelConfidence = true;
+                    }
                     // Decodificación de estado
                     const now = performance.now();
                     function freqNear(target) {
@@ -294,18 +367,23 @@ document.addEventListener('DOMContentLoaded', function () {
                             lastSymbolTime = now;
                             return;
                         }
-                        // Detectar carácter
-                        for (const [char, freq] of Object.entries(CHAR_FREQUENCIES)) {
-                            if (Math.abs(protoDetectedFreq - freq) <= PROTO.TOLERANCE && isStableFrequency(freq)) {
-                                // Evitar repeticiones por frames consecutivos
-                                if (char !== lastChar || now - lastSymbolTime > 60) {
-                                    rxBuffer += char;
-                                    lastChar = char;
-                                    lastSymbolTime = now;
-                                    if (panelMsg) panelMsg.textContent = rxBuffer;
-                                }
-                                break;
-                            }
+                        // Detectar carácter SOLO por el pico dominante
+                        const detectedChar = frequencyToChar(freqPeak);
+                        const tiempoDesdeUltimo = now - lastSymbolTime;
+                        if (
+                            detectedChar &&
+                            (parallelConfidence || isStableFrequency(charToFrequency(detectedChar))) &&
+                            (detectedChar !== lastChar || tiempoDesdeUltimo > SYMBOL_LOCKOUT_MS)
+                        ) {
+                            rxBuffer += detectedChar;
+                            lastChar = detectedChar;
+                            lastSymbolTime = now;
+                            if (panelMsg) panelMsg.textContent = rxBuffer;
+                            console.log(`Carácter agregado: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
+                        } else if (detectedChar === lastChar && tiempoDesdeUltimo <= SYMBOL_LOCKOUT_MS) {
+                            console.log(`Carácter ignorado por lockout: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
+                        } else if (detectedChar) {
+                            console.log(`Carácter detectado pero no agregado: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
                         }
                     } else if (rxState === 'END') {
                         if (freqNear(PROTO.END) && isStableFrequency(PROTO.END)) {
@@ -352,10 +430,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// --- EMISOR ULTRASÓNICO (Web Audio API) ---
 function sendMessage() {
     const val = input.value.trim().toUpperCase();
     if (val) {
         status.textContent = 'enviando...';
+        visualizer.setTransmitMode(true);
+        // Emitir por ultrasonido en el navegador (frontend)
+        emitirUltrasonico(val).then(() => {
+            visualizer.setTransmitMode(false);
+        });
+        // Enviar al backend como antes
         fetch('/emit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

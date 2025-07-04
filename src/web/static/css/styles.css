@@ -15,7 +15,8 @@
     padding: 0;
 }
 
-body, html {
+body,
+html {
     background-color: var(--bg-color) !important;
     color: var(--text-color);
     font-family: var(--mono-font);
@@ -347,8 +348,15 @@ h2 {
 }
 
 @keyframes blink-btn {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
 }
 
 .start-fft-btn:hover {
@@ -543,3 +551,17 @@ h2 {
 }
 
 /* Sobrescribe el color de las barras en JS usando un gradiente morado */
+
+@media (max-width: 600px) {
+
+    .frequency-visualizer,
+    #fft-canvas {
+        width: 100vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        height: 180px !important;
+        max-height: 30vh !important;
+        margin: 0 auto !important;
+        display: block;
+    }
+}

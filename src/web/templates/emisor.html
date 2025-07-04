@@ -3,10 +3,13 @@
     <div class="panel-body">
         <textarea id="messageInput" class="message-input" placeholder="Escribe un mensaje..."></textarea>
         <button id="transmit-btn" class="transmit-btn">TRANSMITIR</button>
-        <div id="emisor-status" style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;"></div>
+        <div id="emisor-status" style="margin-top: 1rem; color: #ff184c; font-family: monospace; font-size: 1rem;">
+        </div>
     </div>
 </div>
-<script>
+<script type="module">
+    import { emitirUltrasonico } from '/static/js/emisor_ultrasonico.js';
+
     const input = document.getElementById('messageInput');
     const status = document.getElementById('emisor-status');
     const transmitBtn = document.getElementById('transmit-btn');
@@ -24,32 +27,16 @@
         }
     }
 
-    function sendMessage() {
-        const val = input.value.trim();
+    async function sendMessage() {
+        const val = input.value.trim().toUpperCase();
         if (val) {
             status.textContent = 'enviando...';
             transmitBtn.disabled = true;
-            fetch('/emit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: val.toUpperCase() })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        status.textContent = 'mensaje enviado';
-                        input.value = '';
-                        safeAddToMessageLog(val.toUpperCase(), 'sent');
-                    } else {
-                        status.textContent = 'error: ' + (data.error || 'no se pudo enviar');
-                    }
-                })
-                .catch(err => {
-                    status.textContent = 'error de red';
-                })
-                .finally(() => {
-                    transmitBtn.disabled = false;
-                });
+            await emitirUltrasonico(val);
+            status.textContent = 'mensaje enviado';
+            input.value = '';
+            safeAddToMessageLog(val, 'sent');
+            transmitBtn.disabled = false;
         }
     }
     input.addEventListener('keydown', function (e) {
