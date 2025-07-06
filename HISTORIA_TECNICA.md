@@ -6,7 +6,7 @@
 
 Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API** y **JavaScript puro**. Permite transmitir mensajes de texto y archivos entre dispositivos (laptops, móviles) aprovechando hardware de audio común, sin necesidad de red ni cables.
 
-**Estado Actual**: ✅ **FUNCIONAL** - Sistema robusto con transmisión de mensajes y archivos, optimizado para hardware de consumo.
+**Estado Actual**: **FUNCIONAL** - Sistema robusto con transmisión de mensajes y archivos, optimizado para hardware de consumo.
 
 ## Evolución Técnica del Proyecto
 
