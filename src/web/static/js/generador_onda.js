@@ -22,6 +22,7 @@ export function generarOnda({ frecuencia, duracion, tipo, amplitud = 1.0, sample
     const buffer = audioCtx.createBuffer(1, length, sampleRate);
     const data = buffer.getChannelData(0);
     const fadeSamples = Math.floor(fadeTime * sampleRate);
+
     for (let i = 0; i < length; i++) {
         const t = i / sampleRate;
         let sample = 0;
@@ -41,15 +42,17 @@ export function generarOnda({ frecuencia, duracion, tipo, amplitud = 1.0, sample
             default:
                 sample = Math.sin(2 * Math.PI * frecuencia * t);
         }
-        // Aplicar fade in/out
+
         let gain = 1.0;
         if (i < fadeSamples) {
-            gain = i / fadeSamples;
+            gain = Math.pow(i / fadeSamples, 2);
         } else if (i > length - fadeSamples) {
-            gain = (length - i) / fadeSamples;
+            gain = Math.pow((length - i) / fadeSamples, 2);
         }
+
         data[i] = amplitud * sample * gain;
     }
+
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
     if (destino) {

@@ -23,6 +23,11 @@
                 <button id="start-fft-btn" class="start-fft-btn">INICIAR VISUALIZACIÓN</button>
                 <canvas id="fft-canvas"></canvas>
             </div>
+            <div style="text-align:center;margin-top:1rem;">
+                <a href="/archivos" class="archivos-link"
+                    style="color:#ff184c;text-decoration:none;font-family:monospace;font-size:0.9rem;border:1px solid #ff184c;padding:8px 16px;border-radius:4px;transition:all 0.2s;">&gt;
+                    TRANSMISIÓN DE ARCHIVOS</a>
+            </div>
         </div>
         <!-- Aquí puedes renderizar tu frontend o incluir más componentes -->
         <div class="panels-row">
@@ -97,7 +102,66 @@
             input.value = input.value.toUpperCase();
             input.setSelectionRange(start, end);
         });
+
+
     </script>
+    <style>
+        .cyber-terminal {
+            background: #18181c;
+            border: 2px solid #ff184c;
+            border-radius: 8px;
+            margin: 24px auto 0 auto;
+            width: 420px;
+            box-shadow: 0 0 16px #ff184c44;
+            font-family: 'Fira Mono', monospace;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #ff184c;
+            color: #fff;
+            padding: 8px 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+        }
+
+        .terminal-body {
+            padding: 18px 16px 24px 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .cyber-upload-btn {
+            background: #212121;
+            color: #ff184c;
+            border: 1.5px dashed #ff184c;
+            border-radius: 6px;
+            padding: 10px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 12px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .cyber-upload-btn:hover {
+            background: #ff184c;
+            color: #fff;
+        }
+
+        .cyber-progress-bar {
+            width: 0%;
+            height: 8px;
+            background: linear-gradient(90deg, #0ff 0%, #ff184c 100%);
+            border-radius: 4px;
+            margin-top: 18px;
+            transition: width 0.3s;
+        }
+    </style>
 </body>
 
 </html>

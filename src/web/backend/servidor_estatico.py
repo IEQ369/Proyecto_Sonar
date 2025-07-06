@@ -14,6 +14,8 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path in ['/', '/index.html']:
             self.path = '/templates/index.html'
+        elif self.path == '/archivos':
+            self.path = '/templates/archivos.html'
         return super().do_GET()
 
 Handler = CustomHandler
@@ -21,4 +23,4 @@ Handler = CustomHandler
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print(f"Servidor estático corriendo en http://localhost:{PORT}/")
     print(f"Raíz de archivos: {os.path.abspath(WEB_DIR)}")
-    httpd.serve_forever() 
+    httpd.serve_forever()

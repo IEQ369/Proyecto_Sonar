@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONAR // TRANSMISIÓN DE ARCHIVOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+    <div id="root">
+        <div class="visualizer-container">
+            <div class="section-title" style="text-align:center;">&gt; TRANSMISIÓN DE ARCHIVOS POR ULTRASONIDO</div>
+            <div class="frequency-visualizer" style="position:relative;">
+                <button id="start-fft-btn" class="start-fft-btn">INICIAR VISUALIZACIÓN</button>
+                <canvas id="fft-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="cyber-terminal">
+            <div class="terminal-header">&gt; TRANSMISIÓN DE ARCHIVOS</div>
+            <div class="terminal-body">
+                <input type="file" id="archivo-input" style="display:none;" />
+                <label for="archivo-input" class="cyber-upload-btn">SELECCIONAR ARCHIVO</label>
+                <button id="archivo-transmit-btn" class="transmit-btn" style="margin-top:12px;">TRANSMITIR ARCHIVO</button>
+                
+                <div id="archivo-progress-container" style="display:none;width:100%;">
+                    <div style="width:100%;background:#2a2a2a;height:8px;border-radius:4px;overflow:hidden;">
+                        <div id="archivo-progress-bar" class="cyber-progress-bar"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:8px;color:#999;font-size:0.9rem;">
+                        <span id="archivo-progress-percent">0%</span>
+                        <span id="archivo-progress-bytes">0 / 0 bytes</span>
+                        <span id="archivo-progress-speed">0 bps</span>
+                    </div>
+                    <div class="archivo-progress-text" style="text-align:center;margin-top:8px;color:#0ff;">esperando...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panels-row">
+            <div class="panel panel-left">
+                <div class="panel-header" style="color:#000">&gt; RECEPCIÓN DE ARCHIVOS</div>
+                <div class="panel-body">
+                    <div id="messages-log" class="messages-log">
+                        <span class="msg-time">[00:00:00]</span> esperando archivos...
+                    </div>
+                    <div id="messages-history" class="messages-history-scroll"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/static/js/app_archivos.js"></script>
+    <script type="module">
+        import { setupEmisorArchivoUI } from '/static/js/emisor_binario.js';
+        setupEmisorArchivoUI();
+    </script>
+</body>
+</html>

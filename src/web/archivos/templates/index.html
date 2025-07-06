@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONAR // TRANSMISIÓN DE ARCHIVOS ULTRASÓNICOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+
+<body>
+    <div id="root">
+        <div class="visualizer-container">
+            <div class="section-title" style="text-align:center;">&gt; ANÁLISIS DE FRECUENCIA (ARCHIVOS)</div>
+            <div class="frequency-visualizer" style="position:relative;">
+                <button id="start-fft-btn" class="start-fft-btn">INICIAR VISUALIZACIÓN</button>
+                <canvas id="fft-canvas"></canvas>
+            </div>
+            <div style="text-align:center;margin-top:1rem;">
+                <a href="/" class="mensajes-link"
+                    style="color:#00ff41;text-decoration:none;font-family:monospace;font-size:0.9rem;border:1px solid #00ff41;padding:8px 16px;border-radius:4px;transition:all 0.2s;">&gt;
+                    TRANSMISIÓN DE MENSAJES</a>
+            </div>
+        </div>
+
+        <div class="panels-row">
+            <div class="panel panel-left">
+                <div class="panel-header" style="color:#000">&gt; RECEPCIÓN DE ARCHIVOS</div>
+                <div class="panel-body">
+                    <div id="messages-log" class="messages-log">
+                        <span class="msg-time">[00:00:00]</span> esperando archivos...
+                    </div>
+                    <div id="messages-history" class="messages-history-scroll"></div>
+                </div>
+            </div>
+            <div class="panel panel-right">
+                <div class="panel-header" style="color:#000">&gt; TRANSMITIR ARCHIVO</div>
+                <div class="panel-body">
+                    <div class="archivo-container">
+                        <div class="archivo-info">
+                            <span class="archivo-label">archivo seleccionado:</span>
+                            <span id="archivo-nombre" class="archivo-nombre">ninguno</span>
+                        </div>
+
+                        <div class="archivo-drop-area" id="archivo-drop-area">
+                            <div class="archivo-drop-content">
+                                <div class="archivo-icon">📁</div>
+                                <div class="archivo-text">arrastra archivo aquí o</div>
+                                <button class="archivo-select-btn" id="archivo-select-btn">seleccionar archivo</button>
+                            </div>
+                            <input type="file" id="archivo-input" style="display: none;" />
+                        </div>
+
+                        <div class="archivo-progress-container" id="archivo-progress-container" style="display: none;">
+                            <div class="archivo-progress-info">
+                                <span class="archivo-progress-text">transmitiendo archivo...</span>
+                                <span class="archivo-progress-percent" id="archivo-progress-percent">0%</span>
+                            </div>
+                            <div class="archivo-progress-bar-container">
+                                <div class="archivo-progress-bar" id="archivo-progress-bar"></div>
+                            </div>
+                            <div class="archivo-progress-details">
+                                <span class="archivo-progress-bytes" id="archivo-progress-bytes">0 / 0 bytes</span>
+                                <span class="archivo-progress-speed" id="archivo-progress-speed">0 bps</span>
+                            </div>
+                        </div>
+
+                        <button class="archivo-transmit-btn" id="archivo-transmit-btn" disabled>
+                            transmitir archivo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/static/js/app_archivos.js"></script>
+    <script type="module">
+        import { emitirArchivoBinario } from '/static/js/emisor_binario.js';
+        import { ReceptorBinario } from '/static/js/receptor_binario.js';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar receptor binario específico para archivos
+            const receptorBinario = new ReceptorBinario();
+            window.receptorBinario = receptorBinario;
+
+            // Configurar callbacks del receptor
+            receptorBinario.setCallbacks(
+                (progreso) => {
+                    console.log('Progreso archivo:', progreso.progreso + '%');
+                },
+                (archivo) => {
+                    console.log('Archivo recibido:', archivo.nombre, archivo.tamaño, 'bytes');
+                    addToMessageLog(`Archivo recibido: ${archivo.nombre} (${archivo.tamaño} bytes)`, 'received');
+                },
+                (estado) => {
+                    console.log('Estado receptor:', estado);
+                    const panelMsg = document.getElementById('panel-msg');
+                    if (panelMsg) {
+                        panelMsg.textContent = `[ARCHIVO] ${estado}`;
+                        panelMsg.style.color = '#00ff41';
+                    }
+                }
+            );
+
+            // Funcionalidad de selección de archivos
+            const archivoInput = document.getElementById('archivo-input');
+            const archivoSelectBtn = document.getElementById('archivo-select-btn');
+            const archivoDropArea = document.getElementById('archivo-drop-area');
+            const archivoNombre = document.getElementById('archivo-nombre');
+            const archivoTransmitBtn = document.getElementById('archivo-transmit-btn');
+            const archivoProgressContainer = document.getElementById('archivo-progress-container');
+            const archivoProgressBar = document.getElementById('archivo-progress-bar');
+            const archivoProgressPercent = document.getElementById('archivo-progress-percent');
+            const archivoProgressBytes = document.getElementById('archivo-progress-bytes');
+            const archivoProgressSpeed = document.getElementById('archivo-progress-speed');
+
+            let archivoSeleccionado = null;
+            let inputActivado = false;
+
+            // Selección de archivo por botón
+            archivoSelectBtn.addEventListener('click', () => {
+                if (!inputActivado) {
+                    inputActivado = true;
+                    archivoInput.click();
+                    setTimeout(() => { inputActivado = false; }, 1000);
+                }
+            });
+
+            // Selección de archivo por input
+            archivoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    seleccionarArchivo(file);
+                }
+            });
+
+            // Drag and drop
+            archivoDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                archivoDropArea.classList.add('dragover');
+            });
+
+            archivoDropArea.addEventListener('dragleave', () => {
+                archivoDropArea.classList.remove('dragover');
+            });
+
+            archivoDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                archivoDropArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    seleccionarArchivo(file);
+                }
+            });
+
+            // Click en el área de drop
+            archivoDropArea.addEventListener('click', (e) => {
+                if (e.target !== archivoSelectBtn && !archivoSelectBtn.contains(e.target) && !inputActivado) {
+                    inputActivado = true;
+                    archivoInput.click();
+                    setTimeout(() => { inputActivado = false; }, 1000);
+                }
+            });
+
+            function seleccionarArchivo(file) {
+                archivoSeleccionado = file;
+                archivoNombre.textContent = file.name;
+                archivoTransmitBtn.disabled = false;
+                archivoProgressContainer.style.display = 'none';
+
+                const size = (file.size / 1024).toFixed(1);
+                archivoNombre.title = `${file.name} (${size} KB)`;
+            }
+
+            // Botón de transmisión
+            archivoTransmitBtn.addEventListener('click', async () => {
+                if (!archivoSeleccionado) return;
+
+                archivoTransmitBtn.disabled = true;
+                archivoProgressContainer.style.display = 'block';
+
+                try {
+                    const startTime = performance.now();
+                    let lastBytes = 0;
+                    let lastTime = startTime;
+
+                    await emitirArchivoBinario(archivoSeleccionado, {
+                        AMPLITUDE: 0.08,
+                        FADE_TIME: 0.035
+                    }, (progreso) => {
+                        archivoProgressBar.style.width = progreso.progreso + '%';
+                        archivoProgressPercent.textContent = progreso.progreso + '%';
+                        archivoProgressBytes.textContent = `${progreso.bytesTransmitidos} / ${progreso.totalBytes} bytes`;
+
+                        const now = performance.now();
+                        const timeDiff = (now - lastTime) / 1000;
+                        const bytesDiff = progreso.bytesTransmitidos - lastBytes;
+                        const speed = timeDiff > 0 ? Math.round(bytesDiff / timeDiff * 8) : 0;
+                        archivoProgressSpeed.textContent = `${speed} bps`;
+
+                        lastBytes = progreso.bytesTransmitidos;
+                        lastTime = now;
+                    });
+
+                    setTimeout(() => {
+                        archivoProgressContainer.style.display = 'none';
+                        archivoTransmitBtn.disabled = false;
+                    }, 2000);
+
+                } catch (error) {
+                    console.error('Error al transmitir archivo:', error);
+                    archivoTransmitBtn.disabled = false;
+                }
+            });
+        });
+
+        function addToMessageLog(msg, type = 'received') {
+            const log = document.getElementById('messages-history');
+            if (!log) return;
+            const now = new Date();
+            const time = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+            const entry = document.createElement('div');
+            entry.className = 'msg-log-entry ' + type;
+            if (type === 'received') {
+                entry.innerHTML = `<span class="msg-time">${time}</span> <span class="msg-type" style="color:#ff184c;font-weight:bold;">[ARCHIVO]</span> <span>${msg}</span>`;
+                entry.style.borderLeft = '4px solid #ff184c';
+                entry.style.padding = '2px 0 2px 8px';
+                entry.style.marginBottom = '4px';
+                entry.style.fontFamily = 'monospace';
+            } else if (type === 'sent') {
+                entry.innerHTML = `<span class="msg-time">${time}</span> <span class="msg-type" style="color:#00ff41;font-weight:bold;">[ENVIADO]</span> <span>${msg}</span>`;
+                entry.style.borderLeft = '4px solid #00ff41';
+                entry.style.padding = '2px 0 2px 8px';
+                entry.style.marginBottom = '4px';
+                entry.style.fontFamily = 'monospace';
+            }
+            if (log.firstChild) {
+                log.insertBefore(entry, log.firstChild);
+            } else {
+                log.appendChild(entry);
+            }
+        }
+        window.addToMessageLog = addToMessageLog;
+    </script>
+
+    <style>
+        /* Estilos específicos para archivos */
+        .archivo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .archivo-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            color: #00ff41;
+        }
+
+        .archivo-label {
+            color: #888;
+        }
+
+        .archivo-nombre {
+            color: #00ff41;
+            font-weight: bold;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .archivo-drop-area {
+            border: 2px dashed #ff184c;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            background: rgba(255, 24, 76, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .archivo-drop-area:hover {
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .archivo-drop-area.dragover {
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+            transform: scale(1.02);
+        }
+
+        .archivo-drop-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .archivo-icon {
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        .archivo-text {
+            color: #888;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+        }
+
+        .archivo-select-btn {
+            background: #212121;
+            color: #ff184c;
+            border: 1px solid #ff184c;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .archivo-select-btn:hover {
+            background: #ff184c;
+            color: #fff;
+        }
+
+        .archivo-progress-container {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .archivo-progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .archivo-progress-text {
+            color: #00ff41;
+        }
+
+        .archivo-progress-percent {
+            color: #ff184c;
+            font-weight: bold;
+        }
+
+        .archivo-progress-bar-container {
+            background: #333;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .archivo-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41 0%, #ff184c 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+        }
+
+        .archivo-progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .archivo-transmit-btn {
+            background: #212121;
+            color: #ff184c;
+            border: 1px solid #ff184c;
+            border-radius: 4px;
+            padding: 12px 24px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .archivo-transmit-btn:hover:not(:disabled) {
+            background: #ff184c;
+            color: #fff;
+        }
+
+        .archivo-transmit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</body>
+
+</html>
