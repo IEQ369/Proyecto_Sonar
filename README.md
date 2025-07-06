@@ -1,5 +1,10 @@
 # SONAR - transmision de datos por ultrasonido
 
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Web Audio API](https://img.shields.io/badge/Web_Audio_API-Supported-green.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+[![Status](https://img.shields.io/badge/Status-Functional-brightgreen.svg)](STATUS)
+[![License](https://img.shields.io/badge/License-Educational-green.svg)](LICENSE)
+
 herramienta para enviar y recibir mensajes y archivos usando ultrasonido, funciona en navegadores modernos usando web audio api, multiplataforma, sin cables ni red
 
 **estado actual:** funcional, sistema robusto con transmision de mensajes y archivos, optimizado para hardware de consumo
