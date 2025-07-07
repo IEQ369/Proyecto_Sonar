@@ -34,7 +34,8 @@ python -m http.server 8000
 
 accede desde el navegador:
 ```
-http://localhost:8000/
+http://localhost:8000/          # mensajes
+http://localhost:8000/archivos  # transmision de archivos
 ```
 
 **importante para moviles:**
@@ -86,7 +87,7 @@ opcion 3, servidor con https (produccion):
 - generador de ondas personalizado, soporta senoidal, cuadrada, sierra, triangular
 - deteccion automatica de conflictos de frecuencias
 - interfaz web responsive con visualizacion fft en tiempo real
-- barra de progreso y confirmacion para archivos
+- barra de progreso y descarga automática de archivos recibidos
 - documentacion de problemas y soluciones
 
 ## tips y recomendaciones
@@ -102,21 +103,27 @@ opcion 3, servidor con https (produccion):
 src/web/
 ├── templates/
 │   ├── index.html          # interfaz de mensajes
-│   └── archivos/
-│       └── index.html      # interfaz de archivos
+│   ├── emisor.html         # emisor de mensajes
+│   └── receptor.html       # receptor de mensajes
 ├── static/
 │   ├── css/
 │   │   └── styles.css      # estilos cyberpunk
 │   └── js/
 │       ├── app.js          # receptor de mensajes
-│       ├── app_archivos.js # receptor de archivos
 │       ├── emisor_ultrasonico.js
-│       ├── emisor_binario.js
-│       ├── receptor_binario.js
 │       ├── protocolo_ultrasonico.js
-│       ├── protocolo_binario.js
 │       ├── generador_onda.js
-│       └── fft_visualizer.js
+│       ├── fft_visualizer.js
+│       └── ui_archivo.js   # utilidades ui
+├── archivos/
+│   ├── templates/
+│   │   └── index.html      # interfaz de archivos
+│   └── static/
+│       └── js/
+│           ├── app_archivos.js      # receptor de archivos
+│           ├── emisor_archivos.js   # emisor de archivos
+│           ├── receptor_archivos.js # receptor robusto
+│           └── protocolo_archivos.js # protocolo de archivos
 └── backend/
     └── servidor_estatico.py
 ```
@@ -132,6 +139,12 @@ src/web/
 - sensible a interferencias y eco
 - algunos antivirus pueden bloquear la generacion de audio
 
+## problemas y soluciones recientes
+
+- antes, los archivos recibidos solo se podían descargar manualmente, ahora la descarga es automática al finalizar la recepción
+- problemas de hardware: algunos parlantes/micrófonos no detectan bien ciertas frecuencias, se recomienda ajustar tolerancia y frecuencias según el dispositivo
+- si la transmisión de archivos falla, prueba aumentar la duración de símbolo, la tolerancia o usar hardware diferente
+
 ## roadmap completado
 
 - migracion de python a web audio api
@@ -144,6 +157,8 @@ src/web/
 - sistema de debug y logs en tiempo real
 - cancelacion automatica y limpieza de recursos
 - documentacion completa de problemas y soluciones
+- separacion de modos: mensajes y archivos con protocolos independientes
+- organizacion modular de archivos por funcionalidad
 
 ## referencias
 

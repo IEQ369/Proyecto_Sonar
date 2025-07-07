@@ -6,7 +6,7 @@
 
 Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API** y **JavaScript puro**. Permite transmitir mensajes de texto y archivos entre dispositivos (laptops, móviles) aprovechando hardware de audio común, sin necesidad de red ni cables.
 
-**Estado Actual**: **FUNCIONAL** - Sistema robusto con transmisión de mensajes y archivos, optimizado para hardware de consumo.
+**Estado Actual**:  **FUNCIONAL** - Sistema robusto con transmisión de mensajes y archivos, optimizado para hardware de consumo.
 
 ## Evolución Técnica del Proyecto
 
@@ -74,8 +74,6 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 - **Filtro corregido**: `/[^A-Z0-9Ñ ]/g` incluye la Ñ.
 - **Amplitud aumentada**: Ñ recibe 180% del volumen normal.
 
-
-
 ## Características Principales
 
 ### **Transmisión de Mensajes**
@@ -92,14 +90,14 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 - Descarga automática del archivo recibido
 - Cancelación automática al cerrar/recargar página
 
+**mejora reciente:** antes la descarga de archivos era manual, ahora es automática al finalizar la recepción, solucionando el problema de archivos recibidos que no se descargaban automáticamente
+
 ### **Interfaz Web**
 - Diseño cyberpunk con visualización FFT en tiempo real
 - Navegación entre mensajes y archivos
 - Drag & drop para archivos
 - Feedback visual del estado de transmisión
 - Responsive para móviles y laptops
-
-
 
 ## Protocolos Implementados
 
@@ -185,7 +183,7 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 ### Hardware
 - **Parlantes móviles**: Distorsión en frecuencias altas, emisión débil
 - **Micrófonos**: Sensibilidad variable, atenuación en ultrasonidos
-- **Distancia**: Limitada por atenuación del aire (1-3 metros máximo)
+- **Distancia**: Limitada por atenuación del aire (30cm-1m metros máximo probado)
 
 ### Software
 - **HTTPS requerido**: Para permisos de micrófono en móviles
@@ -216,14 +214,4 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 - [Web Audio API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 - [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
 
-## Contribuciones
 
-Este proyecto es parte de trabajo académico universitario. Las contribuciones son bienvenidas, especialmente en:
-- Optimización de algoritmos de detección
-- Mejoras en la interfaz de usuario
-- Documentación de casos de uso
-- Pruebas en diferentes dispositivos y ambientes
-
-## Licencia
-
-Proyecto educativo. Uso responsable requerido.
