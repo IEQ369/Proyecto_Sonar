@@ -34,6 +34,19 @@
                         <span class="msg-time">[00:00:00]</span> esperando archivos...
                     </div>
                     <div id="messages-history" class="messages-history-scroll"></div>
+
+                    <!-- Feedback visual robusto para archivos -->
+                    <div id="feedback-receptor-archivos" style="margin-top: 1em; display: none;">
+                        <div id="estado-receptor-archivos"
+                            style="font-size: 1em; margin-bottom: 0.5em; color: #00ff41; font-family: monospace;"></div>
+                        <div id="progreso-receptor-archivos"
+                            style="width: 100%; background: #333; height: 18px; border-radius: 6px; overflow: hidden;">
+                            <div id="barra-progreso-receptor-archivos"
+                                style="height: 100%; width: 0%; background: #4caf50; transition: width 0.3s ease;">
+                            </div>
+                        </div>
+                        <div id="descarga-archivo-receptor" style="margin-top: 0.7em;"></div>
+                    </div>
                 </div>
             </div>
             <div class="panel panel-right">
@@ -77,31 +90,41 @@
         </div>
     </div>
 
-    <script type="module" src="/static/js/app_archivos.js"></script>
+    <script type="module" src="/archivos/static/js/app_archivos.js"></script>
     <script type="module">
-        import { emitirArchivoBinario } from '/static/js/emisor_binario.js';
-        import { ReceptorBinario } from '/static/js/receptor_binario.js';
+        import { ReceptorArchivos } from '/archivos/static/js/receptor_archivos.js';
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Inicializar receptor binario específico para archivos
-            const receptorBinario = new ReceptorBinario();
-            window.receptorBinario = receptorBinario;
+            // Inicializar receptor robusto específico para archivos
+            const receptorArchivos = new ReceptorArchivos();
+            window.receptorArchivos = receptorArchivos;
 
-            // Configurar callbacks del receptor
-            receptorBinario.setCallbacks(
-                (progreso) => {
-                    console.log('Progreso archivo:', progreso.progreso + '%');
+            // Configurar callbacks del receptor robusto
+            receptorArchivos.setCallbacks(
+                // onProgreso
+                function ({ progreso, bloquesRecibidos, totalBloques, bytesRecibidos, totalBytes }) {
+                    document.getElementById('feedback-receptor-archivos').style.display = 'block';
+                    let barra = document.getElementById('barra-progreso-receptor-archivos');
+                    barra.style.width = progreso + '%';
                 },
-                (archivo) => {
-                    console.log('Archivo recibido:', archivo.nombre, archivo.tamaño, 'bytes');
+                // onArchivoCompleto
+                function (archivo) {
+                    let descarga = document.getElementById('descarga-archivo-receptor');
+                    descarga.innerHTML = `<a href="${URL.createObjectURL(archivo.datos)}" download="${archivo.nombre}" style="color: #00ff41; text-decoration: none; font-family: monospace;">descargar archivo recibido (${archivo.nombre})</a>`;
                     addToMessageLog(`Archivo recibido: ${archivo.nombre} (${archivo.tamaño} bytes)`, 'received');
                 },
-                (estado) => {
-                    console.log('Estado receptor:', estado);
-                    const panelMsg = document.getElementById('panel-msg');
-                    if (panelMsg) {
-                        panelMsg.textContent = `[ARCHIVO] ${estado}`;
-                        panelMsg.style.color = '#00ff41';
+                // onEstado
+                function (mensaje) {
+                    document.getElementById('feedback-receptor-archivos').style.display = 'block';
+                    document.getElementById('estado-receptor-archivos').textContent = mensaje;
+                    if (mensaje.startsWith('error')) {
+                        document.getElementById('barra-progreso-receptor-archivos').style.background = '#f44336';
+                    } else {
+                        document.getElementById('barra-progreso-receptor-archivos').style.background = '#4caf50';
+                    }
+                    if (mensaje.includes('timeout') || mensaje.includes('esperando archivo')) {
+                        document.getElementById('barra-progreso-receptor-archivos').style.width = '0%';
+                        document.getElementById('descarga-archivo-receptor').innerHTML = '';
                     }
                 }
             );
@@ -175,47 +198,6 @@
                 const size = (file.size / 1024).toFixed(1);
                 archivoNombre.title = `${file.name} (${size} KB)`;
             }
-
-            // Botón de transmisión
-            archivoTransmitBtn.addEventListener('click', async () => {
-                if (!archivoSeleccionado) return;
-
-                archivoTransmitBtn.disabled = true;
-                archivoProgressContainer.style.display = 'block';
-
-                try {
-                    const startTime = performance.now();
-                    let lastBytes = 0;
-                    let lastTime = startTime;
-
-                    await emitirArchivoBinario(archivoSeleccionado, {
-                        AMPLITUDE: 0.08,
-                        FADE_TIME: 0.035
-                    }, (progreso) => {
-                        archivoProgressBar.style.width = progreso.progreso + '%';
-                        archivoProgressPercent.textContent = progreso.progreso + '%';
-                        archivoProgressBytes.textContent = `${progreso.bytesTransmitidos} / ${progreso.totalBytes} bytes`;
-
-                        const now = performance.now();
-                        const timeDiff = (now - lastTime) / 1000;
-                        const bytesDiff = progreso.bytesTransmitidos - lastBytes;
-                        const speed = timeDiff > 0 ? Math.round(bytesDiff / timeDiff * 8) : 0;
-                        archivoProgressSpeed.textContent = `${speed} bps`;
-
-                        lastBytes = progreso.bytesTransmitidos;
-                        lastTime = now;
-                    });
-
-                    setTimeout(() => {
-                        archivoProgressContainer.style.display = 'none';
-                        archivoTransmitBtn.disabled = false;
-                    }, 2000);
-
-                } catch (error) {
-                    console.error('Error al transmitir archivo:', error);
-                    archivoTransmitBtn.disabled = false;
-                }
-            });
         });
 
         function addToMessageLog(msg, type = 'received') {

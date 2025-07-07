@@ -22,12 +22,12 @@ function getAmplitudPorCaracter(caracter, amplitudBase = 0.15) {
     }
 
     // Letras problemáticas: amplitud aumentada
-    if ('CDIÑYZO'.includes(caracterUpper)) {
+    if ('CDIÑYZOU'.includes(caracterUpper)) {
         return amplitudBase * 1.8; // 180% del volumen normal
     }
 
     // Letras en frecuencias altas: amplitud moderadamente aumentada
-    if ('UVWXYZ'.includes(caracterUpper)) {
+    if ('VWXYZ'.includes(caracterUpper)) {
         return amplitudBase * 1.4; // 140% del volumen normal
     }
 
@@ -103,7 +103,7 @@ export async function emitirUltrasonico(mensaje, opts = {}) {
     setTimeout(() => audioCtx.close(), 200);
 }
 
-export function setupEmisorUI(visualizer) {
+export function setupEmisorUI(visualizer, isTransmittingRef) {
     const input = document.getElementById('messageInput');
     const status = document.getElementById('emisor-status');
     let isSending = false;
@@ -126,6 +126,16 @@ export function setupEmisorUI(visualizer) {
             status.textContent = 'enviando...';
             visualizer.setTransmitMode(true);
 
+            // activar estado de transmisión para evitar auto eco
+            isTransmittingRef.current = true;
+            console.log('transmision iniciada - bloqueando recepcion');
+
+            // mostrar indicador visual de transmisión
+            const transmissionStatus = document.getElementById('transmission-status');
+            if (transmissionStatus) {
+                transmissionStatus.style.display = 'block';
+            }
+
             emitirUltrasonico(val, { AMPLITUDE: 0.08, FADE_TIME: 0.035 })
                 .then(() => {
                     status.textContent = 'mensaje enviado';
@@ -139,6 +149,16 @@ export function setupEmisorUI(visualizer) {
                     isSending = false;
                     input.disabled = false;
                     visualizer.setTransmitMode(false);
+
+                    // desactivar estado de transmisión
+                    isTransmittingRef.current = false;
+                    console.log('transmision terminada - permitiendo recepcion');
+
+                    // ocultar indicador visual de transmisión
+                    const transmissionStatus = document.getElementById('transmission-status');
+                    if (transmissionStatus) {
+                        transmissionStatus.style.display = 'none';
+                    }
                 });
         }
     }

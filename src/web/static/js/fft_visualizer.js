@@ -75,25 +75,60 @@ export class Visualizer {
 
         this.clear();
 
+        // cambiar colores según modo transmisión (patrón chirp)
+        if (this.transmitMode) {
+            // modo transmisión: colores verdes
+            this.gradient = this.ctx.createLinearGradient(0, this.canvas.height, 0, 0);
+            this.gradient.addColorStop(0, '#00ff41');
+            this.gradient.addColorStop(0.5, '#00ff88');
+            this.gradient.addColorStop(1, '#00ffaa');
+        } else {
+            // modo recepción: colores originales
+            this.gradient = this.ctx.createLinearGradient(0, this.canvas.height, 0, 0);
+            this.gradient.addColorStop(0, '#6e1fff');
+            this.gradient.addColorStop(0.5, '#a259f7');
+            this.gradient.addColorStop(1, '#e040fb');
+        }
+
         for (let i = 0; i < numBars; i++) {
             const bin = minBin + Math.floor(i * (maxBin - minBin) / numBars);
             let magnitude = data[bin];
             const freq = bin * binSize;
             const barHeight = (magnitude / 255) * (height - 30);
             const x = i * barWidth;
-            if (i === maxBarIdx) {
-                this.ctx.fillStyle = '#00fff7';
-                this.ctx.shadowColor = '#00fff7';
-                this.ctx.shadowBlur = 16;
-            } else if (i === secondIdx) {
-                this.ctx.fillStyle = '#e040fb';
-                this.ctx.shadowColor = '#e040fb';
-                this.ctx.shadowBlur = 12;
+
+            if (this.transmitMode) {
+                // colores verdes para transmisión
+                if (i === maxBarIdx) {
+                    this.ctx.fillStyle = '#00ff41';
+                    this.ctx.shadowColor = '#00ff41';
+                    this.ctx.shadowBlur = 16;
+                } else if (i === secondIdx) {
+                    this.ctx.fillStyle = '#00ff88';
+                    this.ctx.shadowColor = '#00ff88';
+                    this.ctx.shadowBlur = 12;
+                } else {
+                    this.ctx.fillStyle = this.gradient;
+                    this.ctx.shadowColor = '#00ff41';
+                    this.ctx.shadowBlur = 8;
+                }
             } else {
-                this.ctx.fillStyle = this.gradient;
-                this.ctx.shadowColor = '#00f0ff';
-                this.ctx.shadowBlur = 8;
+                // colores originales para recepción
+                if (i === maxBarIdx) {
+                    this.ctx.fillStyle = '#00fff7';
+                    this.ctx.shadowColor = '#00fff7';
+                    this.ctx.shadowBlur = 16;
+                } else if (i === secondIdx) {
+                    this.ctx.fillStyle = '#e040fb';
+                    this.ctx.shadowColor = '#e040fb';
+                    this.ctx.shadowBlur = 12;
+                } else {
+                    this.ctx.fillStyle = this.gradient;
+                    this.ctx.shadowColor = '#00f0ff';
+                    this.ctx.shadowBlur = 8;
+                }
             }
+
             this.ctx.fillRect(x, height - barHeight, barWidth * 0.8, barHeight);
             this.ctx.shadowBlur = 0;
         }

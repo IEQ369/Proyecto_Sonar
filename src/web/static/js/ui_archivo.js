@@ -1,5 +1,4 @@
 // UI para envío de archivos por ultrasonido
-import { emitirArchivoBinario } from './emisor_binario.js';
 
 export function setupArchivoUI() {
     const fileInput = document.getElementById('file');

@@ -15,7 +15,10 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         if self.path in ['/', '/index.html']:
             self.path = '/templates/index.html'
         elif self.path == '/archivos':
-            self.path = '/templates/archivos.html'
+            self.path = '/archivos/templates/index.html'
+        elif self.path.startswith('/archivos/static/'):
+            # Servir archivos estáticos de la carpeta de archivos
+            self.path = self.path
         return super().do_GET()
 
 Handler = CustomHandler

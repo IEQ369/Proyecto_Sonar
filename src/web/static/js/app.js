@@ -5,6 +5,10 @@ const visualizer = new Visualizer('fft-canvas');
 import { START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, MIN_DATA_FREQUENCY, MAX_DATA_FREQUENCY, FREQUENCY_STEP, CHAR_FREQUENCIES, charToFrequency, frequencyToChar, SYMBOL_DURATION, CHARACTER_GAP } from './protocolo_ultrasonico.js';
 import { emitirUltrasonico, setupEmisorUI } from './emisor_ultrasonico.js';
 
+// estado global para evitar auto eco (patrón chirp)
+let isTransmitting = false;
+let isTransmittingRef = { current: false };
+
 const PROTO = {
     START: START_FREQUENCY,
     SYNC: SYNC_FREQUENCY,
@@ -118,10 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     const avg = sum / count;
                     const freqPeak = maxIdx * binSize;
-                    if (panelMsg) {
-                        panelMsg.textContent = `Freq: ${freqPeak.toFixed(1)} Hz | Mag: ${maxMag} | Avg: ${avg.toFixed(1)} | State: ${rxState} | Buffer: ${rxBuffer}`;
-                    }
-
                     updateFreqHistory(freqPeak);
                     if (maxMag < 12 || freqPeak < 18000) return;
 
@@ -130,7 +130,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         return Math.abs(freqPeak - target) <= PROTO.TOLERANCE;
                     }
 
-
+                    // evitar auto eco: solo bloquear el procesamiento de mensajes, no la detección
+                    if (isTransmittingRef.current) {
+                        // seguir mostrando la frecuencia detectada pero no procesar mensajes
+                        return;
+                    }
 
                     if (rxState === 'IDLE') {
                         if (freqNear(PROTO.START) && isStableFrequency(PROTO.START)) {
@@ -174,11 +178,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         const detectedChar = frequencyToChar(freqPeak);
                         const tiempoDesdeUltimo = now - lastSymbolTime;
 
-                        // Debug específico para caracteres problemáticos
-                        if (detectedChar && 'ÑCDIYZO0123456789'.includes(detectedChar)) {
-                            console.log(`DEBUG ${detectedChar}: Freq=${freqPeak.toFixed(1)}Hz, Mag=${maxMag}, Estable=${isStableFrequency(charToFrequency(detectedChar))}`);
-                        }
-
                         if (
                             detectedChar &&
                             isStableFrequency(charToFrequency(detectedChar)) &&
@@ -212,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         lastChar = '';
                         startDetected = false;
                         syncDetected = false;
-                        if (panelMsg) panelMsg.textContent = '[TIMEOUT]';
+                        if (panelMsg) panelMsg.textContent = '';
                         console.log('Timeout - reiniciando receptor');
                     }
                 }
@@ -230,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('No se encontró el botón con id start-fft-btn');
     }
 
-    setupEmisorUI(visualizer);
+    setupEmisorUI(visualizer, isTransmittingRef);
 });
 
 function addToMessageLog(msg, type = 'received') {

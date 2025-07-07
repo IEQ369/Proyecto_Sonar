@@ -298,6 +298,26 @@ h2 {
     animation: transmitPulse 2s infinite ease-in-out;
 }
 
+.transmission-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00ff41;
+    border-radius: 6px;
+    padding: 8px 12px;
+    z-index: 10;
+    animation: transmitPulse 1.5s ease-in-out infinite;
+}
+
+.transmission-status .status-indicator {
+    color: #00ff41;
+    font-family: var(--mono-font);
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-shadow: 0 0 8px #00ff41;
+}
+
 .visualizer-container {
     background: transparent !important;
     padding: 0;
@@ -564,4 +584,8 @@ h2 {
         margin: 0 auto !important;
         display: block;
     }
+}
+
+#panel-msg {
+    display: none !important;
 }
