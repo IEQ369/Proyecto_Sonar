@@ -213,5 +213,6 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 - [SurfingAttack: Interactive Hidden Attack on Voice Assistants Using Ultrasonic Guided Waves](https://surfingattack.github.io/papers/NDSS-surfingattack.pdf)
 - [Web Audio API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 - [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
+- [BadBIOS - Mito/Leyenda](https://en.wikipedia.org/wiki/BadBIOS)
 
 
