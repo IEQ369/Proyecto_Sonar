@@ -741,3 +741,165 @@ Milestone 1 — Baseline reproducible
 ```
 
 será el inicio oficial del trabajo técnico.
+
+---
+
+# 2026-09-01 — Inicio de Milestone 1 y contrato E001
+
+## Objetivo
+
+Comenzar el baseline reproducible del modo de mensajes sin depender de dos
+dispositivos, altavoz, aire o micrófono.
+
+## Problema / observación
+
+Las pruebas físicas mezclan demasiadas causas posibles:
+
+```text
+emisor
+temporización
+altavoz
+ambiente
+micrófono
+FFT
+detector
+decodificador
+```
+
+Si una transmisión falla, esa prueba por sí sola no identifica cuál de esas
+partes produjo el error.
+
+Además, la página principal posee dos listeners de Enter. Uno transmite con
+amplitud base `0.08` y fade `0.035 s`; el otro utiliza los valores por defecto
+`0.15` y `0.025 s`. Enter puede iniciar ambas rutas, mientras que el botón usa
+la segunda. Esta contradicción queda registrada y no se corrige durante el
+baseline.
+
+## Concepto aprendido
+
+Una señal digital puede representarse como muestras de amplitud:
+
+```text
+x[n] → Float32Array
+```
+
+Un canal identidad permite comprobar primero el software:
+
+```text
+y[n] = x[n]
+```
+
+Después se podrán introducir atenuación, ruido, eco o retardo de forma
+controlada. Si el sistema falla con `y[n] = x[n]`, la causa no puede atribuirse
+al aire ni al hardware.
+
+## Hipótesis
+
+Una señal sintética perfecta debe ser recuperada sin errores si el contrato
+entre emisor y receptor es correcto.
+
+La hipótesis sigue pendiente porque esta sesión cerró únicamente la primera
+fase lógica del experimento.
+
+## Cambios realizados
+
+- creado el contrato de experimento `E001`;
+- registrada una configuración legible por código;
+- añadido un ejecutor de pruebas basado en Node sin dependencias externas;
+- creados vectores deterministas para `A` y `SONAR 01`;
+- añadidas pruebas de mapeo, marcadores, solapamientos y Nyquist;
+- creada la rama `codex/test-reproducible-baseline`;
+- no se modificó código funcional ni la interfaz visual.
+
+## Archivos involucrados
+
+```text
+package.json
+tests/protocolo_mensajes.test.js
+tests/configuracion_e001.test.js
+docs/experiments/README.md
+docs/experiments/E001-baseline-mensajes/README.md
+docs/experiments/E001-baseline-mensajes/config.json
+PROGRESO.md
+```
+
+## Pruebas
+
+Comando:
+
+```text
+npm test
+```
+
+Resultado:
+
+```text
+9 aprobadas
+0 fallidas
+```
+
+## Resultados e interpretación
+
+- el mapeo desde cada frecuencia central es determinista;
+- los vectores documentados coinciden con el protocolo ejecutable;
+- ningún marcador coincide exactamente con un centro de datos;
+- se confirmaron 34 pares de ventanas de decisión solapadas;
+- `7`, `8` y `9` están sobre Nyquist a 44,1 kHz;
+- esto valida el contrato lógico central, no el receptor de audio.
+
+SER, BER y PER todavía no se reportan como resultados porque aún no se ha
+ejecutado una transmisión digital completa. BER se reservará para el flujo
+binario y PER para una definición formal de paquete.
+
+## Decisión y motivo
+
+No reorganizar ni corregir V1 antes de capturar su comportamiento. La evolución
+se realizará mediante módulos pequeños y comprobables, comenzando con un
+generador puro que devuelva muestras sin reproducirlas.
+
+## Próximo paso
+
+E001-B — implementar y verificar:
+
+```text
+tono conocido → Float32Array
+secuencia de mensaje → muestras concatenadas
+longitud, amplitud, frecuencia y fade deterministas
+```
+
+## Continuación de la sesión — E001-B y E001-C
+
+Se extrajo la fórmula matemática de `generador_onda.js` a una función pura que
+devuelve muestras. `generarOnda()` utiliza ahora esa misma función para llenar
+su `AudioBuffer`, por lo que simulación y reproducción no mantienen fórmulas
+duplicadas.
+
+También se añadió un canal identidad:
+
+```text
+Float32Array TX
+      ↓
+y[n] = x[n]
+      ↓
+Float32Array RX independiente
+```
+
+Pruebas acumuladas:
+
+```text
+18 aprobadas
+0 fallidas
+```
+
+Resultados nuevos:
+
+- tono de 60 ms a 48 kHz: 2880 muestras;
+- silencio de 20 ms a 48 kHz: 960 muestras;
+- secuencia sintética de `A`: 21120 muestras, equivalentes a 440 ms;
+- generación repetible muestra por muestra;
+- canal identidad exacto y sin memoria compartida;
+- el fade de 35 ms del perfil Enter se solapa dentro de un símbolo de 60 ms.
+
+El siguiente paso ya no es producir audio: es separar la máquina de estados del
+receptor para poder entregarle detecciones controladas y, después, conectar las
+muestras sintéticas mediante un detector medible.

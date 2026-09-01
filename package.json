@@ -1,0 +1,9 @@
+{
+  "name": "proyecto-sonar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-isolation=none",
+    "test:baseline": "node --test --test-isolation=none tests/protocolo_mensajes.test.js tests/configuracion_e001.test.js"
+  }
+}

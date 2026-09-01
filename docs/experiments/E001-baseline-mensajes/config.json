@@ -1,0 +1,62 @@
+{
+  "experimentId": "E001",
+  "status": "in_progress",
+  "mode": "messages",
+  "canonicalSignal": {
+    "sampleRateHz": 48000,
+    "waveform": "sine",
+    "symbolDurationSeconds": 0.06,
+    "markerDurationSeconds": 0.09,
+    "characterGapSeconds": 0.02
+  },
+  "currentReceiver": {
+    "fftSize": 2048,
+    "stableFramesRequired": 3,
+    "historyFrames": 5,
+    "controlToleranceHz": 60,
+    "characterMappingToleranceHz": 80,
+    "minimumMagnitude": 12
+  },
+  "observedTransmitProfiles": {
+    "enterSetupListener": {
+      "baseAmplitude": 0.08,
+      "fadeSeconds": 0.035
+    },
+    "inlineButtonOrEnterListener": {
+      "baseAmplitude": 0.15,
+      "fadeSeconds": 0.025
+    }
+  },
+  "channelProfiles": [
+    {
+      "id": "identity",
+      "gain": 1,
+      "noiseAmplitude": 0,
+      "delaySamples": 0,
+      "echoGain": 0
+    }
+  ],
+  "initialVectors": [
+    {
+      "message": "A",
+      "frequenciesHz": [18500, 19050, 18800, 19050, 19600]
+    },
+    {
+      "message": "SONAR 01",
+      "frequenciesHz": [
+        18500,
+        19050,
+        20600,
+        20200,
+        20100,
+        18800,
+        20500,
+        18600,
+        21400,
+        21500,
+        19050,
+        19600
+      ]
+    }
+  ]
+}
