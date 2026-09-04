@@ -34,3 +34,4 @@ costo para el repositorio.
 ## Índice
 
 - [E001 — Baseline reproducible de mensajes](E001-baseline-mensajes/README.md)
+- [E002 — Baseline lógico de archivos](E002-baseline-archivos/README.md)

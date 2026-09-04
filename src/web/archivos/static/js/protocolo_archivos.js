@@ -62,6 +62,57 @@ export function codificarCabeceraArchivo(tamano, nombre, crc) {
     return buffer;
 }
 
+/**
+ * Construye una cabecera autoconsistente calculando CRC16 sobre sus primeros
+ * 20 bytes. Se utiliza como referencia verificable del protocolo.
+ */
+export function crearCabeceraArchivo(tamano, nombre) {
+    if (!Number.isInteger(tamano) || tamano < 0 || tamano > 0xFFFFFFFF) {
+        throw new RangeError('El tamaño debe ser un entero entre 0 y 2^32-1');
+    }
+
+    const cabecera = codificarCabeceraArchivo(tamano, String(nombre), 0);
+    const crc = crc16ccitt(cabecera.slice(0, 20));
+    cabecera[20] = crc & 0xFF;
+    cabecera[21] = (crc >> 8) & 0xFF;
+    return cabecera;
+}
+
+/**
+ * Lee los campos de una cabecera y comprueba su CRC16.
+ */
+export function decodificarCabeceraArchivo(cabecera) {
+    if (
+        !(cabecera instanceof Uint8Array)
+        || cabecera.length !== PROTOCOLO_ARCHIVOS.CABECERA_BYTES
+    ) {
+        throw new TypeError('La cabecera debe ser un Uint8Array de 22 bytes');
+    }
+
+    const vista = new DataView(
+        cabecera.buffer,
+        cabecera.byteOffset,
+        cabecera.byteLength
+    );
+    const tamano = vista.getUint32(0, true);
+    let nombre = '';
+
+    for (let indice = 4; indice < 20 && cabecera[indice] !== 0; indice++) {
+        nombre += String.fromCharCode(cabecera[indice]);
+    }
+
+    const crcRecibido = vista.getUint16(20, true);
+    const crcCalculado = crc16ccitt(cabecera.slice(0, 20));
+
+    return {
+        valida: crcRecibido === crcCalculado,
+        tamano,
+        nombre,
+        crcRecibido,
+        crcCalculado
+    };
+}
+
 // CRC16-CCITT simple para la cabecera
 export function crc16ccitt(buf) {
     let crc = 0xFFFF;
@@ -84,6 +135,26 @@ export function codificarBloqueDatos(bytes) {
     return bloque;
 }
 
+/**
+ * Separa payload y CRC8, y devuelve el resultado de validación.
+ */
+export function decodificarBloqueDatos(bloque) {
+    if (!(bloque instanceof Uint8Array) || bloque.length < 1) {
+        throw new TypeError('El bloque debe ser un Uint8Array con CRC8');
+    }
+
+    const datos = bloque.slice(0, -1);
+    const crcRecibido = bloque[bloque.length - 1];
+    const crcCalculado = crc8(datos);
+
+    return {
+        valido: crcRecibido === crcCalculado,
+        datos,
+        crcRecibido,
+        crcCalculado
+    };
+}
+
 // CRC8 simple para bloques
 export function crc8(buf) {
     let crc = 0;
@@ -96,4 +167,4 @@ export function crc8(buf) {
         }
     }
     return crc;
-} 
+}

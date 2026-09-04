@@ -1954,3 +1954,50 @@ una implementación final del módem.
 
 La próxima evolución debe preservar esta separación y evitar que las métricas,
 el detector o el modelo de canal vuelvan a mezclarse con la interfaz.
+
+---
+
+# 41. Contrato de referencia para archivos — E002
+
+El baseline lógico de archivos añadió funciones puras de referencia dentro de
+`protocolo_archivos.js`:
+
+```text
+crearCabeceraArchivo
+decodificarCabeceraArchivo
+codificarBloqueDatos
+decodificarBloqueDatos
+byteToBits
+bitsToByte
+crc16ccitt
+crc8
+```
+
+Estas funciones permiten probar el formato sin Web Audio API, temporizadores ni
+interfaz. Todavía no sustituyen las rutas activas de emisor y receptor.
+
+La comparación confirmó que la estructura conceptual puede ser consistente,
+pero las rutas V1 combinan componentes incompatibles:
+
+```text
+TX cabecera: CRC calculado con tamaño cero
+RX cabecera: CRC calculado con tamaño real
+
+TX bloque: CRC8 polinomial
+RX bloque: XOR simple
+
+TX bloque final: longitud variable
+RX bloque final: longitud fija de 9 bytes
+```
+
+También existen colisiones de roles físicos:
+
+```text
+START = DATA_0
+SYNC  = DATA_1
+END   = ACK
+```
+
+La arquitectura corregida deberá definir un único contrato compartido y hacer
+que emisor y receptor dependan de él. E002 conserva el comportamiento original
+para que esas correcciones puedan compararse contra evidencia.

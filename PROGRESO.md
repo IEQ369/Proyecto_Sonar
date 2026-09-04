@@ -955,9 +955,10 @@ Resultado:
 0 fallidas
 ```
 
-La página `/` también fue cargada mediante el servidor estático y no produjo
-errores de consola. No se concedió acceso al micrófono, por lo que esto no se
-registra como prueba acústica.
+Las páginas `/` y `/archivos` también fueron cargadas mediante el servidor
+estático y no produjeron errores de consola JavaScript. No se concedió acceso al
+micrófono, por lo que esto no se registra como prueba acústica. El servidor
+mantiene el 404 ya conocido de `favicon.ico`, sin efecto sobre el protocolo.
 
 ## Experimento ejecutado
 
@@ -1019,3 +1020,74 @@ docs/experiments/E001-baseline-mensajes/results/latest.json
 
 Completar M1-003 para el protocolo binario de archivos mediante vectores de
 cabecera, empaquetado de bits, CRC8 y CRC16 antes de corregir sus defectos.
+
+## Continuación — E002 baseline lógico de archivos
+
+Se creó un contrato de referencia para comprobar el protocolo de archivos sin
+generar audio.
+
+Pruebas acumuladas:
+
+```text
+45 aprobadas
+0 fallidas
+```
+
+Comando experimental:
+
+```text
+npm run experiment:e002
+```
+
+Resultados:
+
+```text
+CRC16 transmitido por cabecera V1: 53940
+CRC16 calculado por receptor:      59143
+
+CRC8 transmitido para [1..8]:      62
+XOR calculado por receptor:        8
+
+bloque final de 3 bytes + CRC:     4 bytes
+bloque esperado por receptor:      9 bytes
+```
+
+Se confirmaron además:
+
+```text
+START = DATA_0
+SYNC  = DATA_1
+END   = ACK
+```
+
+y solapamiento de ventanas binarias porque la separación es 495 Hz y cada
+decisión admite 300 Hz.
+
+## Interpretación
+
+La hipótesis de compatibilidad emisor ↔ receptor fue refutada. Una transferencia
+puede fallar aunque todos los bits acústicos sean perfectos, porque la cabecera
+y los bloques no comparten el mismo cálculo de integridad ni la misma longitud
+final.
+
+Estas observaciones pertenecen al protocolo lógico. No son resultados sobre
+alcance, ruido físico, altavoces o micrófonos.
+
+## Estado de la base
+
+La base reproducible inicial queda formada por:
+
+```text
+E001 → mensajes, muestras, canal, detector, receptor y SER
+E002 → bits, cabecera, bloques, CRC y conflictos de archivos
+```
+
+Los dos experimentos producen resultados JSON repetibles y conservan los
+defectos V1 antes de corregirlos.
+
+## Próximo paso
+
+La base ya permite formular una investigación científica sin depender de
+afirmaciones históricas del README. El siguiente trabajo debe definirse a partir
+de la pregunta, hipótesis y alcance de esa investigación, o continuar Milestone
+1 con relación señal-ruido, latencia y registro de pruebas físicas.

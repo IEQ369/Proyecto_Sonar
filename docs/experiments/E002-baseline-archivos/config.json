@@ -1,0 +1,16 @@
+{
+  "experimentId": "E002",
+  "status": "completed_logical_baseline",
+  "mode": "files",
+  "headerVector": {
+    "fileSizeBytes": 1,
+    "fileName": "A"
+  },
+  "fullBlockVector": [1, 2, 3, 4, 5, 6, 7, 8],
+  "shortBlockVector": [1, 2, 3],
+  "receiverV1": {
+    "frequencyToleranceHz": 300,
+    "expectedBlockDataBytes": 8,
+    "expectedBlockCrcBytes": 1
+  }
+}

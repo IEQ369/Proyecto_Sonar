@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E002",
+  "experimentStatus": "completed_logical_baseline",
+  "executedAt": "2026-09-04T14:51:25.674Z",
+  "environment": {
+    "runtime": "Node.js",
+    "runtimeVersion": "v24.18.0",
+    "platform": "linux",
+    "architecture": "x64"
+  },
+  "summary": {
+    "confirmedDefectCount": 5,
+    "confirmedDefects": [
+      "header_crc_mismatch",
+      "block_crc_algorithm_mismatch",
+      "short_final_block_length_mismatch",
+      "exact_frequency_role_collisions",
+      "binary_decision_windows_overlap"
+    ]
+  },
+  "header": {
+    "input": {
+      "fileSizeBytes": 1,
+      "fileName": "A"
+    },
+    "reference": {
+      "bytesHex": "01 00 00 00 41 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 07 e7",
+      "validForReceiver": true,
+      "crc16": 59143
+    },
+    "transmitterV1": {
+      "bytesHex": "01 00 00 00 41 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 b4 d2",
+      "validForReceiver": false,
+      "transmittedCrc16": 53940,
+      "receiverCalculatedCrc16": 59143
+    }
+  },
+  "fullBlock": {
+    "data": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "encodedHex": "01 02 03 04 05 06 07 08 3e",
+    "referenceCrc8": 62,
+    "receiverV1Xor": 8,
+    "referenceValidation": true
+  },
+  "shortFinalBlock": {
+    "data": [
+      1,
+      2,
+      3
+    ],
+    "encodedLengthBytes": 4,
+    "receiverExpectedLengthBytes": 9,
+    "compatible": false
+  },
+  "frequencies": {
+    "collisions": [
+      {
+        "left": "START",
+        "right": "DATA_0",
+        "frequencyHz": 18700,
+        "exact": true
+      },
+      {
+        "left": "SYNC",
+        "right": "DATA_1",
+        "frequencyHz": 19195,
+        "exact": true
+      },
+      {
+        "left": "END",
+        "right": "ACK",
+        "frequencyHz": 19500,
+        "exact": true
+      }
+    ],
+    "dataDistanceHz": 495,
+    "receiverToleranceHz": 300,
+    "decisionWindowsOverlap": true
+  }
+}

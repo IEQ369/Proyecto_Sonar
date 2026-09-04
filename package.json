@@ -5,6 +5,7 @@
   "scripts": {
     "test": "node --test --test-isolation=none",
     "test:baseline": "node --test --test-isolation=none",
-    "experiment:e001": "node scripts/run_e001.js"
+    "experiment:e001": "node scripts/run_e001.js",
+    "experiment:e002": "node scripts/run_e002.js"
   }
 }
