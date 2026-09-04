@@ -1,6 +1,6 @@
 # E001 — Baseline reproducible de mensajes
 
-> **Estado:** en progreso
+> **Estado:** baseline digital inicial completado
 >
 > **Inicio:** 2026-09-01
 >
@@ -21,8 +21,10 @@ que atraviesa un canal identidad debe recuperarse sin errores. Un fallo en esas
 condiciones pertenece al software; un éxito digital seguido de un fallo físico
 orientaría la investigación hacia el navegador, el dispositivo o el ambiente.
 
-La hipótesis todavía está **PENDIENTE**. La primera fase únicamente fija y prueba
-el contrato lógico sobre el cual construiremos la señal sintética.
+La hipótesis fue comprobada parcialmente. Mensajes sin símbolos consecutivos se
+recuperan en el canal identidad, pero `AA` se recupera como `A`. Por tanto, la
+afirmación general «todo mensaje perfecto llega sin errores» queda refutada por
+la lógica temporal actual del receptor.
 
 ## Modelo que vamos a comprobar
 
@@ -63,7 +65,7 @@ Quedan fuera de esta primera iteración:
 - altavoz, micrófono, distancia y habitación;
 - corrección de los defectos conocidos de V1;
 - comparación FFT frente a Goertzel;
-- ruido, eco y atenuación, salvo el perfil identidad.
+- eco y modelos físicos realistas del canal.
 
 ## Unidad de prueba
 
@@ -249,6 +251,138 @@ El conjunto acumulado queda en:
 0 pruebas fallidas
 ```
 
-El canal ya existe, pero todavía no está conectado al receptor. La siguiente
-frontera es separar la máquina de estados RX de la captura por micrófono y de la
-visualización FFT.
+### E001-D — Receptor aislado
+
+**Estado:** MEDIDO el 2026-09-04.
+
+La máquina de estados se separó de `app.js` y ahora recibe únicamente:
+
+```text
+frecuencia detectada
+magnitud detectada
+tiempo de detección
+```
+
+El núcleo no conoce el micrófono, el lienzo de visualización ni elementos HTML.
+Las pruebas comprueban:
+
+- estado y buffer iniciales;
+- rechazo de un START aislado;
+- estabilidad de tres detecciones;
+- transiciones `IDLE → SYNC → DATA`;
+- reconstrucción de `A` y retorno a `IDLE`;
+- rechazo de señales bajo el umbral;
+- cancelación por timeout.
+
+`app.js` utiliza ahora este mismo núcleo. La página principal cargó en el
+navegador sin errores de JavaScript. No se concedió permiso al micrófono y no se
+considera realizada una prueba acústica.
+
+### E001-E — Extremo a extremo digital
+
+**Estado:** MEDIDO el 2026-09-04.
+
+Se creó un detector de referencia que compara las muestras contra todas las
+frecuencias candidatas. Su función es servir como instrumento de laboratorio;
+no sustituye ni valida todavía la Transformada Rápida de Fourier utilizada por
+el navegador.
+
+El recorrido ejecutado es:
+
+```text
+mensaje
+→ plan de tonos
+→ Float32Array
+→ canal simulado
+→ detector de referencia
+→ máquina de estados
+→ mensaje recibido
+→ tasa de error de símbolos
+```
+
+Resultados con canal identidad:
+
+| Entrada | Salida | Errores | SER | Interpretación |
+|---|---|---:|---:|---|
+| `A` | `A` | 0 | 0 | recorrido básico correcto |
+| `SONAR 01` | `SONAR 01` | 0 | 0 | varios símbolos correctos |
+| `AA` | `A` | 1 | 0,5 | segundo símbolo bloqueado |
+
+SER significa *Symbol Error Rate* o tasa de error de símbolos. En mensajería,
+cada carácter transmitido cuenta como un símbolo de datos.
+
+El caso `AA` falla aunque las dos frecuencias fueron detectadas correctamente.
+Esto aísla el defecto en el bloqueo temporal del receptor: entre decisiones hay
+exactamente 80 ms y la condición existente exige más de 80 ms para aceptar dos
+caracteres iguales consecutivos.
+
+### E001-F — Canal degradado mínimo
+
+**Estado:** MEDIDO el 2026-09-04.
+
+Se añadieron ganancia y ruido uniforme con semilla. La semilla hace que la misma
+configuración produzca exactamente la misma secuencia de ruido.
+
+| Caso | Entrada | Salida | SER |
+|---|---|---|---:|
+| ganancia `0,5`, sin ruido | `A` | vacío | 1 |
+| ganancia `1`, ruido `0,02`, semilla `369` | `A` | `A` | 0 |
+
+La ganancia `0,5` no representa automáticamente «volumen físico al 50 %». El
+detector de laboratorio convierte amplitud numérica a una escala de 0 a 255
+antes de aplicar el umbral heredado de V1. Este resultado caracteriza ese
+modelo numérico, no un altavoz, micrófono o habitación.
+
+## Ejecución reproducible
+
+Pruebas completas:
+
+```text
+npm test
+```
+
+Experimento y generación del resultado JSON:
+
+```text
+npm run experiment:e001
+```
+
+Resultado registrado:
+
+```text
+35 pruebas aprobadas
+0 pruebas fallidas
+3 de 5 casos experimentales con mensaje completo correcto
+```
+
+El informe legible por máquinas se encuentra en
+[`results/latest.json`](results/latest.json).
+
+## Limitaciones del baseline
+
+- el simulador conoce el inicio y final de cada segmento generado;
+- todavía no busca fronteras desconocidas dentro de un flujo continuo;
+- el detector de referencia no es el `AnalyserNode` del navegador;
+- el ruido uniforme no modela una habitación ni la respuesta de hardware;
+- no se midió relación señal-ruido en decibelios;
+- no se probaron altavoz, aire ni micrófono;
+- el protocolo de archivos permanece fuera de E001.
+
+`AnalyserNode` es el componente de Web Audio API que obtiene el espectro usado
+por la interfaz. API significa interfaz de programación de aplicaciones.
+
+## Conclusión
+
+E001 cumple su condición de cierre como baseline digital inicial: un comando
+genera casos, ejecuta el receptor sin micrófono, calcula la tasa de error y
+guarda resultados reproducibles.
+
+La evidencia permite distinguir dos clases de fallo:
+
+1. `AA` demuestra un fallo de lógica RX porque el detector sí encontró ambos
+   tonos y el canal fue perfecto.
+2. Un futuro fallo exclusivo de la ruta física, después de superar estas
+   pruebas, podrá investigarse en adquisición, navegador, hardware o ambiente.
+
+E001 no demuestra que SONAR funcione acústicamente. Establece una referencia
+controlada desde la cual comparar correcciones y pruebas físicas posteriores.

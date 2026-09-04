@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test --test-isolation=none",
-    "test:baseline": "node --test --test-isolation=none tests/protocolo_mensajes.test.js tests/configuracion_e001.test.js"
+    "test:baseline": "node --test --test-isolation=none",
+    "experiment:e001": "node scripts/run_e001.js"
   }
 }

@@ -1891,3 +1891,66 @@ SONAR actual puede entenderse así:
 La V2 no debe destruir este conocimiento.
 
 Debe convertir este prototipo en un sistema donde cada capa tenga una responsabilidad clara y podamos demostrar cuantitativamente que funciona mejor.
+
+---
+
+# 40. Primera separación ejecutada — E001
+
+El baseline digital de mensajes introdujo una separación incremental sin
+rediseñar la interfaz:
+
+```text
+src/web/static/js/core/
+├── receptor_mensajes_core.js
+└── metricas_mensajes.js
+
+src/web/static/js/simulacion/
+├── emisor_mensajes_sintetico.js
+├── detector_tonos_referencia.js
+├── canal_simulado.js
+└── simulador_mensajes.js
+```
+
+Las responsabilidades quedan así:
+
+```text
+UI / micrófono
+    ↓ entrega frecuencia, magnitud y tiempo
+ReceptorMensajesCore
+    ↓ entrega eventos
+UI / registro / métricas
+```
+
+En el laboratorio digital:
+
+```text
+Emisor sintético
+    ↓ Float32Array
+Canal simulado
+    ↓ Float32Array
+Detector de referencia
+    ↓ frecuencia y magnitud
+ReceptorMensajesCore
+    ↓ mensaje
+Métricas
+```
+
+Esta estructura crea dos adaptadores alrededor de un mismo núcleo:
+
+```text
+adaptador real      → micrófono + AnalyserNode
+adaptador simulado  → arrays + detector de referencia
+```
+
+`ReceptorMensajesCore` ya es utilizado por la página principal, eliminando la
+copia anterior de la máquina de estados dentro de `app.js`.
+
+## Límite arquitectónico actual
+
+El detector de referencia conoce las fronteras de los segmentos producidos por
+el emisor sintético. Por tanto, todavía no resuelve adquisición continua ni
+sincronización temporal desconocida. Es una herramienta para aislar capas, no
+una implementación final del módem.
+
+La próxima evolución debe preservar esta separación y evitar que las métricas,
+el detector o el modelo de canal vuelvan a mezclarse con la interfaz.

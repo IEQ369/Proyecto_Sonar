@@ -1,6 +1,6 @@
 {
   "experimentId": "E001",
-  "status": "in_progress",
+  "status": "completed_initial_baseline",
   "mode": "messages",
   "canonicalSignal": {
     "sampleRateHz": 48000,
@@ -34,6 +34,53 @@
       "noiseAmplitude": 0,
       "delaySamples": 0,
       "echoGain": 0
+    }
+  ],
+  "measurementCases": [
+    {
+      "id": "identity-a",
+      "message": "A",
+      "channel": {
+        "gain": 1,
+        "noiseAmplitude": 0,
+        "seed": 369
+      }
+    },
+    {
+      "id": "identity-sonar-01",
+      "message": "SONAR 01",
+      "channel": {
+        "gain": 1,
+        "noiseAmplitude": 0,
+        "seed": 369
+      }
+    },
+    {
+      "id": "identity-repeated-aa",
+      "message": "AA",
+      "channel": {
+        "gain": 1,
+        "noiseAmplitude": 0,
+        "seed": 369
+      }
+    },
+    {
+      "id": "attenuation-50-a",
+      "message": "A",
+      "channel": {
+        "gain": 0.5,
+        "noiseAmplitude": 0,
+        "seed": 369
+      }
+    },
+    {
+      "id": "noise-002-a",
+      "message": "A",
+      "channel": {
+        "gain": 1,
+        "noiseAmplitude": 0.02,
+        "seed": 369
+      }
     }
   ],
   "initialVectors": [

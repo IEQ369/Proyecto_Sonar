@@ -1,44 +1,13 @@
 import { Visualizer } from './fft_visualizer.js';
+import { frequencyToChar } from './protocolo_ultrasonico.js';
+import { setupEmisorUI } from './emisor_ultrasonico.js';
+import { ReceptorMensajesCore } from './core/receptor_mensajes_core.js';
 
 const visualizer = new Visualizer('fft-canvas');
-
-import { START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, MIN_DATA_FREQUENCY, MAX_DATA_FREQUENCY, FREQUENCY_STEP, CHAR_FREQUENCIES, charToFrequency, frequencyToChar, SYMBOL_DURATION, CHARACTER_GAP } from './protocolo_ultrasonico.js';
-import { emitirUltrasonico, setupEmisorUI } from './emisor_ultrasonico.js';
+const receptorMensajes = new ReceptorMensajesCore();
 
 // estado global para evitar auto eco (patrón chirp)
-let isTransmitting = false;
 let isTransmittingRef = { current: false };
-
-const PROTO = {
-    START: START_FREQUENCY,
-    SYNC: SYNC_FREQUENCY,
-    END: END_FREQUENCY,
-    MIN_DATA: MIN_DATA_FREQUENCY,
-    MAX_DATA: MAX_DATA_FREQUENCY,
-    STEP: FREQUENCY_STEP,
-    TOLERANCE: 60
-};
-
-let rxState = 'IDLE';
-let rxBuffer = '';
-let lastChar = '';
-let lastSymbolTime = 0;
-let lastDetectedFreq = 0;
-let lastPanelMsg = '';
-let startDetected = false;
-let syncDetected = false;
-
-let freqHistory = [];
-const HISTORY_SIZE = 5;
-function updateFreqHistory(freq) {
-    freqHistory.push(freq);
-    if (freqHistory.length > HISTORY_SIZE) freqHistory.shift();
-}
-function isStableFrequency(targetFreq) {
-    return freqHistory.filter(f => Math.abs(f - targetFreq) < PROTO.TOLERANCE).length >= 3;
-}
-
-const SYMBOL_LOCKOUT_MS = (SYMBOL_DURATION + CHARACTER_GAP) * 1000;
 
 document.addEventListener('DOMContentLoaded', function () {
     visualizer.start();
@@ -87,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 analyser.fftSize = 2048;
                 analyser.smoothingTimeConstant = 0.3;
                 source.connect(analyser);
-                let lastUltrasound = 0;
-                let lastMsg = '';
                 const minFreq = 18100;
                 const maxFreq = 22500;
                 function processFrame() {
@@ -109,26 +76,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     const maxBin = Math.ceil(maxFreq / binSize);
                     let maxMag = 0;
                     let maxIdx = -1;
-                    let sum = 0;
-                    let count = 0;
                     for (let i = minBin; i <= maxBin; i++) {
                         const mag = dataArray[i];
-                        sum += mag;
-                        count++;
                         if (mag > maxMag) {
                             maxMag = mag;
                             maxIdx = i;
                         }
                     }
-                    const avg = sum / count;
                     const freqPeak = maxIdx * binSize;
-                    updateFreqHistory(freqPeak);
-                    if (maxMag < 12 || freqPeak < 18000) return;
-
                     const now = performance.now();
-                    function freqNear(target) {
-                        return Math.abs(freqPeak - target) <= PROTO.TOLERANCE;
-                    }
 
                     // evitar auto eco: solo bloquear el procesamiento de mensajes, no la detección
                     if (isTransmittingRef.current) {
@@ -136,82 +92,31 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
                     }
 
-                    if (rxState === 'IDLE') {
-                        if (freqNear(PROTO.START) && isStableFrequency(PROTO.START)) {
-                            rxState = 'SYNC';
-                            rxBuffer = '';
-                            lastChar = '';
-                            lastSymbolTime = now;
-                            startDetected = true;
-                            syncDetected = false;
-                            if (panelMsg) panelMsg.textContent = '[SYNC]';
-                            console.log('START detectado:', freqPeak.toFixed(1), 'Hz');
-                        }
-                    } else if (rxState === 'SYNC') {
-                        if (freqNear(PROTO.SYNC) && isStableFrequency(PROTO.SYNC)) {
-                            rxState = 'DATA';
-                            lastSymbolTime = now;
-                            syncDetected = true;
-                            if (panelMsg) panelMsg.textContent = '[DATA]';
-                            console.log('SYNC detectado:', freqPeak.toFixed(1), 'Hz');
-                        }
-                    } else if (rxState === 'DATA') {
-                        if (freqNear(PROTO.END) && isStableFrequency(PROTO.END)) {
-                            rxState = 'END';
-                            lastSymbolTime = now;
-                            if (panelMsg) panelMsg.textContent = '[END]';
-                            addToMessageLog(rxBuffer, 'received');
-                            if (panelMsg) panelMsg.textContent = '[RECIBIDO] ' + rxBuffer;
-                            rxState = 'IDLE';
-                            rxBuffer = '';
-                            lastChar = '';
-                            lastSymbolTime = now;
-                            startDetected = false;
-                            syncDetected = false;
-                            console.log('END detectado, mensaje completo:', rxBuffer);
-                            return;
-                        }
-                        if (freqNear(PROTO.SYNC) && isStableFrequency(PROTO.SYNC)) {
-                            lastSymbolTime = now;
-                            return;
-                        }
-                        const detectedChar = frequencyToChar(freqPeak);
-                        const tiempoDesdeUltimo = now - lastSymbolTime;
+                    const evento = receptorMensajes.procesarDeteccion({
+                        frecuenciaHz: freqPeak,
+                        magnitud: maxMag,
+                        tiempoMs: now
+                    });
 
-                        if (
-                            detectedChar &&
-                            isStableFrequency(charToFrequency(detectedChar)) &&
-                            (detectedChar !== lastChar || tiempoDesdeUltimo > SYMBOL_LOCKOUT_MS)
-                        ) {
-                            rxBuffer += detectedChar;
-                            lastChar = detectedChar;
-                            lastSymbolTime = now;
-                            if (panelMsg) panelMsg.textContent = rxBuffer;
-                            console.log(`Carácter agregado: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
-                        } else if (detectedChar === lastChar && tiempoDesdeUltimo <= SYMBOL_LOCKOUT_MS) {
-                            console.log(`Carácter ignorado por lockout: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
-                        } else if (detectedChar) {
-                            console.log(`Carácter detectado pero no agregado: ${detectedChar} (${freqPeak.toFixed(1)} Hz)`);
-                        }
-                    } else if (rxState === 'END') {
-                        if (freqNear(PROTO.END) && isStableFrequency(PROTO.END)) {
-                            addToMessageLog(rxBuffer, 'received');
-                            if (panelMsg) panelMsg.textContent = '[RECIBIDO] ' + rxBuffer;
-                            rxState = 'IDLE';
-                            rxBuffer = '';
-                            lastChar = '';
-                            lastSymbolTime = now;
-                            startDetected = false;
-                            syncDetected = false;
-                        }
+                    if (!evento) {
+                        return;
                     }
-                    if (now - lastSymbolTime > 2000) {
-                        rxState = 'IDLE';
-                        rxBuffer = '';
-                        lastChar = '';
-                        startDetected = false;
-                        syncDetected = false;
-                        if (panelMsg) panelMsg.textContent = '';
+
+                    if (evento.tipo === 'inicio') {
+                        panelMsg.textContent = '[SYNC]';
+                        console.log('START detectado:', freqPeak.toFixed(1), 'Hz');
+                    } else if (evento.tipo === 'sincronizado') {
+                        panelMsg.textContent = '[DATA]';
+                        console.log('SYNC detectado:', freqPeak.toFixed(1), 'Hz');
+                    } else if (evento.tipo === 'caracter') {
+                        panelMsg.textContent = evento.mensajeParcial;
+                        console.log(`Carácter agregado: ${evento.caracter} (${freqPeak.toFixed(1)} Hz)`);
+                    } else if (evento.tipo === 'mensaje_completo') {
+                        addToMessageLog(evento.mensaje, 'received');
+                        panelMsg.textContent = '[RECIBIDO] ' + evento.mensaje;
+                        console.log('END detectado, mensaje completo:', evento.mensaje);
+                    } else if (evento.tipo === 'timeout') {
+                        panelMsg.textContent = '';
                         console.log('Timeout - reiniciando receptor');
                     }
                 }

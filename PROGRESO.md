@@ -903,3 +903,119 @@ Resultados nuevos:
 El siguiente paso ya no es producir audio: es separar la máquina de estados del
 receptor para poder entregarle detecciones controladas y, después, conectar las
 muestras sintéticas mediante un detector medible.
+
+---
+
+# 2026-09-04 — E001-D/E/F y primer baseline extremo a extremo
+
+## Objetivo
+
+Completar una base digital reproducible capaz de ejecutar el receptor sin
+micrófono y localizar fallos lógicos antes de realizar pruebas físicas.
+
+## Cambios realizados
+
+- completada la clase `ReceptorMensajesCore` iniciada durante el ejercicio de
+  aprendizaje;
+- separada la máquina de estados de la captura, la Transformada Rápida de
+  Fourier y la interfaz;
+- conectada la página principal al nuevo núcleo del receptor;
+- creado un emisor sintético de mensajes y segmentos;
+- creado un detector de tonos de referencia;
+- añadida la tasa de error de símbolos mediante distancia de edición;
+- ampliado el canal con ganancia y ruido uniforme reproducible;
+- creado `npm run experiment:e001` para escribir un informe JSON;
+- verificada la carga de la página principal sin errores JavaScript;
+- preservado el diseño visual existente.
+
+## Recorrido comprobado
+
+```text
+mensaje
+→ muestras Float32Array
+→ canal simulado
+→ detector de referencia
+→ máquina de estados
+→ mensaje recibido
+→ SER
+```
+
+SER significa *Symbol Error Rate* o tasa de error de símbolos.
+
+## Pruebas automáticas
+
+```text
+npm test
+```
+
+Resultado:
+
+```text
+35 aprobadas
+0 fallidas
+```
+
+La página `/` también fue cargada mediante el servidor estático y no produjo
+errores de consola. No se concedió acceso al micrófono, por lo que esto no se
+registra como prueba acústica.
+
+## Experimento ejecutado
+
+```text
+npm run experiment:e001
+```
+
+Resumen:
+
+```text
+identity-a              A        → A         SER 0
+identity-sonar-01       SONAR 01 → SONAR 01  SER 0
+identity-repeated-aa    AA       → A         SER 0,5
+attenuation-50-a        A        → vacío     SER 1
+noise-002-a             A        → A         SER 0
+```
+
+Tres de cinco mensajes fueron recuperados completamente.
+
+## Hallazgo principal
+
+`AA` pierde el segundo carácter incluso con canal identidad y detección correcta
+de ambos tonos. El intervalo entre decisiones es exactamente 80 ms, mientras
+que el receptor exige un valor estrictamente mayor a 80 ms para aceptar dos
+símbolos iguales.
+
+Este resultado aísla el defecto en el bloqueo temporal del receptor. No puede
+atribuirse al altavoz, aire, micrófono o ruido.
+
+La prueba de ganancia `0,5` describe la escala numérica del simulador. No debe
+interpretarse como un resultado de volumen físico al 50 %.
+
+## Decisiones
+
+- conservar `AA → A` como resultado de baseline y corregirlo posteriormente en
+  Milestone 2;
+- mantener el detector de referencia separado del detector del navegador;
+- no presentar el ruido uniforme como modelo acústico real;
+- cerrar E001 como baseline digital inicial, no como validación física;
+- mantener Milestone 1 abierto para protocolo binario, métricas restantes y
+  registro de pruebas físicas.
+
+## Archivos principales
+
+```text
+src/web/static/js/core/receptor_mensajes_core.js
+src/web/static/js/core/metricas_mensajes.js
+src/web/static/js/simulacion/emisor_mensajes_sintetico.js
+src/web/static/js/simulacion/detector_tonos_referencia.js
+src/web/static/js/simulacion/canal_simulado.js
+src/web/static/js/simulacion/simulador_mensajes.js
+scripts/run_e001.js
+tests/receptor_mensajes_core.test.js
+tests/simulador_mensajes.test.js
+docs/experiments/E001-baseline-mensajes/results/latest.json
+```
+
+## Próximo paso
+
+Completar M1-003 para el protocolo binario de archivos mediante vectores de
+cabecera, empaquetado de bits, CRC8 y CRC16 antes de corregir sus defectos.

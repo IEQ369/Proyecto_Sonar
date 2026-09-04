@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E001",
+  "experimentStatus": "completed_initial_baseline",
+  "executedAt": "2026-09-04T14:47:30.126Z",
+  "environment": {
+    "runtime": "Node.js",
+    "runtimeVersion": "v24.18.0",
+    "platform": "linux",
+    "architecture": "x64"
+  },
+  "configuration": {
+    "sampleRateHz": 48000,
+    "waveform": "sine",
+    "symbolDurationSeconds": 0.06,
+    "markerDurationSeconds": 0.09,
+    "characterGapSeconds": 0.02
+  },
+  "summary": {
+    "totalCases": 5,
+    "correctMessages": 3,
+    "casesWithSymbolErrors": [
+      "identity-repeated-aa",
+      "attenuation-50-a"
+    ]
+  },
+  "cases": [
+    {
+      "id": "identity-a",
+      "input": {
+        "message": "A",
+        "channel": {
+          "gain": 1,
+          "noiseAmplitude": 0,
+          "seed": 369
+        }
+      },
+      "output": {
+        "receivedMessage": "A",
+        "sampleCount": 21120,
+        "detectedFrequenciesHz": [
+          18500,
+          19050,
+          18800,
+          19050,
+          19600
+        ]
+      },
+      "metrics": {
+        "expectedSymbols": 1,
+        "receivedSymbols": 1,
+        "symbolErrors": 0,
+        "symbolErrorRate": 0,
+        "messageCorrect": true
+      }
+    },
+    {
+      "id": "identity-sonar-01",
+      "input": {
+        "message": "SONAR 01",
+        "channel": {
+          "gain": 1,
+          "noiseAmplitude": 0,
+          "seed": 369
+        }
+      },
+      "output": {
+        "receivedMessage": "SONAR 01",
+        "sampleCount": 48000,
+        "detectedFrequenciesHz": [
+          18500,
+          19050,
+          20600,
+          20200,
+          20100,
+          18800,
+          20500,
+          18600,
+          21400,
+          21500,
+          19050,
+          19600
+        ]
+      },
+      "metrics": {
+        "expectedSymbols": 8,
+        "receivedSymbols": 8,
+        "symbolErrors": 0,
+        "symbolErrorRate": 0,
+        "messageCorrect": true
+      }
+    },
+    {
+      "id": "identity-repeated-aa",
+      "input": {
+        "message": "AA",
+        "channel": {
+          "gain": 1,
+          "noiseAmplitude": 0,
+          "seed": 369
+        }
+      },
+      "output": {
+        "receivedMessage": "A",
+        "sampleCount": 24960,
+        "detectedFrequenciesHz": [
+          18500,
+          19050,
+          18800,
+          18800,
+          19050,
+          19600
+        ]
+      },
+      "metrics": {
+        "expectedSymbols": 2,
+        "receivedSymbols": 1,
+        "symbolErrors": 1,
+        "symbolErrorRate": 0.5,
+        "messageCorrect": false
+      }
+    },
+    {
+      "id": "attenuation-50-a",
+      "input": {
+        "message": "A",
+        "channel": {
+          "gain": 0.5,
+          "noiseAmplitude": 0,
+          "seed": 369
+        }
+      },
+      "output": {
+        "receivedMessage": "",
+        "sampleCount": 21120,
+        "detectedFrequenciesHz": [
+          18500,
+          19050,
+          18800,
+          19050,
+          19600
+        ]
+      },
+      "metrics": {
+        "expectedSymbols": 1,
+        "receivedSymbols": 0,
+        "symbolErrors": 1,
+        "symbolErrorRate": 1,
+        "messageCorrect": false
+      }
+    },
+    {
+      "id": "noise-002-a",
+      "input": {
+        "message": "A",
+        "channel": {
+          "gain": 1,
+          "noiseAmplitude": 0.02,
+          "seed": 369
+        }
+      },
+      "output": {
+        "receivedMessage": "A",
+        "sampleCount": 21120,
+        "detectedFrequenciesHz": [
+          18500,
+          19050,
+          18800,
+          19050,
+          19600
+        ]
+      },
+      "metrics": {
+        "expectedSymbols": 1,
+        "receivedSymbols": 1,
+        "symbolErrors": 0,
+        "symbolErrorRate": 0,
+        "messageCorrect": true
+      }
+    }
+  ]
+}

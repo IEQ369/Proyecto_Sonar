@@ -526,6 +526,25 @@ El repositorio contiene estos documentos y el dueño sabe para qué sirve cada u
 
 # 6. MILESTONE 1 — Baseline reproducible
 
+## Estado al 2026-09-04
+
+| Tarea | Estado | Evidencia actual |
+|---|---|---|
+| M1-001 | Parcial | SER implementada para mensajes; BER, PER, bitrate, goodput, latencia y SNR pendientes |
+| M1-002 | Parcial | entorno de ejecución digital registrado; entorno físico pendiente |
+| M1-003 | Parcial | mapeo de caracteres y vectores de mensajes probados; protocolo de archivos pendiente |
+| M1-004 | Completa para mensajes | tonos y secuencias sintéticas deterministas |
+| M1-005 | Versión mínima | identidad, ganancia y ruido uniforme con semilla |
+
+Evidencia principal:
+
+```text
+docs/experiments/E001-baseline-mensajes/
+```
+
+Milestone 1 continúa abierto hasta incorporar las métricas pendientes, el
+protocolo binario y un registro adecuado de pruebas físicas.
+
 ## Objetivo
 
 Transformar:
