@@ -1338,3 +1338,78 @@ información estructurada después del preámbulo.
 Cerrar M2-FILE-007/008. Después revisar la condición de cierre completa de
 Milestone 2 y decidir qué defectos de temporización deben pasar al rediseño del
 módem en lugar de recibir parches inseguros.
+
+## Continuación — cierre de Milestone 2
+
+### Objetivo
+
+Cerrar los dos últimos contratos deterministas de V1 Clean: nombre de archivo y
+progreso de transmisión.
+
+### Cambios
+
+- el nombre se serializa mediante UTF-8 tanto para calcular CRC como para
+  reconstruir la cabecera;
+- el campo conserva un máximo de 16 bytes y se trunca solamente entre caracteres
+  completos;
+- se añadieron funciones puras para calcular el total y porcentaje de símbolos;
+- el emisor incrementa el progreso después de cada tono de preámbulo, SOI,
+  cabecera, datos y END;
+- el callback de progreso informa también símbolos transmitidos y total;
+- el emisor permite sustituir audio y temporizadores durante tests, sin cambiar
+  su comportamiento normal en el navegador.
+
+UTF-8 es una codificación de texto de longitud variable. Por ejemplo, una letra
+ASCII ocupa un byte, mientras otros caracteres pueden ocupar varios. Por eso el
+límite debe aplicarse a bytes completos y no solamente al número de letras.
+
+### Pruebas
+
+El primer intento detectó una expectativa incorrecta del propio test: después
+de contar los bytes de `archivo-📡-`, solo cabía `ult`, no `ultr`. La función no
+había cortado el emoji; se corrigió la expectativa y se volvió a ejecutar toda
+la suite.
+
+Resultado final:
+
+```text
+64 aprobadas
+0 fallidas
+```
+
+Cobertura nueva:
+
+- ida y vuelta de `área-ñ.txt` mediante cabecera UTF-8;
+- truncado de un nombre con emoji sin secuencia inválida;
+- total exacto para archivos de 0, 1, 8 y 9 bytes;
+- porcentaje limitado al intervalo 0–100;
+- ejecución completa del emisor de un archivo de un byte con audio simulado;
+- 637 tonos contados y último progreso igual a 100 %.
+- rechazo de una cabecera fuera de rango antes de crear o reproducir audio.
+
+### Resultado
+
+M2-FILE-007 y M2-FILE-008 quedan completados. Con ellos se cierra el alcance
+determinista de **Milestone 2 — SONAR V1 Clean**.
+
+La palabra “Clean” no significa que el módem ya sea físicamente fiable. Significa
+que los errores lógicos independientes del canal que invalidaban futuras
+comparaciones fueron corregidos y quedaron cubiertos por regresiones.
+
+### Defectos trasladados conscientemente
+
+- el receptor de archivos todavía puede contar frames de pantalla como bits;
+- START comparte frecuencia con DATA_0;
+- SYNC comparte frecuencia con DATA_1;
+- END comparte frecuencia con ACK;
+- las ventanas binarias se solapan;
+- las duraciones físicas no forman todavía un reloj uniforme.
+
+Estos puntos requieren medición o rediseño del módem, no una corrección local de
+serialización.
+
+### Próximo paso
+
+Milestone 3 — caracterizar V1 Clean. La primera tarea será convertir el mapa de
+frecuencias y sus regiones de decisión en resultados medibles mediante barridos
+sintéticos, antes de seleccionar el mapa de SONAR V2.

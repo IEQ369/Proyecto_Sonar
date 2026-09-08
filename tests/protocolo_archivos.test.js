@@ -8,10 +8,13 @@ import {
     codificarCabeceraArchivo,
     crearCabeceraArchivo,
     decodificarCabeceraArchivo,
+    codificarNombreArchivo,
     crc16ccitt,
     codificarBloqueDatos,
     decodificarBloqueDatos,
-    crc8
+    crc8,
+    calcularTotalSimbolosArchivo,
+    calcularProgresoArchivo
 } from '../src/web/archivos/static/js/protocolo_archivos.js';
 
 function calcularCrcCabeceraEmisorV1(nombre) {
@@ -61,6 +64,25 @@ test('una alteración en la cabecera es detectada por CRC16', () => {
     const resultado = decodificarCabeceraArchivo(cabecera);
 
     assert.equal(resultado.valida, false);
+});
+
+test('un nombre UTF-8 conserva eñe y tilde dentro de la cabecera', () => {
+    const cabecera = crearCabeceraArchivo(7, 'área-ñ.txt');
+    const resultado = decodificarCabeceraArchivo(cabecera);
+
+    assert.equal(resultado.valida, true);
+    assert.equal(resultado.nombre, 'área-ñ.txt');
+});
+
+test('un nombre largo se trunca sin cortar un carácter UTF-8', () => {
+    const nombre = 'archivo-📡-ultrasónico.bin';
+    const nombreCodificado = codificarNombreArchivo(nombre);
+    const cabecera = crearCabeceraArchivo(1, nombre);
+    const resultado = decodificarCabeceraArchivo(cabecera);
+
+    assert.ok(nombreCodificado.length <= PROTOCOLO_ARCHIVOS.NOMBRE_BYTES);
+    assert.equal(resultado.valida, true);
+    assert.equal(resultado.nombre, 'archivo-📡-ult');
 });
 
 test('el CRC de cabecera del emisor V1 no incluye el tamaño real', () => {
@@ -171,6 +193,23 @@ test('archivos de 1 a 25 bytes sobreviven al empaquetado por bloques', () => {
 
         assert.deepEqual(new Uint8Array(reconstruido), original);
     }
+});
+
+test('el total de símbolos incluye SOI, cabecera, bloques completos y END', () => {
+    const baseSinDatos = 10 + 24 + 528 + 3;
+
+    assert.equal(calcularTotalSimbolosArchivo(0), baseSinDatos);
+    assert.equal(calcularTotalSimbolosArchivo(1), baseSinDatos + 72);
+    assert.equal(calcularTotalSimbolosArchivo(8), baseSinDatos + 72);
+    assert.equal(calcularTotalSimbolosArchivo(9), baseSinDatos + 144);
+});
+
+test('el progreso llega a 100 por ciento sin excederlo', () => {
+    const total = calcularTotalSimbolosArchivo(1);
+
+    assert.equal(calcularProgresoArchivo(0, total), 0);
+    assert.equal(calcularProgresoArchivo(total, total), 100);
+    assert.equal(calcularProgresoArchivo(total + 1, total), 100);
 });
 
 test('el baseline registra colisiones exactas entre control y datos', () => {

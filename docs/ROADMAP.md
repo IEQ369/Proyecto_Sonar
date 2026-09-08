@@ -641,6 +641,10 @@ Tener una versión del diseño actual que no contenga bugs lógicos conocidos qu
 
 **No cambia todavía la arquitectura fundamental del módem.**
 
+**Estado del milestone:** completado el 2026-09-08 en su alcance lógico. Los
+defectos de reloj de bits, preámbulo y regiones de decisión no recibieron parches
+sin evidencia; pasan a caracterización y rediseño como indica la nota crítica.
+
 ## Grupo A — Mensajes
 
 ### M2-MSG-001
@@ -740,9 +744,16 @@ existía un control real de cancelación que conservar.
 
 Unificar codificación del nombre de archivo.
 
+**Estado:** completado el 2026-09-08. El nombre se codifica en UTF-8 con un
+máximo de 16 bytes y nunca se corta en medio de un carácter multibyte.
+
 ### M2-FILE-008
 
 Corregir cálculo de progreso.
+
+**Estado:** completado el 2026-09-08. El denominador y el contador incluyen
+preámbulo, SOI, cabeceras repetidas, bloques rellenados y END. Una prueba del
+emisor completo confirma que el último símbolo produce exactamente 100 %.
 
 ## Nota crítica
 
@@ -753,6 +764,9 @@ Si arreglarlos implica rediseñar el módem, se trasladan a milestones posterior
 ## Condición de cierre
 
 La lógica puramente determinista pasa tests.
+
+**Cumplida el 2026-09-08:** 64 pruebas aprobadas y 0 fallidas. Esto no sustituye
+las futuras pruebas acústicas.
 
 ## Aprendizaje
 

@@ -2025,6 +2025,10 @@ Cabecera RX
 1–8 bytes útiles recuperados
 ```
 
+El campo de nombre utiliza UTF-8 y admite hasta 16 bytes. El truncado se realiza
+por caracteres completos, por lo que una `ñ`, una tilde o un emoji no puede
+quedar representado por una secuencia de bytes incompleta.
+
 El relleno hace que todos los bloques tengan el mismo tamaño físico. Los ceros
 añadidos no forman parte del archivo recuperado: la longitud total declarada en
 la cabecera determina cuántos bytes del último bloque son útiles.
@@ -2032,3 +2036,16 @@ la cabecera determina cuántos bytes del último bloque son útiles.
 La compatibilidad lógica no valida todavía la ruta acústica. Continúan abiertos
 el reloj de bits dependiente de frames, las colisiones entre marcadores y datos,
 y el solapamiento de ventanas de decisión.
+
+El progreso TX se deriva del mismo contrato:
+
+```text
+total = preámbulo
+      + SOI
+      + cabeceras repetidas
+      + bloques fijos de 9 bytes
+      + END
+```
+
+Cada tono emitido incrementa una vez el contador. El último tono END corresponde
+al 100 %; no se usa el tamaño del archivo como aproximación del tiempo.

@@ -7,7 +7,9 @@ import {
     PROTOCOLO_ARCHIVOS,
     crearCabeceraArchivo,
     codificarBloqueDatos,
-    byteToBits
+    byteToBits,
+    calcularTotalSimbolosArchivo,
+    calcularProgresoArchivo
 } from './protocolo_archivos.js';
 
 // Constantes para el protocolo robusto
@@ -22,47 +24,65 @@ const SAMPLE_RATE = 48000;
  * @param {Function} onProgreso - Callback para actualizar progreso
  */
 export async function emitirArchivoRobusto(archivo, opts = {}, onProgreso = null) {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
     const arrayBuffer = await archivo.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
+    const cabecera = crearCabeceraArchivo(archivo.size, archivo.name);
+    const audioCtx = opts.audioContexto
+        ?? new (window.AudioContext || window.webkitAudioContext)({
+            sampleRate: SAMPLE_RATE
+        });
+    const reproducirTono = opts.emitirTono ?? emitirTono;
+    const programar = opts.programar ?? globalThis.setTimeout;
 
     console.log('=== EMISION ARCHIVO ROBUSTO ===');
     console.log('Archivo:', archivo.name);
     console.log('Tamaño:', archivo.size, 'bytes');
 
-    let now = audioCtx.currentTime;
     let simbolosTransmitidos = 0;
-    const totalSimbolos = calcularTotalSimbolos(archivo.size);
+    const totalSimbolos = calcularTotalSimbolosArchivo(archivo.size);
+
+    function registrarSimbolo() {
+        simbolosTransmitidos++;
+
+        if (onProgreso) {
+            onProgreso({
+                progreso: calcularProgresoArchivo(
+                    simbolosTransmitidos,
+                    totalSimbolos
+                ),
+                simbolosTransmitidos,
+                totalSimbolos
+            });
+        }
+    }
 
     // 1. PREÁMBULO: START+SYNC repetido
     for (let rep = 0; rep < PROTOCOLO_ARCHIVOS.PREAMBULO_REPS; rep++) {
         console.log('Emitiendo START:', PROTOCOLO_ARCHIVOS.START);
-        await emitirTono(audioCtx, PROTOCOLO_ARCHIVOS.START, 0.1, AMPLITUDE * 1.2, FADE_TIME);
+        await reproducirTono(audioCtx, PROTOCOLO_ARCHIVOS.START, 0.1, AMPLITUDE * 1.2, FADE_TIME);
+        registrarSimbolo();
         console.log('Emitiendo SYNC:', PROTOCOLO_ARCHIVOS.SYNC);
-        await emitirTono(audioCtx, PROTOCOLO_ARCHIVOS.SYNC, 0.1, AMPLITUDE * 1.2, FADE_TIME);
-        simbolosTransmitidos += 2;
-        if (onProgreso) onProgreso({ progreso: Math.round((simbolosTransmitidos / totalSimbolos) * 100) });
+        await reproducirTono(audioCtx, PROTOCOLO_ARCHIVOS.SYNC, 0.1, AMPLITUDE * 1.2, FADE_TIME);
+        registrarSimbolo();
     }
 
     // 2. SOI: secuencia binaria única repetida
     for (let rep = 0; rep < PROTOCOLO_ARCHIVOS.SOI_REPS; rep++) {
         for (let bit of PROTOCOLO_ARCHIVOS.SOI) {
             const freq = bit ? PROTOCOLO_ARCHIVOS.DATA_1 : PROTOCOLO_ARCHIVOS.DATA_0;
-            await emitirTono(audioCtx, freq, PROTOCOLO_ARCHIVOS.SYMBOL_DURATION, AMPLITUDE, FADE_TIME);
+            await reproducirTono(audioCtx, freq, PROTOCOLO_ARCHIVOS.SYMBOL_DURATION, AMPLITUDE, FADE_TIME);
+            registrarSimbolo();
         }
     }
 
     // 3. CABECERA: tamaño, nombre, CRC16 (repetida)
-    const cabecera = crearCabeceraArchivo(archivo.size, archivo.name);
-
     for (let rep = 0; rep < PROTOCOLO_ARCHIVOS.CABECERA_REPS; rep++) {
         for (let byte of cabecera) {
             const bits = byteToBits(byte);
             for (let bit of bits) {
                 const freq = bit ? PROTOCOLO_ARCHIVOS.DATA_1 : PROTOCOLO_ARCHIVOS.DATA_0;
-                await emitirTono(audioCtx, freq, 0.05, AMPLITUDE, FADE_TIME);
-                simbolosTransmitidos++;
-                if (onProgreso) onProgreso({ progreso: Math.round((simbolosTransmitidos / totalSimbolos) * 100) });
+                await reproducirTono(audioCtx, freq, 0.05, AMPLITUDE, FADE_TIME);
+                registrarSimbolo();
             }
         }
     }
@@ -76,31 +96,20 @@ export async function emitirArchivoRobusto(archivo, opts = {}, onProgreso = null
             const bits = byteToBits(byte);
             for (let bit of bits) {
                 const freq = bit ? PROTOCOLO_ARCHIVOS.DATA_1 : PROTOCOLO_ARCHIVOS.DATA_0;
-                await emitirTono(audioCtx, freq, 0.05, AMPLITUDE, FADE_TIME);
-                simbolosTransmitidos++;
-                if (onProgreso) onProgreso({ progreso: Math.round((simbolosTransmitidos / totalSimbolos) * 100) });
+                await reproducirTono(audioCtx, freq, 0.05, AMPLITUDE, FADE_TIME);
+                registrarSimbolo();
             }
         }
     }
 
     // 5. FIN: END repetido
     for (let rep = 0; rep < 3; rep++) {
-        await emitirTono(audioCtx, PROTOCOLO_ARCHIVOS.END, 0.1, AMPLITUDE * 1.2, FADE_TIME);
-        simbolosTransmitidos++;
-        if (onProgreso) onProgreso({ progreso: Math.round((simbolosTransmitidos / totalSimbolos) * 100) });
+        await reproducirTono(audioCtx, PROTOCOLO_ARCHIVOS.END, 0.1, AMPLITUDE * 1.2, FADE_TIME);
+        registrarSimbolo();
     }
 
-    setTimeout(() => audioCtx.close(), 200);
+    programar(() => audioCtx.close(), 200);
     console.log('=== EMISION ARCHIVO ROBUSTO COMPLETADA ===');
-}
-
-function calcularTotalSimbolos(tamanoArchivo) {
-    const bloques = Math.ceil(tamanoArchivo / 8);
-    return PROTOCOLO_ARCHIVOS.PREAMBULO_REPS * 2 + // START+SYNC
-        PROTOCOLO_ARCHIVOS.SOI_REPS * PROTOCOLO_ARCHIVOS.SOI.length + // SOI
-        PROTOCOLO_ARCHIVOS.CABECERA_REPS * PROTOCOLO_ARCHIVOS.CABECERA_BYTES * 8 + // cabecera
-        bloques * 9 * 8 + // datos + CRC8
-        3; // END repetido
 }
 
 async function emitirTono(audioCtx, freq, duracion, amplitud, fadeTime) {

@@ -20,6 +20,7 @@ export const PROTOCOLO_ARCHIVOS = {
     SOI_REPS: 3,
     CABECERA_REPS: 3,
     CABECERA_BYTES: 22, // 4 tamaño + 16 nombre + 2 CRC16
+    NOMBRE_BYTES: 16,
     BLOQUE_DATOS: 8, // bytes por bloque
     CRC_BLOQUE: 1, // byte extra por bloque
     TIMEOUT_MS: 2000,
@@ -52,10 +53,9 @@ export function codificarCabeceraArchivo(tamano, nombre, crc) {
     buffer[1] = (tamano >> 8) & 0xFF;
     buffer[2] = (tamano >> 16) & 0xFF;
     buffer[3] = (tamano >> 24) & 0xFF;
-    // nombre (16 bytes, ASCII, relleno con 0)
-    for (let i = 0; i < 16; i++) {
-        buffer[4 + i] = i < nombre.length ? nombre.charCodeAt(i) : 0;
-    }
+    // nombre (16 bytes UTF-8, relleno con 0)
+    const nombreCodificado = codificarNombreArchivo(nombre);
+    buffer.set(nombreCodificado, 4);
     // CRC16 (2 bytes, little endian)
     buffer[20] = crc & 0xFF;
     buffer[21] = (crc >> 8) & 0xFF;
@@ -95,11 +95,7 @@ export function decodificarCabeceraArchivo(cabecera) {
         cabecera.byteLength
     );
     const tamano = vista.getUint32(0, true);
-    let nombre = '';
-
-    for (let indice = 4; indice < 20 && cabecera[indice] !== 0; indice++) {
-        nombre += String.fromCharCode(cabecera[indice]);
-    }
+    const nombre = decodificarNombreArchivo(cabecera.slice(4, 20));
 
     const crcRecibido = vista.getUint16(20, true);
     const crcCalculado = crc16ccitt(cabecera.slice(0, 20));
@@ -111,6 +107,71 @@ export function decodificarCabeceraArchivo(cabecera) {
         crcRecibido,
         crcCalculado
     };
+}
+
+export function codificarNombreArchivo(nombre) {
+    const codificador = new TextEncoder();
+    const bytes = [];
+
+    for (const caracter of String(nombre)) {
+        const caracterCodificado = codificador.encode(caracter);
+
+        if (
+            bytes.length + caracterCodificado.length
+            > PROTOCOLO_ARCHIVOS.NOMBRE_BYTES
+        ) {
+            break;
+        }
+
+        bytes.push(...caracterCodificado);
+    }
+
+    return new Uint8Array(bytes);
+}
+
+export function decodificarNombreArchivo(bytes) {
+    if (!(bytes instanceof Uint8Array)) {
+        throw new TypeError('El nombre codificado debe ser un Uint8Array');
+    }
+
+    const fin = bytes.indexOf(0);
+    const contenido = fin === -1 ? bytes : bytes.slice(0, fin);
+    return new TextDecoder().decode(contenido);
+}
+
+export function calcularTotalSimbolosArchivo(tamanoArchivo) {
+    if (!Number.isInteger(tamanoArchivo) || tamanoArchivo < 0) {
+        throw new RangeError('El tamaño del archivo debe ser un entero no negativo');
+    }
+
+    const bloques = Math.ceil(
+        tamanoArchivo / PROTOCOLO_ARCHIVOS.BLOQUE_DATOS
+    );
+
+    return PROTOCOLO_ARCHIVOS.PREAMBULO_REPS * 2
+        + PROTOCOLO_ARCHIVOS.SOI_REPS * PROTOCOLO_ARCHIVOS.SOI.length
+        + PROTOCOLO_ARCHIVOS.CABECERA_REPS
+            * PROTOCOLO_ARCHIVOS.CABECERA_BYTES * 8
+        + bloques
+            * (PROTOCOLO_ARCHIVOS.BLOQUE_DATOS
+                + PROTOCOLO_ARCHIVOS.CRC_BLOQUE) * 8
+        + 3;
+}
+
+export function calcularProgresoArchivo(simbolosTransmitidos, totalSimbolos) {
+    if (
+        !Number.isInteger(simbolosTransmitidos)
+        || !Number.isInteger(totalSimbolos)
+        || simbolosTransmitidos < 0
+        || totalSimbolos <= 0
+    ) {
+        throw new RangeError('El progreso requiere cantidades enteras válidas');
+    }
+
+    return Math.min(
+        100,
+        Math.round(simbolosTransmitidos / totalSimbolos * 100)
+    );
 }
 
 // CRC16-CCITT simple para la cabecera
