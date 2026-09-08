@@ -1273,3 +1273,68 @@ se ocultaron ni se presentaron como resueltos.
 Continuar la limpieza de archivos con propiedad única del receptor y del archivo
 seleccionado (M2-FILE-004 y M2-FILE-005), antes de abordar cancelación, nombre y
 progreso.
+
+## Continuación — propiedad única de estado en archivos
+
+### Problema
+
+La plantilla creaba un receptor de archivos y `app_archivos.js` creaba otro. De
+forma análoga, drag/drop guardaba el archivo seleccionado en una variable de la
+plantilla, mientras el emisor consultaba una variable distinta.
+
+El resultado podía ser contradictorio:
+
+```text
+interfaz: archivo seleccionado
+emisor:   ningún archivo seleccionado
+```
+
+### Cambios
+
+- se retiró todo el módulo JavaScript incrustado en la plantilla de archivos;
+- `app_archivos.js` conserva la única instancia de `ReceptorArchivos`;
+- `setupEmisorArchivoUI()` es dueño del único `archivoSeleccionado`;
+- selección por input, botón y drag/drop llaman a la misma función;
+- el objeto enviado es exactamente el último objeto mostrado en la interfaz;
+- se añadieron dependencias inyectables para probar la interfaz sin abrir el
+  selector del sistema ni reproducir audio;
+- se retiraron las variables y la opción de cancelación que nunca interrumpían
+  la transmisión.
+
+### Pruebas
+
+Resultado acumulado:
+
+```text
+58 aprobadas
+0 fallidas
+```
+
+Las pruebas nuevas confirman que:
+
+- input y drag/drop actualizan una sola referencia;
+- después de arrastrar un segundo archivo, el emisor recibe ese segundo objeto;
+- la plantilla y la aplicación contienen en conjunto una única construcción
+  `new ReceptorArchivos()`.
+
+### Resultado
+
+Quedan completados M2-FILE-004, M2-FILE-005 y M2-FILE-006. Esto elimina dos
+fuentes de estado contradictorio y evita afirmar que existe una cancelación
+funcional.
+
+### Pendiente
+
+- M2-FILE-007: definir la codificación y truncado del nombre en bytes;
+- M2-FILE-008: hacer que el progreso cuente todos los símbolos realmente
+  emitidos, incluido SOI;
+- el reloj de bits y las colisiones físicas permanecen fuera de esta corrección.
+
+SOI significa *Start of Information*: patrón que marca el comienzo de la
+información estructurada después del preámbulo.
+
+### Próximo paso
+
+Cerrar M2-FILE-007/008. Después revisar la condición de cierre completa de
+Milestone 2 y decidir qué defectos de temporización deben pasar al rediseño del
+módem en lugar de recibir parches inseguros.

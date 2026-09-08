@@ -984,25 +984,26 @@ ruta de recepción, pero la modifica un único controlador TX.
 ## Archivos
 
 ```text
-template
-   ↓
-archivoSeleccionado
-   ↓
-ReceptorArchivos A
-
-módulo app/emisor
-   ↓
-archivoSeleccionado B
-   ↓
-ReceptorArchivos B
+template → controles sin lógica inline
+             ↓
+       app_archivos.js
+       └─ ReceptorArchivos único
+             ↓
+       setupEmisorArchivoUI()
+       └─ archivoSeleccionado único
+          ↑ input / botón / drag & drop
 ```
 
-Esto produce situaciones donde:
+Antes de M2-FILE-004/005, las copias de estado producían situaciones donde:
 
 ```text
 UI dice una cosa
 módulo interno cree otra
 ```
+
+La ruta activa ya no mantiene esas copias. La instancia del receptor sigue
+expuesta temporalmente como `window.receptorArchivos` para depuración, pero es
+la misma que recibe las detecciones del analizador.
 
 Principio futuro:
 

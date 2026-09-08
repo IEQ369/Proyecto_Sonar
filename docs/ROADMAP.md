@@ -717,13 +717,24 @@ conserva únicamente los bytes útiles indicados por el tamaño total.
 
 Eliminar instancias duplicadas de receptor.
 
+**Estado:** completado el 2026-09-08. `app_archivos.js` crea la única instancia
+de `ReceptorArchivos`; la plantilla ya no contiene lógica ni una segunda
+instancia inline.
+
 ### M2-FILE-005
 
 Unificar estado de drag/drop y selección de archivo.
 
+**Estado:** completado el 2026-09-08. Botón, input y drag/drop llaman a
+`seleccionarArchivo()` y actualizan la misma referencia utilizada al transmitir.
+
 ### M2-FILE-006
 
 Implementar o retirar cancelación falsa.
+
+**Estado:** completado el 2026-09-08 mediante retirada. Se eliminaron
+`cancelando`, `detenerTransmision` y la opción que siempre devolvía `false`. No
+existía un control real de cancelación que conservar.
 
 ### M2-FILE-007
 

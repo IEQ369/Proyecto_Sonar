@@ -120,86 +120,136 @@ async function emitirTono(audioCtx, freq, duracion, amplitud, fadeTime) {
  * Configura la UI del emisor de archivos
  * @param {Function} onProgreso - Callback para actualizar progreso en UI
  */
-export function setupEmisorArchivoUI(onProgreso = null) {
-    const archivoTransmitBtn = document.getElementById('archivo-transmit-btn');
-    const archivoProgressContainer = document.getElementById('archivo-progress-container');
-    const archivoProgressBar = document.getElementById('archivo-progress-bar');
-    const archivoProgressPercent = document.getElementById('archivo-progress-percent');
-    const archivoProgressBytes = document.getElementById('archivo-progress-bytes');
-    const archivoProgressSpeed = document.getElementById('archivo-progress-speed');
-    const archivoProgressText = document.querySelector('.archivo-progress-text');
+export function setupEmisorArchivoUI(onProgreso = null, dependencias = {}) {
+    const documento = dependencias.documento ?? globalThis.document;
+    const emitir = dependencias.emitir ?? emitirArchivoRobusto;
+    const programar = dependencias.programar ?? globalThis.setTimeout;
+    const archivoTransmitBtn = documento.getElementById('archivo-transmit-btn');
+    const archivoProgressContainer = documento.getElementById('archivo-progress-container');
+    const archivoProgressBar = documento.getElementById('archivo-progress-bar');
+    const archivoProgressPercent = documento.getElementById('archivo-progress-percent');
+    const archivoProgressText = documento.querySelector('.archivo-progress-text');
+    const archivoDropArea = documento.getElementById('archivo-drop-area');
+    const archivoSelectBtn = documento.getElementById('archivo-select-btn');
+    const archivoInput = documento.getElementById('archivo-input');
+    const archivoNombre = documento.getElementById('archivo-nombre');
+
+    const controlesRequeridos = [
+        archivoTransmitBtn,
+        archivoProgressContainer,
+        archivoProgressBar,
+        archivoProgressPercent,
+        archivoProgressText,
+        archivoDropArea,
+        archivoSelectBtn,
+        archivoInput,
+        archivoNombre
+    ];
+
+    if (controlesRequeridos.some((control) => !control)) {
+        throw new Error('No se encontraron los controles del emisor de archivos');
+    }
 
     let archivoSeleccionado = null;
+    let transmisionActiva = false;
 
-    // Obtener archivo seleccionado del DOM
-    const archivoInput = document.getElementById('archivo-input');
-    archivoInput.addEventListener('change', (e) => {
-        archivoSeleccionado = e.target.files[0];
+    function ocultarSelector() {
+        archivoDropArea.style.display = 'none';
+        archivoSelectBtn.style.display = 'none';
+        archivoInput.style.display = 'none';
+    }
+
+    function mostrarSelector() {
+        archivoDropArea.style.display = '';
+        archivoSelectBtn.style.display = '';
+        archivoInput.style.display = 'none';
+    }
+
+    function seleccionarArchivo(archivo) {
+        if (!archivo) {
+            return false;
+        }
+
+        archivoSeleccionado = archivo;
+        archivoNombre.textContent = archivo.name;
+        archivoNombre.title = `${archivo.name} ${(archivo.size / 1024).toFixed(1)} KB`;
+        archivoTransmitBtn.disabled = false;
+        archivoProgressContainer.style.display = 'none';
+        return true;
+    }
+
+    archivoSelectBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        archivoInput.click();
     });
 
-    if (archivoTransmitBtn) {
-        let cancelando = false;
-        let transmisionActiva = false;
-        let detenerTransmision = null;
-        const archivoContainer = document.querySelector('.archivo-container');
-        const archivoDropArea = document.getElementById('archivo-drop-area');
-        const archivoSelectBtn = document.getElementById('archivo-select-btn');
-        const archivoInput = document.getElementById('archivo-input');
+    archivoInput.addEventListener('change', (event) => {
+        seleccionarArchivo(event.target.files[0]);
+    });
 
-        function ocultarSelector() {
-            if (archivoDropArea) archivoDropArea.style.display = 'none';
-            if (archivoSelectBtn) archivoSelectBtn.style.display = 'none';
-            if (archivoInput) archivoInput.style.display = 'none';
+    archivoDropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        archivoDropArea.classList.add('dragover');
+    });
+
+    archivoDropArea.addEventListener('dragleave', () => {
+        archivoDropArea.classList.remove('dragover');
+    });
+
+    archivoDropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        archivoDropArea.classList.remove('dragover');
+        seleccionarArchivo(event.dataTransfer.files[0]);
+    });
+
+    archivoDropArea.addEventListener('click', () => {
+        archivoInput.click();
+    });
+
+    async function transmitirArchivo() {
+        if (transmisionActiva || !archivoSeleccionado) {
+            return false;
         }
-        function mostrarSelector() {
-            if (archivoDropArea) archivoDropArea.style.display = '';
-            if (archivoSelectBtn) archivoSelectBtn.style.display = '';
-            if (archivoInput) archivoInput.style.display = '';
+
+        transmisionActiva = true;
+        archivoTransmitBtn.textContent = 'transmitir archivo';
+        archivoTransmitBtn.disabled = true;
+        archivoProgressContainer.style.display = 'block';
+        archivoProgressText.textContent = 'transmitiendo archivo...';
+        archivoProgressBar.style.background = '#0ff';
+        ocultarSelector();
+
+        try {
+            await emitir(archivoSeleccionado, {}, (progreso) => {
+                archivoProgressBar.style.width = progreso.progreso + '%';
+                archivoProgressPercent.textContent = progreso.progreso + '%';
+                if (onProgreso) onProgreso(progreso);
+            });
+
+            archivoProgressText.textContent = 'archivo transmitido';
+            archivoProgressBar.style.background = '#00ff41';
+            return true;
+        } catch (error) {
+            console.error('Error al transmitir archivo:', error);
+            archivoProgressText.textContent = 'error en transmisión';
+            archivoProgressBar.style.background = '#ff184c';
+            return false;
+        } finally {
+            programar(() => {
+                archivoProgressContainer.style.display = 'none';
+                mostrarSelector();
+                archivoTransmitBtn.disabled = false;
+                transmisionActiva = false;
+            }, 2000);
         }
-
-        archivoTransmitBtn.addEventListener('click', async () => {
-            if (transmisionActiva) {
-                return;
-            }
-            if (!archivoSeleccionado) return;
-            cancelando = false;
-            transmisionActiva = true;
-            archivoTransmitBtn.textContent = 'transmitir archivo';
-            archivoTransmitBtn.disabled = true;
-            archivoProgressContainer.style.display = 'block';
-            archivoProgressText.textContent = 'transmitiendo archivo...';
-            archivoProgressBar.style.background = '#0ff';
-            ocultarSelector();
-
-            try {
-                await emitirArchivoRobusto(archivoSeleccionado, {
-                    cancelar: () => cancelando
-                }, (progreso) => {
-                    if (archivoProgressBar) archivoProgressBar.style.width = progreso.progreso + '%';
-                    if (archivoProgressPercent) archivoProgressPercent.textContent = progreso.progreso + '%';
-                    if (onProgreso) onProgreso(progreso);
-                });
-
-                archivoProgressText.textContent = 'archivo transmitido';
-                archivoProgressBar.style.background = '#00ff41';
-                setTimeout(() => {
-                    archivoProgressContainer.style.display = 'none';
-                    mostrarSelector();
-                    archivoTransmitBtn.disabled = false;
-                    transmisionActiva = false;
-                }, 2000);
-
-            } catch (error) {
-                console.error('Error al transmitir archivo:', error);
-                archivoProgressText.textContent = 'error en transmisión';
-                archivoProgressBar.style.background = '#ff184c';
-                setTimeout(() => {
-                    archivoProgressContainer.style.display = 'none';
-                    mostrarSelector();
-                    archivoTransmitBtn.disabled = false;
-                    transmisionActiva = false;
-                }, 2000);
-            }
-        });
     }
+
+    archivoTransmitBtn.addEventListener('click', transmitirArchivo);
+
+    return {
+        seleccionarArchivo,
+        transmitirArchivo,
+        obtenerArchivoSeleccionado: () => archivoSeleccionado,
+        estaTransmitiendo: () => transmisionActiva
+    };
 }
