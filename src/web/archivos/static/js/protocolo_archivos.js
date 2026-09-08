@@ -129,27 +129,54 @@ export function crc16ccitt(buf) {
 
 // Codifica un bloque de datos con CRC8
 export function codificarBloqueDatos(bytes) {
-    const bloque = new Uint8Array(bytes.length + 1);
-    bloque.set(bytes, 0);
-    bloque[bytes.length] = crc8(bytes);
+    if (!(bytes instanceof Uint8Array)) {
+        throw new TypeError('Los datos del bloque deben ser un Uint8Array');
+    }
+
+    if (bytes.length < 1 || bytes.length > PROTOCOLO_ARCHIVOS.BLOQUE_DATOS) {
+        throw new RangeError('Un bloque debe contener entre 1 y 8 bytes');
+    }
+
+    const datosRellenos = new Uint8Array(PROTOCOLO_ARCHIVOS.BLOQUE_DATOS);
+    datosRellenos.set(bytes, 0);
+    const bloque = new Uint8Array(
+        PROTOCOLO_ARCHIVOS.BLOQUE_DATOS + PROTOCOLO_ARCHIVOS.CRC_BLOQUE
+    );
+    bloque.set(datosRellenos, 0);
+    bloque[PROTOCOLO_ARCHIVOS.BLOQUE_DATOS] = crc8(datosRellenos);
     return bloque;
 }
 
 /**
  * Separa payload y CRC8, y devuelve el resultado de validación.
  */
-export function decodificarBloqueDatos(bloque) {
-    if (!(bloque instanceof Uint8Array) || bloque.length < 1) {
-        throw new TypeError('El bloque debe ser un Uint8Array con CRC8');
+export function decodificarBloqueDatos(bloque, opciones = {}) {
+    const longitudEsperada = PROTOCOLO_ARCHIVOS.BLOQUE_DATOS
+        + PROTOCOLO_ARCHIVOS.CRC_BLOQUE;
+
+    if (!(bloque instanceof Uint8Array) || bloque.length !== longitudEsperada) {
+        throw new TypeError('El bloque debe ser un Uint8Array de 9 bytes');
     }
 
-    const datos = bloque.slice(0, -1);
+    const longitudDatos = opciones.longitudDatos
+        ?? PROTOCOLO_ARCHIVOS.BLOQUE_DATOS;
+
+    if (
+        !Number.isInteger(longitudDatos)
+        || longitudDatos < 0
+        || longitudDatos > PROTOCOLO_ARCHIVOS.BLOQUE_DATOS
+    ) {
+        throw new RangeError('La longitud útil debe ser un entero entre 0 y 8');
+    }
+
+    const datosRellenos = bloque.slice(0, PROTOCOLO_ARCHIVOS.BLOQUE_DATOS);
     const crcRecibido = bloque[bloque.length - 1];
-    const crcCalculado = crc8(datos);
+    const crcCalculado = crc8(datosRellenos);
 
     return {
         valido: crcRecibido === crcCalculado,
-        datos,
+        datos: datosRellenos.slice(0, longitudDatos),
+        datosRellenos,
         crcRecibido,
         crcCalculado
     };

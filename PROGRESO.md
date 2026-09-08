@@ -1202,3 +1202,74 @@ muestreo; para 44,1 kHz es 22,05 kHz.
 M2-FILE-001 a M2-FILE-003: hacer que emisor y receptor de archivos compartan el
 mismo CRC16, CRC8 y formato de bloque final, con pruebas antes de conectar el
 contrato a la interfaz.
+
+## Continuación — contrato activo de archivos
+
+### Objetivo
+
+Corregir las tres incompatibilidades de serialización que impedían aceptar una
+transferencia incluso suponiendo bits acústicos perfectos.
+
+### Hipótesis
+
+Si emisor y receptor usan las mismas funciones para crear y leer cabeceras y
+bloques, cualquier secuencia de bytes sin alteraciones debe reconstruirse
+exactamente, incluyendo archivos cuyo tamaño no sea múltiplo de ocho.
+
+### Cambios
+
+- el emisor sustituyó el cálculo manual defectuoso por
+  `crearCabeceraArchivo()`;
+- el receptor sustituyó su lectura manual por
+  `decodificarCabeceraArchivo()`;
+- el receptor valida CRC8 con el mismo polinomio `0x07` que el emisor;
+- cada bloque se rellena hasta ocho bytes y añade un noveno byte CRC8;
+- el receptor calcula cuántos bytes útiles quedan según el tamaño de cabecera y
+  descarta únicamente el relleno del último bloque;
+- se añadieron validaciones para tipos, tamaños de bloque y longitud útil.
+
+### Pruebas
+
+```text
+npm test
+```
+
+Resultado acumulado:
+
+```text
+56 aprobadas
+0 fallidas
+```
+
+Las pruebas nuevas comprueban:
+
+- cabecera válida y detección de una cabecera alterada;
+- bloque válido y detección de un bloque alterado;
+- último bloque de tres bytes empaquetado en nueve bytes;
+- recuperación de los tres bytes sin conservar cinco ceros de relleno;
+- rechazo de bloques con más de ocho bytes;
+- reconstrucción exacta de archivos deterministas de 1 a 25 bytes.
+
+### Resultado
+
+Quedan completados M2-FILE-001, M2-FILE-002 y M2-FILE-003. La incompatibilidad
+lógica CRC16/CRC8/bloque final está corregida en las rutas activas.
+
+Esto no demuestra todavía una transferencia acústica completa. El receptor
+continúa tratando llamadas de `requestAnimationFrame` como oportunidades para
+agregar bits y el mapa físico mantiene colisiones conocidas. Esos defectos no
+se ocultaron ni se presentaron como resueltos.
+
+### Decisiones y motivo
+
+- usar relleno en lugar de introducir ahora un campo nuevo de longitud por
+  paquete, porque mantiene un formato fijo y la cabecera ya contiene el tamaño
+  total necesario para retirar el relleno;
+- conservar intactos el documento y JSON de E002 como línea base histórica;
+- separar compatibilidad lógica de sincronización acústica.
+
+### Próximo paso
+
+Continuar la limpieza de archivos con propiedad única del receptor y del archivo
+seleccionado (M2-FILE-004 y M2-FILE-005), antes de abordar cancelación, nombre y
+progreso.

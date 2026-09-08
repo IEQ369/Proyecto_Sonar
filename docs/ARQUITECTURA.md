@@ -1982,7 +1982,8 @@ crc8
 ```
 
 Estas funciones permiten probar el formato sin Web Audio API, temporizadores ni
-interfaz. Todavía no sustituyen las rutas activas de emisor y receptor.
+interfaz. Desde M2-FILE-001/003, las rutas activas de emisor y receptor también
+utilizan este contrato para cabecera y bloques.
 
 La comparación confirmó que la estructura conceptual puede ser consistente,
 pero las rutas V1 combinan componentes incompatibles:
@@ -2006,6 +2007,27 @@ SYNC  = DATA_1
 END   = ACK
 ```
 
-La arquitectura corregida deberá definir un único contrato compartido y hacer
-que emisor y receptor dependan de él. E002 conserva el comportamiento original
-para que esas correcciones puedan compararse contra evidencia.
+E002 conserva este comportamiento original para que las correcciones puedan
+compararse contra evidencia. El contrato activo corregido es:
+
+```text
+Cabecera TX
+    ↓ crearCabeceraArchivo()
+22 bytes = tamaño + nombre + CRC16
+    ↓ decodificarCabeceraArchivo()
+Cabecera RX
+
+1–8 bytes útiles
+    ↓ relleno hasta 8 bytes + CRC8
+9 bytes transmitidos
+    ↓ validación CRC8 + longitud restante del archivo
+1–8 bytes útiles recuperados
+```
+
+El relleno hace que todos los bloques tengan el mismo tamaño físico. Los ceros
+añadidos no forman parte del archivo recuperado: la longitud total declarada en
+la cabecera determina cuántos bytes del último bloque son útiles.
+
+La compatibilidad lógica no valida todavía la ruta acústica. Continúan abiertos
+el reloj de bits dependiente de frames, las colisiones entre marcadores y datos,
+y el solapamiento de ventanas de decisión.

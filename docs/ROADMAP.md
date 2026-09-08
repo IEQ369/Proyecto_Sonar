@@ -694,13 +694,24 @@ ya no se eliminan ni convierten silenciosamente símbolos desconocidos.
 
 Unificar CRC16.
 
+**Estado:** completado el 2026-09-08. El emisor crea la cabecera mediante
+`crearCabeceraArchivo()` y el receptor la interpreta mediante
+`decodificarCabeceraArchivo()`. Ambos calculan CRC16 sobre los mismos 20 bytes.
+
 ### M2-FILE-002
 
 Unificar CRC8.
 
+**Estado:** completado el 2026-09-08. Emisor y receptor utilizan el CRC8
+polinomial compartido; se eliminó el XOR acumulado de la ruta activa.
+
 ### M2-FILE-003
 
 Definir correctamente bloque final.
+
+**Estado:** completado el 2026-09-08. Todos los bloques transportan 8 bytes más
+CRC8. El último se rellena con ceros para validar el mismo formato y el receptor
+conserva únicamente los bytes útiles indicados por el tamaño total.
 
 ### M2-FILE-004
 

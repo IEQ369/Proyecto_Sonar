@@ -3,7 +3,12 @@
 // Protocolo robusto: preámbulo, SOI, cabecera con CRC, datos, END
 
 import { generarOnda } from '../../../static/js/generador_onda.js';
-import { PROTOCOLO_ARCHIVOS, codificarCabeceraArchivo, crc16ccitt, codificarBloqueDatos, byteToBits } from './protocolo_archivos.js';
+import {
+    PROTOCOLO_ARCHIVOS,
+    crearCabeceraArchivo,
+    codificarBloqueDatos,
+    byteToBits
+} from './protocolo_archivos.js';
 
 // Constantes para el protocolo robusto
 const AMPLITUDE = 0.15;
@@ -48,8 +53,7 @@ export async function emitirArchivoRobusto(archivo, opts = {}, onProgreso = null
     }
 
     // 3. CABECERA: tamaño, nombre, CRC16 (repetida)
-    const crc = crc16ccitt(new Uint8Array([...new Uint8Array(4), ...new TextEncoder().encode(archivo.name.slice(0, 16).padEnd(16, '\0'))]));
-    const cabecera = codificarCabeceraArchivo(archivo.size, archivo.name, crc);
+    const cabecera = crearCabeceraArchivo(archivo.size, archivo.name);
 
     for (let rep = 0; rep < PROTOCOLO_ARCHIVOS.CABECERA_REPS; rep++) {
         for (let byte of cabecera) {
@@ -198,4 +202,4 @@ export function setupEmisorArchivoUI(onProgreso = null) {
             }
         });
     }
-} 
+}

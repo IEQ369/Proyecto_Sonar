@@ -2,7 +2,12 @@
 // Receptor robusto para archivos por ultrasonido
 // Protocolo robusto: preámbulo, SOI, cabecera con CRC, datos, END
 
-import { PROTOCOLO_ARCHIVOS, crc16ccitt, bitsToByte } from './protocolo_archivos.js';
+import {
+    PROTOCOLO_ARCHIVOS,
+    bitsToByte,
+    decodificarCabeceraArchivo,
+    decodificarBloqueDatos
+} from './protocolo_archivos.js';
 
 const TOLERANCIA = 300;
 
@@ -135,15 +140,15 @@ export class ReceptorArchivos {
                             let vals = cabeceras.map(c => c[i]);
                             cabeceraFinal[i] = vals.sort((a, b) => vals.filter(v => v === a).length - vals.filter(v => v === b).length).pop();
                         }
-                        // Validar CRC
-                        const crc = (cabeceraFinal[21] << 8) | cabeceraFinal[20];
-                        const crcCalc = crc16ccitt(new Uint8Array(cabeceraFinal.slice(0, 20)));
-                        if (crc === crcCalc) {
+                        const cabeceraDecodificada = decodificarCabeceraArchivo(
+                            new Uint8Array(cabeceraFinal)
+                        );
+                        if (cabeceraDecodificada.valida) {
                             this.cabeceraValida = true;
-                            // Extraer info
-                            const tamano = cabeceraFinal[0] | (cabeceraFinal[1] << 8) | (cabeceraFinal[2] << 16) | (cabeceraFinal[3] << 24);
-                            let nombre = '';
-                            for (let i = 4; i < 20; i++) if (cabeceraFinal[i]) nombre += String.fromCharCode(cabeceraFinal[i]);
+                            const {
+                                tamano,
+                                nombre
+                            } = cabeceraDecodificada;
                             this.infoCabecera = { tamano, nombre };
                             this.bufferBytes = [];
                             this.estado = 'RECEIVING_DATA';
@@ -167,38 +172,56 @@ export class ReceptorArchivos {
                         console.log('[Receptor] Recibiendo datos, bits:', this.bufferBits.length);
                     }
                     if (this.bufferBits.length === (8 + 1) * 8) { // 8 bytes + CRC8
-                        let bytes = [];
-                        for (let i = 0; i < 8; i++) {
-                            bytes.push(bitsToByte(this.bufferBits.slice(i * 8, (i + 1) * 8)));
+                        const bytesBloque = [];
+                        for (let i = 0; i < 9; i++) {
+                            bytesBloque.push(
+                                bitsToByte(
+                                    this.bufferBits.slice(i * 8, (i + 1) * 8)
+                                )
+                            );
                         }
-                        const crc = bitsToByte(this.bufferBits.slice(8 * 8, 9 * 8));
-                        // Validar CRC8
-                        let crcCalc = 0;
-                        for (let b of bytes) crcCalc ^= b;
-                        if (crc === crcCalc) {
-                            for (let b of bytes) this.bufferBytes.push(b);
-                            this.bloquesRecibidos++;
-                            if (this.onProgreso) {
-                                this.onProgreso({
-                                    progreso: Math.round((this.bloquesRecibidos / this.totalBloques) * 100),
-                                    bloquesRecibidos: this.bloquesRecibidos,
-                                    totalBloques: this.totalBloques,
-                                    bytesRecibidos: this.bufferBytes.length,
-                                    totalBytes: this.infoCabecera.tamano
-                                });
+                        const bytesRestantes = this.infoCabecera.tamano
+                            - this.bufferBytes.length;
+                        const resultadoBloque = decodificarBloqueDatos(
+                            new Uint8Array(bytesBloque),
+                            {
+                                longitudDatos: Math.min(
+                                    PROTOCOLO_ARCHIVOS.BLOQUE_DATOS,
+                                    bytesRestantes
+                                )
                             }
-                            this.actualizarEstado(`recibiendo archivo: ${this.infoCabecera.nombre} (${this.bufferBytes.length}/${this.infoCabecera.tamano} bytes)`);
-                        } else {
+                        );
+                        this.bufferBits = [];
+
+                        if (!resultadoBloque.valido) {
                             this.estado = 'ERROR';
                             this.actualizarEstado('error de bloque (CRC8)');
                             this.resetTimeout(2500);
+                            break;
                         }
-                        this.bufferBits = [];
-                        this.resetTimeout();
+
+                        for (const byte of resultadoBloque.datos) {
+                            this.bufferBytes.push(byte);
+                        }
+                        this.bloquesRecibidos++;
+
+                        if (this.onProgreso) {
+                            this.onProgreso({
+                                progreso: Math.round((this.bloquesRecibidos / this.totalBloques) * 100),
+                                bloquesRecibidos: this.bloquesRecibidos,
+                                totalBloques: this.totalBloques,
+                                bytesRecibidos: this.bufferBytes.length,
+                                totalBytes: this.infoCabecera.tamano
+                            });
+                        }
+                        this.actualizarEstado(`recibiendo archivo: ${this.infoCabecera.nombre} (${this.bufferBytes.length}/${this.infoCabecera.tamano} bytes)`);
+
                         // Si ya recibimos todos los bytes
                         if (this.bufferBytes.length >= this.infoCabecera.tamano) {
                             this.estado = 'COMPLETE';
                             this.finalizarArchivo();
+                        } else {
+                            this.resetTimeout();
                         }
                     }
                 } else if (Math.abs(frecuencia - PROTOCOLO_ARCHIVOS.END) < TOLERANCIA && this.isStableFrequency(PROTOCOLO_ARCHIVOS.END)) {
@@ -241,4 +264,4 @@ export class ReceptorArchivos {
         this.onArchivoCompleto = onArchivoCompleto;
         this.onEstado = onEstado;
     }
-} 
+}
