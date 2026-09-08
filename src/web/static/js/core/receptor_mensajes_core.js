@@ -188,7 +188,7 @@ export class ReceptorMensajesCore {
             && this.esFrecuenciaEstable(charToFrequency(caracterDetectado))
             && (
                 caracterDetectado !== this.ultimoCaracter
-                || tiempoDesdeUltimo > this.bloqueoSimboloMs
+                || tiempoDesdeUltimo >= this.bloqueoSimboloMs
             )
         ) {
             this.buffer += caracterDetectado;

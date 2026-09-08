@@ -57,57 +57,6 @@
     <!-- Scripts principales del sistema -->
     <script type="module" src="/static/js/app.js"></script>
     <!-- <script src="/static/js/test_mic.js"></script> -->
-    <script type="module">
-        import { emitirUltrasonico } from '/static/js/emisor_ultrasonico.js';
-
-        const input = document.getElementById('messageInput');
-        const status = document.getElementById('emisor-status');
-        const transmitBtn = document.getElementById('transmit-btn');
-
-        // Limpia listeners previos si existen
-        input.onkeydown = null;
-        transmitBtn.onclick = null;
-        input.oninput = null;
-
-        function safeAddToMessageLog(msg, type) {
-            if (typeof window.addToMessageLog === 'function') {
-                window.addToMessageLog(msg, type);
-            } else {
-                setTimeout(() => safeAddToMessageLog(msg, type), 50);
-            }
-        }
-
-        async function sendMessage() {
-            const val = input.value.trim().toUpperCase();
-            if (val) {
-                status.textContent = 'enviando...';
-                transmitBtn.disabled = true;
-                await emitirUltrasonico(val);
-                status.textContent = 'mensaje enviado';
-                input.value = '';
-                safeAddToMessageLog(val, 'sent');
-                transmitBtn.disabled = false;
-            }
-        }
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        transmitBtn.addEventListener('click', function () {
-            sendMessage();
-        });
-        // Mostrar siempre en mayúsculas mientras se escribe
-        input.addEventListener('input', function () {
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-            input.value = input.value.toUpperCase();
-            input.setSelectionRange(start, end);
-        });
-
-
-    </script>
     <style>
         .cyber-terminal {
             background: #18181c;

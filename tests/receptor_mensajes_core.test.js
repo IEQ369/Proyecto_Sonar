@@ -81,6 +81,19 @@ test('el receptor reconstruye el mensaje A y vuelve a IDLE', () => {
     assert.equal(receptor.buffer, '');
 });
 
+test('el receptor acepta dos símbolos iguales en el límite temporal', () => {
+    const receptor = new ReceptorMensajesCore();
+
+    alimentarFrecuenciaEstable(receptor, 18500, 0);
+    alimentarFrecuenciaEstable(receptor, 19050, 30);
+    const primerCaracter = alimentarFrecuenciaEstable(receptor, 18800, 60);
+    const segundoCaracter = alimentarFrecuenciaEstable(receptor, 18800, 140);
+
+    assert.equal(primerCaracter.caracter, 'A');
+    assert.equal(segundoCaracter.caracter, 'A');
+    assert.equal(segundoCaracter.mensajeParcial, 'AA');
+});
+
 test('una señal débil no inicia el receptor', () => {
     const receptor = new ReceptorMensajesCore();
 

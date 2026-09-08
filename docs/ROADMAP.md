@@ -647,6 +647,10 @@ Tener una versión del diseño actual que no contenga bugs lógicos conocidos qu
 
 Eliminar transmisión doble por Enter.
 
+**Estado:** completado el 2026-09-08. `setupEmisorUI()` es el único propietario
+de los eventos de Enter y del botón. Una prueba comprueba que un segundo intento
+mientras existe una emisión en curso no inicia otra transmisión.
+
 Referencia:
 
 ```text
@@ -656,6 +660,10 @@ AUDITORIA MSG-001
 ### M2-MSG-002
 
 Unificar el camino TX.
+
+**Estado:** completado el 2026-09-08. Enter y el botón utilizan la misma función,
+los mismos parámetros de emisión, el mismo bloqueo de auto-eco y el mismo
+registro del mensaje enviado.
 
 Referencia:
 
@@ -667,9 +675,16 @@ MSG-002
 
 Simplificar estados END/redundantes con tests.
 
+**Estado:** completado el 2026-09-08. El núcleo separado conserva únicamente
+`IDLE`, `SYNC` y `DATA`; END produce el evento final y reinicia directamente el
+receptor. Las transiciones y el reinicio están cubiertos por pruebas.
+
 ### M2-MSG-004
 
 Errores explícitos para caracteres no soportados.
+
+**Estado:** completado el 2026-09-08. La entrada se normaliza a mayúsculas, pero
+ya no se eliminan ni convierten silenciosamente símbolos desconocidos.
 
 ---
 

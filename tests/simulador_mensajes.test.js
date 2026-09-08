@@ -30,10 +30,17 @@ test('el plan sintético A contiene marcadores, dato y silencio', () => {
 });
 
 test('el emisor sintético normaliza la entrada y conserva 21120 muestras para A', () => {
-    const transmision = generarMensajeSintetico('a!');
+    const transmision = generarMensajeSintetico('a');
 
     assert.equal(transmision.mensaje, 'A');
     assert.equal(transmision.muestras.length, 21120);
+});
+
+test('el emisor sintético no elimina silenciosamente caracteres desconocidos', () => {
+    assert.throws(
+        () => generarMensajeSintetico('a!'),
+        /Caracteres no soportados: !/
+    );
 });
 
 test('el detector de referencia recupera una frecuencia sintética', () => {
@@ -98,10 +105,10 @@ test('la simulación ideal recupera SONAR 01 con SER igual a cero', () => {
     assert.equal(resultado.metricas.ser, 0);
 });
 
-test('la simulación registra la pérdida actual de caracteres consecutivos', () => {
+test('la simulación ideal recupera caracteres consecutivos iguales', () => {
     const resultado = simularMensaje('AA');
 
-    assert.equal(resultado.mensajeRecibido, 'A');
-    assert.equal(resultado.metricas.erroresSimbolo, 1);
-    assert.equal(resultado.metricas.ser, 0.5);
+    assert.equal(resultado.mensajeRecibido, 'AA');
+    assert.equal(resultado.metricas.erroresSimbolo, 0);
+    assert.equal(resultado.metricas.ser, 0);
 });

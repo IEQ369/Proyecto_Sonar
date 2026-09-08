@@ -7,7 +7,8 @@ import {
     END_FREQUENCY,
     CHAR_FREQUENCIES,
     charToFrequency,
-    frequencyToChar
+    frequencyToChar,
+    validarMensaje
 } from '../src/web/static/js/protocolo_ultrasonico.js';
 
 function secuenciaPara(mensaje) {
@@ -28,6 +29,24 @@ test('cada carácter vuelve desde su frecuencia central exacta', () => {
             `${caracter} debe recuperarse desde ${frecuencia} Hz`
         );
     }
+});
+
+test('un carácter no soportado produce un error explícito', () => {
+    assert.throws(
+        () => charToFrequency('!'),
+        {
+            name: 'RangeError',
+            message: 'Carácter no soportado: !'
+        }
+    );
+});
+
+test('un mensaje conserva minúsculas normalizadas pero rechaza símbolos desconocidos', () => {
+    assert.equal(validarMensaje(' sonar 01 '), 'SONAR 01');
+    assert.throws(
+        () => validarMensaje('SONAR!'),
+        /Caracteres no soportados: !/
+    );
 });
 
 test('los marcadores no coinciden exactamente con una frecuencia de datos', () => {

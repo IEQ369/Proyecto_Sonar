@@ -1,7 +1,16 @@
 // Emisor ultrasónico Web Audio API - Sincronizado con protocolo y mapeo del sistema
 // Autor: IA (basado en tu emisor Python)
 
-import { START_FREQUENCY, SYNC_FREQUENCY, END_FREQUENCY, charToFrequency, SYMBOL_DURATION, MARKER_DURATION, CHARACTER_GAP } from './protocolo_ultrasonico.js';
+import {
+    START_FREQUENCY,
+    SYNC_FREQUENCY,
+    END_FREQUENCY,
+    charToFrequency,
+    validarMensaje,
+    SYMBOL_DURATION,
+    MARKER_DURATION,
+    CHARACTER_GAP
+} from './protocolo_ultrasonico.js';
 import { generarOnda } from './generador_onda.js';
 
 /**
@@ -41,11 +50,11 @@ function getAmplitudPorCaracter(caracter, amplitudBase = 0.15) {
  * @param {object} [opts] - Opciones avanzadas (duraciones, amplitud)
  */
 export async function emitirUltrasonico(mensaje, opts = {}) {
-    mensaje = mensaje.replace(/[^A-Z0-9Ñ ]/g, '');
+    mensaje = validarMensaje(mensaje);
 
-    const AMPLITUDE = opts.AMPLITUDE || 0.15;
-    const FADE_TIME = opts.FADE_TIME || 0.025;
-    const SAMPLE_RATE = opts.SAMPLE_RATE || 48000;
+    const AMPLITUDE = opts.AMPLITUDE ?? 0.15;
+    const FADE_TIME = opts.FADE_TIME ?? 0.025;
+    const SAMPLE_RATE = opts.SAMPLE_RATE ?? 48000;
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
 
@@ -103,63 +112,88 @@ export async function emitirUltrasonico(mensaje, opts = {}) {
     setTimeout(() => audioCtx.close(), 200);
 }
 
-export function setupEmisorUI(visualizer, isTransmittingRef) {
-    const input = document.getElementById('messageInput');
-    const status = document.getElementById('emisor-status');
+export function setupEmisorUI(visualizer, isTransmittingRef, dependencias = {}) {
+    const documento = dependencias.documento ?? globalThis.document;
+    const emitir = dependencias.emitir ?? emitirUltrasonico;
+    const registrarMensaje = dependencias.registrarMensaje
+        ?? ((mensaje, tipo) => globalThis.window?.addToMessageLog?.(mensaje, tipo));
+    const input = documento.getElementById('messageInput');
+    const status = documento.getElementById('emisor-status');
+    const transmitBtn = documento.getElementById('transmit-btn');
+    const transmissionStatus = documento.getElementById('transmission-status');
     let isSending = false;
 
-    if (input && status) {
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey && !isSending) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+    if (!input || !status || !transmitBtn) {
+        throw new Error('No se encontraron los controles del emisor de mensajes');
     }
 
-    function sendMessage() {
-        if (isSending) return;
-        const val = input.value.trim().toUpperCase();
-        if (val) {
-            isSending = true;
-            input.disabled = true;
-            status.textContent = 'enviando...';
-            visualizer.setTransmitMode(true);
+    async function enviarMensaje() {
+        if (isSending) {
+            return false;
+        }
 
-            // activar estado de transmisión para evitar auto eco
-            isTransmittingRef.current = true;
-            console.log('transmision iniciada - bloqueando recepcion');
+        let mensaje;
+        try {
+            mensaje = validarMensaje(input.value);
+        } catch (error) {
+            status.textContent = error.message;
+            return false;
+        }
 
-            // mostrar indicador visual de transmisión
-            const transmissionStatus = document.getElementById('transmission-status');
+        isSending = true;
+        input.disabled = true;
+        transmitBtn.disabled = true;
+        status.textContent = 'enviando...';
+        visualizer.setTransmitMode(true);
+        isTransmittingRef.current = true;
+
+        if (transmissionStatus) {
+            transmissionStatus.style.display = 'block';
+        }
+
+        try {
+            await emitir(mensaje, { AMPLITUDE: 0.08, FADE_TIME: 0.035 });
+            status.textContent = 'mensaje enviado';
+            input.value = '';
+            registrarMensaje(mensaje, 'sent');
+            return true;
+        } catch (error) {
+            console.error('Error al emitir:', error);
+            status.textContent = 'error al emitir';
+            return false;
+        } finally {
+            isSending = false;
+            input.disabled = false;
+            transmitBtn.disabled = false;
+            visualizer.setTransmitMode(false);
+            isTransmittingRef.current = false;
+
             if (transmissionStatus) {
-                transmissionStatus.style.display = 'block';
+                transmissionStatus.style.display = 'none';
             }
-
-            emitirUltrasonico(val, { AMPLITUDE: 0.08, FADE_TIME: 0.035 })
-                .then(() => {
-                    status.textContent = 'mensaje enviado';
-                    input.value = '';
-                })
-                .catch((err) => {
-                    console.error('Error al emitir:', err);
-                    status.textContent = 'error al emitir';
-                })
-                .finally(() => {
-                    isSending = false;
-                    input.disabled = false;
-                    visualizer.setTransmitMode(false);
-
-                    // desactivar estado de transmisión
-                    isTransmittingRef.current = false;
-                    console.log('transmision terminada - permitiendo recepcion');
-
-                    // ocultar indicador visual de transmisión
-                    const transmissionStatus = document.getElementById('transmission-status');
-                    if (transmissionStatus) {
-                        transmissionStatus.style.display = 'none';
-                    }
-                });
         }
     }
-} 
+
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            return enviarMensaje();
+        }
+
+        return undefined;
+    });
+
+    transmitBtn.addEventListener('click', enviarMensaje);
+
+    input.addEventListener('input', function () {
+        const inicio = input.selectionStart;
+        const fin = input.selectionEnd;
+        input.value = input.value.toUpperCase();
+        input.setSelectionRange(inicio, fin);
+    });
+
+    return {
+        enviarMensaje,
+        estaEnviando: () => isSending
+    };
+}

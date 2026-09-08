@@ -19,8 +19,50 @@ export const MIN_DATA_FREQUENCY = 18200;
 export const MAX_DATA_FREQUENCY = 22300;
 export const FREQUENCY_STEP = 100;
 
+export function normalizarMensaje(mensaje) {
+    if (typeof mensaje !== 'string') {
+        throw new TypeError('El mensaje debe ser una cadena de texto');
+    }
+
+    return mensaje.trim().toUpperCase();
+}
+
+export function validarMensaje(mensaje) {
+    const mensajeNormalizado = normalizarMensaje(mensaje);
+
+    if (mensajeNormalizado.length === 0) {
+        throw new RangeError('El mensaje no puede estar vacío');
+    }
+
+    const caracteresNoSoportados = [
+        ...new Set(
+            [...mensajeNormalizado].filter(
+                (caracter) => !Object.hasOwn(CHAR_FREQUENCIES, caracter)
+            )
+        )
+    ];
+
+    if (caracteresNoSoportados.length > 0) {
+        throw new RangeError(
+            `Caracteres no soportados: ${caracteresNoSoportados.join(' ')}`
+        );
+    }
+
+    return mensajeNormalizado;
+}
+
 export function charToFrequency(char) {
-    return CHAR_FREQUENCIES[char.toUpperCase()] || MIN_DATA_FREQUENCY;
+    if (typeof char !== 'string' || [...char].length !== 1) {
+        throw new TypeError('Se esperaba exactamente un carácter');
+    }
+
+    const caracterNormalizado = char.toUpperCase();
+
+    if (!Object.hasOwn(CHAR_FREQUENCIES, caracterNormalizado)) {
+        throw new RangeError(`Carácter no soportado: ${char}`);
+    }
+
+    return CHAR_FREQUENCIES[caracterNormalizado];
 }
 
 export function frequencyToChar(frequency) {
@@ -106,4 +148,4 @@ if (conflictos.length > 0) {
     console.log('==========================================');
 } else {
     console.log('No se detectaron conflictos de frecuencias');
-} 
+}

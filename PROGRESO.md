@@ -1091,3 +1091,114 @@ La base ya permite formular una investigación científica sin depender de
 afirmaciones históricas del README. El siguiente trabajo debe definirse a partir
 de la pregunta, hipótesis y alcance de esa investigación, o continuar Milestone
 1 con relación señal-ruido, latencia y registro de pruebas físicas.
+
+---
+
+# 2026-09-08 — Milestone 2, limpieza lógica de mensajes
+
+## Objetivo
+
+Corregir los errores lógicos conocidos del flujo de mensajes sin rediseñar aún
+el mapa de frecuencias ni confundir una mejora de software con una validación
+del canal acústico físico.
+
+## Problemas comprobados
+
+- la plantilla y `setupEmisorUI()` registraban controladores de Enter distintos;
+- Enter y el botón utilizaban amplitud, fade y control de auto-eco diferentes;
+- los caracteres desconocidos se eliminaban o se convertían silenciosamente en
+  una frecuencia válida;
+- dos caracteres iguales separados exactamente por los 80 ms del protocolo no
+  eran aceptados porque el receptor exigía un intervalo estrictamente mayor;
+- el navegador podía conservar módulos JavaScript antiguos durante el
+  desarrollo y mostrar un comportamiento diferente al código del repositorio.
+
+## Concepto aprendido
+
+Una línea base conserva el comportamiento anterior para poder compararlo; una
+prueba de regresión describe el comportamiento correcto que no debe volver a
+romperse. Por eso el resultado histórico de E001 (`AA → A`, SER 0,5) se conserva,
+mientras que las pruebas actuales ya exigen `AA → AA`, SER 0.
+
+SER significa *Symbol Error Rate* o tasa de error de símbolos.
+
+## Cambios
+
+- se eliminó la lógica de transmisión incrustada en `index.html`;
+- Enter y el botón utilizan ahora un único controlador;
+- un bloqueo impide iniciar dos emisiones simultáneas;
+- normalización y validación forman parte del contrato compartido;
+- `charToFrequency()` produce un error explícito ante símbolos desconocidos;
+- emisor real y emisor sintético aplican la misma validación;
+- el límite temporal acepta un símbolo repetido cuando transcurrieron exactamente
+  80 ms;
+- el servidor local añade `Cache-Control: no-store` para cargar siempre los
+  módulos actuales durante las verificaciones.
+
+No se modificaron las frecuencias, tolerancias, duraciones, forma de onda ni
+algoritmo de detección.
+
+## Archivos principales
+
+```text
+src/web/static/js/protocolo_ultrasonico.js
+src/web/static/js/emisor_ultrasonico.js
+src/web/static/js/core/receptor_mensajes_core.js
+src/web/static/js/simulacion/emisor_mensajes_sintetico.js
+src/web/templates/index.html
+src/web/backend/servidor_estatico.py
+tests/emisor_mensajes_ui.test.js
+tests/protocolo_mensajes.test.js
+tests/receptor_mensajes_core.test.js
+tests/simulador_mensajes.test.js
+```
+
+## Pruebas
+
+```text
+npm test
+```
+
+Resultado:
+
+```text
+51 aprobadas
+0 fallidas
+```
+
+La verificación en navegador confirmó:
+
+- `/` carga sin errores JavaScript;
+- `/archivos` carga sin errores JavaScript;
+- `HOLA!` muestra `Caracteres no soportados: !` y no inicia audio;
+- la página principal contiene un único script de aplicación y ya no contiene
+  un segundo controlador TX incrustado.
+
+No se concedió acceso al micrófono y esta sesión no constituye una prueba
+acústica de recepción.
+
+## Resultado
+
+Quedan completados M2-MSG-001, M2-MSG-002, M2-MSG-003 y M2-MSG-004. El flujo
+de mensajes V1 está lógicamente más limpio y sus regresiones principales están
+cubiertas, pero continúan abiertos los defectos del diseño de señal ya medidos:
+solapamientos de ventanas, frecuencias sobre Nyquist a 44,1 kHz, temporización
+basada en `setTimeout`/`requestAnimationFrame` y umbrales dependientes del
+dispositivo.
+
+Nyquist es el límite máximo representable sin ambigüedad por una frecuencia de
+muestreo; para 44,1 kHz es 22,05 kHz.
+
+## Decisiones y motivo
+
+- conservar E001 como evidencia histórica, sin sobrescribir su JSON;
+- no corregir todavía el mapa de tonos, porque su reemplazo requiere una
+  comparación experimental;
+- continuar Milestone 2 con el contrato lógico de archivos antes de realizar
+  mediciones acústicas físicas.
+
+## Próximo paso
+
+M2-FILE-001 a M2-FILE-003: hacer que emisor y receptor de archivos compartan el
+mismo CRC16, CRC8 y formato de bloque final, con pruebas antes de conectar el
+contrato a la interfaz.

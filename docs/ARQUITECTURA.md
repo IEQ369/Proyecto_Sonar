@@ -256,34 +256,35 @@ HOLA
 la intención arquitectónica es:
 
 ```text
-"HOLA"
-   ↓
-normalización
-   ↓
+Enter o botón
+      ↓
+setupEmisorUI() único
+      ↓
+normalizar + validar "HOLA"
+      ↓
 H O L A
-   ↓
+      ↓
 charToFrequency()
-   ↓
-frecuencias
-   ↓
-generarBufferUltrasonico()
-   ↓
+      ↓
+generarOnda()
+      ↓
 AudioBufferSourceNode
-   ↓
+      ↓
 altavoz
 ```
 
-Pero existe framing adicional:
+El framing efectivo añade marcadores al principio y al final, y un intervalo
+sin tono entre caracteres:
 
 ```text
 START
 SYNC
 H
-SYNC
+GAP
 O
-SYNC
+GAP
 L
-SYNC
+GAP
 A
 SYNC
 END
@@ -965,18 +966,20 @@ Ejemplos:
 ## Mensajes
 
 ```text
-template
-   ↓
-listener TX
-
-emisor_ultrasonico.js
-   ↓
-otro listener TX
-
-app.js
-   ↓
-estado RX + estado transmisión
+template → controles sin lógica inline
+             ↓
+       setupEmisorUI()
+       ├─ Enter
+       ├─ botón
+       ├─ bloqueo isSending
+       └─ estado de auto-eco
+             ↓
+     emitirUltrasonico()
 ```
+
+Desde M2-MSG no existen dos caminos de transmisión de mensajes. `app.js`
+conserva la referencia compartida de auto-eco porque también la consulta la
+ruta de recepción, pero la modifica un único controlador TX.
 
 ## Archivos
 
@@ -1072,14 +1075,19 @@ Esto es un **principio de dirección**, no una reescritura aprobada todavía.
 ```text
 USUARIO
   │
-  │ escribe texto
+  │ escribe texto y usa Enter o botón
   ▼
-index.html / setupEmisorUI
+setupEmisorUI() — controlador único
+  │
+  ├─ normaliza a mayúsculas
+  ├─ valida caracteres soportados
+  ├─ impide emisiones simultáneas
+  └─ controla auto-eco y estado visual
   │
   ▼
 emitirUltrasonico()
   │
-  ├─ normaliza texto
+  ├─ vuelve a validar el contrato de entrada
   ├─ obtiene frecuencia por carácter
   ├─ añade START/SYNC/END
   │

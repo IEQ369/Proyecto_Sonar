@@ -5,7 +5,9 @@ import {
     SYMBOL_DURATION,
     MARKER_DURATION,
     CHARACTER_GAP,
-    charToFrequency
+    charToFrequency,
+    normalizarMensaje,
+    validarMensaje
 } from '../protocolo_ultrasonico.js';
 import {
     generarMuestrasOnda,
@@ -13,14 +15,10 @@ import {
     concatenarMuestras
 } from '../generador_onda.js';
 
-export function normalizarMensaje(mensaje) {
-    return String(mensaje)
-        .toUpperCase()
-        .replace(/[^A-Z0-9Ñ ]/g, '');
-}
+export { normalizarMensaje };
 
 export function crearPlanMensajeSintetico(mensaje, opciones = {}) {
-    const mensajeNormalizado = normalizarMensaje(mensaje);
+    const mensajeNormalizado = validarMensaje(mensaje);
     const amplitud = opciones.amplitud ?? 0.1;
     const fadeTime = opciones.fadeTime ?? 0.004;
     const segmentos = [
