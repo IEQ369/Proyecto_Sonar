@@ -14,7 +14,7 @@ trabajo, usar este estado y las entradas recientes de `PROGRESO.md`.
 
 | Frente | Estado verificado | Siguiente decisión o trabajo |
 |---|---|---|
-| Fundación documental (M0) | Documentos locales creados; integración reciente aún sin confirmar en Git | Preparar el repositorio público sin confundir publicación con despliegue web |
+| Fundación documental (M0) | Documentos integrados en `main` y enviados al repositorio remoto el 2026-09-19 | Cambiar la visibilidad cuando el propietario revise el alcance público del historial |
 | Baseline (M1) | E001 y E002 conservan resultados del baseline digital; faltan métricas y registro físico del alcance original | Ampliar medidas cuando corresponda, sin llamar "física" a la simulación |
 | V1 Clean (M2) | Alcance lógico cerrado; 66 pruebas aprobadas el 2026-09-19 | Conservar esta versión como referencia de comparación |
 | Caracterización (M3) | Pendiente | Empezar por E3-001: barrido sintético de frecuencias y matriz de confusión |
@@ -2073,7 +2073,7 @@ sin convertir el proyecto en malware operativo ni perder su carácter de investi
 # 34. Próximo paso
 
 Iniciar **E3-001 — barrido sintético y matriz de confusión de V1 Clean** como
-siguiente trabajo técnico. En paralelo, preparar la publicación del repositorio
+siguiente trabajo técnico. En paralelo, decidir la visibilidad del repositorio
 y definir con el coordinador la pregunta de investigación. Verificar en navegador
 la interfaz de archivos antes de pruebas con archivos de terceros.
 

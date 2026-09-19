@@ -1625,3 +1625,15 @@ externa a esta carpeta, ni código ejecutable, pruebas o resultados.
   solo los 51 archivos actuales y un historial nuevo de un commit. El original
   conserva las revisiones antiguas como respaldo. No hubo `push` ni cambio de
   visibilidad en GitHub.
+
+## 2026-09-19 — Integración de V1 Clean en `main`
+
+- Se decidió conservar y compartir el historial original de commits como parte
+  del registro técnico del proyecto. La copia local independiente no se usará
+  para publicar.
+- `main` avanzó sin reescribir historia hasta los cambios verificados y se
+  envió al repositorio remoto. No se usó un envío forzado.
+- Se comprobó que el commit remoto coincide con el local (`9a22c23`) y que las
+  66 pruebas siguen aprobadas.
+- La visibilidad del repositorio aún no cambió. Al hacerlo público, también
+  quedarán visibles las versiones anteriores y sus metadatos de autor.
