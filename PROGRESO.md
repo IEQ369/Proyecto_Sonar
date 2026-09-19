@@ -4,6 +4,10 @@
 > Este archivo registra **qué se hizo, por qué se hizo, qué se aprendió y qué sigue**.  
 > No reemplaza a `AUDITORIA.md`, `ARQUITECTURA.md` ni `ROADMAP.md`.
 
+Los hashes y etiquetas citados en entradas antiguas pertenecen al historial
+original. Una copia con historial nuevo conserva estas notas, pero no contiene
+aquellos commits.
+
 ---
 
 # Cómo usar este archivo
@@ -539,34 +543,11 @@ AudioWorklet
 
 ---
 
-# Modelo de aprendizaje
+# Modelo de trabajo
 
-Se decidió trabajar con el principio:
-
-```text
-Tony + JARVIS
-```
-
-La IA/Hermes puede:
-
-```text
-buscar
-analizar
-generar pruebas
-automatizar
-implementar
-comparar
-```
-
-El dueño debe conservar:
-
-```text
-comprensión
-criterio
-decisión
-revisión
-interpretación
-```
+Cada cambio importante debe quedar acompañado de su hipótesis, pruebas y
+explicación. El dueño del proyecto conserva la comprensión, el criterio, la
+decisión y la revisión de los resultados.
 
 ---
 
@@ -808,7 +789,7 @@ fase lógica del experimento.
 - añadido un ejecutor de pruebas basado en Node sin dependencias externas;
 - creados vectores deterministas para `A` y `SONAR 01`;
 - añadidas pruebas de mapeo, marcadores, solapamientos y Nyquist;
-- creada la rama `codex/test-reproducible-baseline`;
+- creada una rama de trabajo para el baseline reproducible;
 - no se modificó código funcional ni la interfaz visual.
 
 ## Archivos involucrados
@@ -1413,3 +1394,234 @@ serialización.
 Milestone 3 — caracterizar V1 Clean. La primera tarea será convertir el mapa de
 frecuencias y sus regiones de decisión en resultados medibles mediante barridos
 sintéticos, antes de seleccionar el mapa de SONAR V2.
+
+## 2026-09-14 — Presentación para la reunión inicial de investigación
+
+### Objetivo
+
+Preparar una presentación que permita explicar al futuro equipo qué es SONAR,
+qué fallaba en el prototipo, qué corrigió V1 Clean, cuál es la evidencia actual
+y qué parte todavía necesita investigación experimental.
+
+### Resultado
+
+Se creó una presentación de 15 diapositivas reutilizando el estilo visual de la
+presentación introductoria original: fondo negro, tipografía y colores neón,
+imágenes y diagramas acústicos.
+
+La secuencia final cubre:
+
+- identidad y propósito del proyecto;
+- paso del prototipo a una base medible;
+- recorrido emisor, canal y receptor;
+- protocolo y receptor de mensajes;
+- contrato lógico y trama de archivos;
+- ejemplos de errores corregidos;
+- diferencia entre trabajo cerrado y pendiente;
+- evidencia E001, E002 y 64 pruebas aprobadas;
+- pregunta científica provisional, métricas y trabajo del equipo.
+
+También se añadieron notas del expositor con explicaciones y fuentes internas.
+La presentación conserva de forma explícita el límite principal del estado
+actual: la base lógica es sólida, pero la fiabilidad acústica física todavía no
+ha sido demostrada.
+
+Archivo local de trabajo (excluido de GitHub):
+
+```text
+docs/presentaciones/SONAR_equipo_investigacion_estilo_original_2026-09-14_v3.pptx
+```
+
+### Verificación
+
+- 15 diapositivas renderizadas y revisadas visualmente;
+- sin texto recortado ni elementos superpuestos de forma accidental;
+- viñetas duplicadas de la plantilla corregidas;
+- estructura del archivo y fuentes de la plantilla verificadas;
+- títulos añadidos a los diagramas del receptor y de la trama de archivos.
+
+### Próximo paso
+
+Usar esta versión como apoyo para estudiar el proyecto y ensayar la explicación.
+Después de definir con el coordinador la pregunta y el alcance científico, se
+deberán ajustar las últimas diapositivas sin presentar la pregunta provisional
+como una decisión definitiva.
+
+## 2026-09-17 — Limpieza local y preparación del repositorio
+
+### Objetivo
+
+Retirar archivos temporales usados para construir la presentación y evitar que
+se publiquen por accidente al compartir el repositorio. Preparar la entrada del
+proyecto para el equipo sin modificar el código ejecutable.
+
+### Cambios
+
+- Se eliminaron carpetas temporales que contenían 45 renderizados, borradores
+  y reportes de validación de la presentación.
+- Se eliminaron tres versiones descartadas de presentaciones. Se conservó una
+  versión final local y una copia de respaldo de la presentación original, ya
+  que esta última no apareció en la ubicación original de Descargas.
+- Se añadió a `.gitignore` la exclusión de presentaciones privadas y
+  dependencias locales de Node.js.
+- Se actualizó `README.md` para describir el estado real: base lógica probada,
+  limitaciones acústicas pendientes y ausencia de licencia elegida.
+- Se mantuvieron `tests/`, `scripts/` y `docs/experiments/`: contienen pruebas
+  y resultados necesarios para reproducir la investigación.
+
+La estructura de `src/web/` no se movió. Reubicar módulos sin actualizar
+importaciones y rutas rompería la aplicación y excedería esta limpieza sin
+cambios de código.
+
+### Verificación
+
+- `npm test`: 64 pruebas aprobadas, 0 fallidas.
+- No quedaron presentaciones ni carpetas temporales versionadas en Git.
+- No se modificó el historial Git ni se publicó nada.
+
+### Pendiente antes de hacer público el repositorio
+
+El historial de `origin/main` aún contiene un antiguo entorno virtual `venv`
+con bibliotecas binarias. `.gitignore` evita reincorporarlo, pero no lo borra
+del historial visible. Reescribir ese historial requeriría una decisión aparte
+porque cambia identificadores de commits y puede afectar a otros clones.
+También falta elegir una licencia de reutilización.
+
+## 2026-09-17 — Roadmap al día y revisión externa como insumo
+
+### Objetivo
+
+Corregir las secciones del roadmap que todavía parecían tareas futuras de
+agosto y registrar una opinión externa de código sin convertirla en órdenes
+automáticas ni alterar la implementación durante esta sesión.
+
+### Comprobaciones
+
+- `PROGRESO.md` ya existe; la fundación documental no está pendiente de creación.
+- El alcance lógico de V1 Clean está cerrado con 64 pruebas aprobadas; el baseline
+  general aún no contiene métricas ni pruebas físicas suficientes.
+- El próximo experimento técnico continúa siendo E3-001, barrido sintético de
+  frecuencias y matriz de confusión con el comportamiento actual del receptor.
+- `app_archivos.js` interpola el nombre recibido en `innerHTML` del enlace de
+  descarga y del registro. Se verificó la inserción de HTML no confiable; no se
+  documentó aquí una explotación práctica. Debe corregirse antes de pruebas
+  con archivos enviados por terceros.
+- Los bucles de captura/FFT de mensajes y archivos se repiten parcialmente; el
+  log de frecuencias de archivos no coincide con `PROTOCOLO_ARCHIVOS`.
+- Existen parámetros de frecuencia, tolerancia y duración repartidos entre
+  varios módulos. Algunos corresponden a fases o protocolos diferentes y no
+  deben igualarse sin inventario y medición.
+- `frequencyToChar()` devuelve el primer carácter que cae en ±80 Hz, aunque
+  otro pueda estar más cerca. Este comportamiento debe registrarse en el
+  baseline antes de evaluar una alternativa.
+
+### Decisiones
+
+- La revisión externa se toma como opinión contrastable. El dueño del proyecto
+  y este plan conservan las decisiones de prioridad.
+- No se refactoriza `archivos` ni se cambia el mapa de frecuencias antes del
+  barrido de V1 Clean. La corrección de inserción HTML es un trabajo separado
+  y prioritario antes de demos con archivos de terceros.
+- La investigación científica avanza en paralelo: pregunta y alcance finales
+  se acordarán con el coordinador; E001/E002 no son evidencia acústica física.
+- El trabajo de esta sesión es documental. No se hizo `commit`, `push` ni un
+  cambio de código ejecutable.
+
+### Archivos
+
+- `docs/ROADMAP.md`: estado actual, flujo científico paralelo, prioridades y
+  orden próximo; planificación de agosto conservada como histórica.
+- `PROGRESO.md`: esta entrada.
+
+### Verificación
+
+- `npm test`: 64 pruebas aprobadas, 0 fallidas.
+- `git diff --check`: sin errores de formato.
+- No se modificó código ejecutable ni se ejecutaron los experimentos E001/E002,
+  que sobrescriben sus archivos `results/latest.json`.
+
+### Próximo paso
+
+Especificar y ejecutar E3-001 sin alterar el receptor de referencia; resolver
+la inserción HTML antes de pruebas con archivos de terceros y preparar la
+publicación del repositorio de manera separada.
+
+## 2026-09-17 — Restauración de referencias del README
+
+### Problema
+
+La reescritura del README para describir el estado real de V1 Clean eliminó por
+error su sección de referencias. Los cuatro enlaces originales seguían en el
+historial de Git y también en `HISTORIA_TECNICA.md`, pero dejaron de ser visibles
+en la entrada principal del proyecto.
+
+### Corrección
+
+- Se restauraron en `README.md` los enlaces originales a SurfingAttack (sitio y
+  artículo), Web Audio API de MDN y Chirp.
+- Se enlazó desde el README la sección histórica que conserva BadBIOS, sin
+  presentarlo como evidencia científica de SONAR.
+- Se corrigió un enlace con sintaxis Markdown sobrante en
+  `HISTORIA_TECNICA.md`.
+- Se distinguió artículo científico de documentación y proyecto de código;
+  conservar una referencia no equivale a validar las conclusiones de SONAR.
+
+### Alcance
+
+Solo documentación. No se cambiaron código, experimentos ni resultados, y no
+se hizo `commit` ni `push`.
+
+## 2026-09-17 — Presentaciones retiradas del proyecto
+
+### Decisión
+
+El dueño del proyecto indicó que las diapositivas eran material temporal para
+copiar ideas y compartir por su cuenta; no deben permanecer dentro del
+repositorio. El guion de exposición se preparará por separado.
+
+### Cambios
+
+- Se eliminaron los dos archivos `.pptx` locales de `docs/presentaciones/`:
+  la versión de trabajo para el equipo y la copia de respaldo de la presentación
+  introductoria original.
+- Se eliminó la carpeta `docs/presentaciones/` una vez vacía.
+- Se retiró su regla específica de `.gitignore` y se corrigieron dos menciones
+  del roadmap que todavía suponían una presentación dentro del proyecto.
+- Se conservaron las entradas históricas sobre cómo se preparó el material;
+  esta entrada registra su retiro posterior.
+
+Ambos archivos estaban ignorados y no versionados en Git. La eliminación local
+fue directa, no se enviaron a la papelera; solo podrían recuperarse desde otra
+copia que el dueño conserve fuera del proyecto. No se tocó ninguna presentación
+externa a esta carpeta, ni código ejecutable, pruebas o resultados.
+
+## 2026-09-19 — Revisión del repositorio e interfaz de archivos
+
+### Estado y cambios
+
+- Se revisaron los archivos versionados, el estado local y el historial de Git
+  antes de compartir el proyecto. Se retiraron del árbol actual referencias a
+  herramientas de trabajo y metadatos que no pertenecen a la documentación
+  técnica. Se conservaron las referencias de investigación y los resultados.
+- Se aclaró en `HISTORIA_TECNICA.md` qué afirmaciones son históricas y qué
+  rendimiento físico permanece sin validar.
+- El nombre de archivo recibido ya no se inserta como HTML en el enlace de
+  descarga ni en el historial. Ambas vistas construyen nodos y asignan el
+  nombre como texto literal; hay dos pruebas de regresión.
+- El diagnóstico de frecuencias de archivos ahora muestra las constantes
+  ejecutadas, en lugar de valores fijos desactualizados.
+- `.gitignore` excluye presentaciones locales y claves privadas para reducir
+  la posibilidad de incorporarlas por accidente en un futuro commit.
+
+### Verificación y límites
+
+- `npm test`: 66 pruebas aprobadas, 0 fallidas.
+- Se verificó la sintaxis de los módulos modificados y el formato del diff.
+- No se alteró el protocolo de audio ni se repitieron E001/E002. La interfaz de
+  archivos todavía requiere una comprobación manual en navegador.
+- El historial conserva material antiguo y un entorno virtual incorporado en
+  commits anteriores. Un commit nuevo no retira esos objetos del historial.
+  Por eso se creó una copia local independiente, `Proyecto_Sonar_publico`, con
+  solo los 51 archivos actuales y un historial nuevo de un commit. El original
+  conserva las revisiones antiguas como respaldo. No hubo `push` ni cambio de
+  visibilidad en GitHub.

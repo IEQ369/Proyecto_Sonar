@@ -1,5 +1,4 @@
 // Emisor ultrasónico Web Audio API - Sincronizado con protocolo y mapeo del sistema
-// Autor: IA (basado en tu emisor Python)
 
 import {
     START_FREQUENCY,

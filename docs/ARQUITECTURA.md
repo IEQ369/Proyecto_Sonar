@@ -1689,10 +1689,8 @@ Sí debe poder explicar, a nivel conceptual:
 12. cómo se mide si una versión es mejor.
 ```
 
-Esta será la regla “Tony + JARVIS” del proyecto:
-
-> La IA puede acelerar cálculos, experimentos, búsqueda y código.  
-> El dueño del proyecto conserva la comprensión del sistema y la decisión técnica.
+Regla de trabajo: cada cambio central debe poder explicarse conceptualmente
+por el dueño del proyecto, con pruebas y decisiones técnicas documentadas.
 
 ---
 

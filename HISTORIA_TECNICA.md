@@ -1,12 +1,12 @@
 # Historia Técnica - SONAR
 
-**Nota**: Este archivo contiene la evolución técnica completa del proyecto. Para uso rápido, consulta el [README.md](README.md) principal.
+**Nota histórica**: Este archivo conserva decisiones, referencias y afirmaciones del prototipo original; algunas prestaciones descritas abajo todavía no cuentan con validación física reproducible. Para conocer el estado vigente, consulta el [README.md](README.md) y el [roadmap](docs/ROADMAP.md).
 
 ## Descripción
 
-Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API** y **JavaScript puro**. Permite transmitir mensajes de texto y archivos entre dispositivos (laptops, móviles) aprovechando hardware de audio común, sin necesidad de red ni cables.
+Prototipo experimental de transmisión de datos por tonos de alta frecuencia usando **Web Audio API** y **JavaScript puro**. Incluye rutas de mensajes y archivos para explorar la comunicación entre dispositivos mediante altavoces y micrófonos comunes.
 
-**Estado Actual**:  **FUNCIONAL** - Sistema robusto con transmisión de mensajes y archivos, optimizado para hardware de consumo.
+**Estado vigente**: La lógica de V1 Clean tiene pruebas automatizadas; la fiabilidad de la transmisión física entre dispositivos aún requiere mediciones reproducibles. Las afirmaciones históricas sobre robustez y alcance no deben leerse como resultados validados.
 
 ## Evolución Técnica del Proyecto
 
@@ -209,10 +209,8 @@ Sistema completo de transmisión de datos por ultrasonido usando **Web Audio API
 
 ## Referencias
 
-- [SurfingAttack:](https://surfingattack.github.io/)()
+- [SurfingAttack — sitio del proyecto](https://surfingattack.github.io/)
 - [SurfingAttack: Interactive Hidden Attack on Voice Assistants Using Ultrasonic Guided Waves](https://surfingattack.github.io/papers/NDSS-surfingattack.pdf)
 - [Web Audio API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 - [Chirp: Sound-based Data Transfer](https://github.com/solst-ice/chirp)
 - [BadBIOS - Mito/Leyenda](https://en.wikipedia.org/wiki/BadBIOS)
-
-

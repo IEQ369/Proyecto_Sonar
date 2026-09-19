@@ -5,6 +5,8 @@
 import { Visualizer } from '../../../static/js/fft_visualizer.js';
 import { ReceptorArchivos } from './receptor_archivos.js';
 import { setupEmisorArchivoUI } from './emisor_archivos.js';
+import { PROTOCOLO_ARCHIVOS } from './protocolo_archivos.js';
+import { crearEnlaceDescarga, crearEntradaHistorialArchivo } from './ui_recepcion_archivos.js';
 
 const visualizer = new Visualizer('fft-canvas');
 
@@ -14,8 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
     visualizer.start();
 
     console.log('=== SISTEMA DE ARCHIVOS ULTRASÓNICOS ===');
-    console.log('Protocolo robusto: 18500-19600 Hz');
-    console.log('Frecuencias: START(18500), SYNC(18700), DATA_0(18900), DATA_1(19100), END(19300), ACK(19500)');
+    console.log('Frecuencias configuradas:',
+        Object.fromEntries(['START', 'SYNC', 'DATA_0', 'DATA_1', 'END', 'ACK']
+            .map(nombre => [nombre, PROTOCOLO_ARCHIVOS[nombre]])));
     console.log('==========================================');
 
     const startBtn = document.getElementById('start-fft-btn');
@@ -36,15 +39,13 @@ document.addEventListener('DOMContentLoaded', function () {
         function (archivo) {
             let descarga = document.getElementById('descarga-archivo-receptor');
             const url = URL.createObjectURL(archivo.datos);
-            descarga.innerHTML = `<a id="enlace-descarga-auto" href="${url}" download="${archivo.nombre}" style="color: #00ff41; text-decoration: none; font-family: monospace;">descargar archivo recibido (${archivo.nombre})</a>`;
+            const enlace = crearEnlaceDescarga(document, archivo, url);
+            descarga.replaceChildren(enlace);
             addToMessageLog(`Archivo recibido: ${archivo.nombre} (${archivo.tamaño} bytes)`, 'received');
             // descarga automática
-            const enlace = document.getElementById('enlace-descarga-auto');
-            if (enlace) {
-                setTimeout(() => {
-                    enlace.click();
-                }, 300); // pequeño retardo para asegurar que el DOM esté listo
-            }
+            setTimeout(() => {
+                enlace.click();
+            }, 300); // pequeño retardo para asegurar que el DOM esté listo
         },
         // onEstado
         function (mensaje) {
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (mensaje.includes('timeout') || mensaje.includes('esperando archivo')) {
                 document.getElementById('barra-progreso-receptor-archivos').style.width = '0%';
-                document.getElementById('descarga-archivo-receptor').innerHTML = '';
+                document.getElementById('descarga-archivo-receptor').replaceChildren();
             }
         }
     );
@@ -173,25 +174,11 @@ function addToMessageLog(msg, type = 'received') {
     if (!log) return;
     const now = new Date();
     const time = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
-    const entry = document.createElement('div');
-    entry.className = 'msg-log-entry ' + type;
-    if (type === 'received') {
-        entry.innerHTML = `<span class="msg-time">${time}</span> <span class="msg-type" style="color:#ff184c;font-weight:bold;">[ARCHIVO]</span> <span>${msg}</span>`;
-        entry.style.borderLeft = '4px solid #ff184c';
-        entry.style.padding = '2px 0 2px 8px';
-        entry.style.marginBottom = '4px';
-        entry.style.fontFamily = 'monospace';
-    } else if (type === 'sent') {
-        entry.innerHTML = `<span class="msg-time">${time}</span> <span class="msg-type" style="color:#00ff41;font-weight:bold;">[ENVIADO]</span> <span>${msg}</span>`;
-        entry.style.borderLeft = '4px solid #00ff41';
-        entry.style.padding = '2px 0 2px 8px';
-        entry.style.marginBottom = '4px';
-        entry.style.fontFamily = 'monospace';
-    }
+    const entry = crearEntradaHistorialArchivo(document, msg, type, time);
     if (log.firstChild) {
         log.insertBefore(entry, log.firstChild);
     } else {
         log.appendChild(entry);
     }
 }
-window.addToMessageLog = addToMessageLog; 
+window.addToMessageLog = addToMessageLog;

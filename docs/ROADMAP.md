@@ -6,6 +6,25 @@
 > **Fecha de inicio del roadmap:** 2026-08-24  
 > **Regla principal:** SONAR debe evolucionar sin perder su identidad, sin reescrituras impulsivas y sin introducir complejidad que no pueda justificarse con pruebas.
 
+## Lectura del estado actual — 2026-09-19
+
+Este documento nació como plan de V1 a V2 en agosto de 2026. Las secciones
+fechadas de agosto se conservan como registro histórico; para decidir el próximo
+trabajo, usar este estado y las entradas recientes de `PROGRESO.md`.
+
+| Frente | Estado verificado | Siguiente decisión o trabajo |
+|---|---|---|
+| Fundación documental (M0) | Documentos locales creados; integración reciente aún sin confirmar en Git | Preparar el repositorio público sin confundir publicación con despliegue web |
+| Baseline (M1) | E001 y E002 conservan resultados del baseline digital; faltan métricas y registro físico del alcance original | Ampliar medidas cuando corresponda, sin llamar "física" a la simulación |
+| V1 Clean (M2) | Alcance lógico cerrado; 66 pruebas aprobadas el 2026-09-19 | Conservar esta versión como referencia de comparación |
+| Caracterización (M3) | Pendiente | Empezar por E3-001: barrido sintético de frecuencias y matriz de confusión |
+| Investigación científica | Pregunta y alcance todavía provisionales | Acordarlos con el coordinador y el equipo; usar mediciones propias y fuentes trazables |
+
+La revisión externa recibida el 2026-09-17 figura como **observaciones
+contrastadas**, no como instrucciones de implementación. La inserción del nombre
+de archivo recibido mediante `innerHTML` se corrigió el 2026-09-19 y tiene dos
+pruebas de regresión. Las otras observaciones permanecen como trabajo por evaluar.
+
 ---
 
 # 0. Identidad del proyecto
@@ -180,26 +199,11 @@ reemplazar solo donde exista evidencia
 
 ---
 
-## P-005 — La IA acelera, no sustituye la comprensión
+## P-005 — Comprensión y decisión técnica
 
-Regla Tony + JARVIS:
-
-```text
-IA/Hermes:
-    busca
-    calcula
-    ejecuta tests
-    implementa trabajo pesado
-    compara
-    automatiza
-
-Dueño del proyecto:
-    entiende
-    decide
-    cuestiona
-    revisa
-    interpreta
-```
+El dueño del proyecto debe entender, cuestionar y revisar los cambios antes de
+adoptarlos. Los experimentos y comparaciones deben quedar documentados para
+que las decisiones puedan verificarse más adelante.
 
 Ningún cambio central se considera terminado si no puede explicarse conceptualmente.
 
@@ -348,6 +352,30 @@ Debe conservarse como **North Star histórico**, no como promesa actual.
 
 ---
 
+## 2.1 — Investigación científica para la feria (trabajo paralelo)
+
+La investigación del equipo puede avanzar mientras se caracteriza el módem.
+No necesita esperar a que SONAR sea un producto terminado, pero tampoco debe
+presentar las pruebas digitales como resultados físicos.
+
+Orden de trabajo propuesto, sujeto a acuerdo con el coordinador:
+
+1. Delimitar una pregunta científica comprobable y el alcance de la feria.
+2. Revisar literatura pertinente y registrar las fuentes, sin fijar de antemano
+   una cantidad de artículos como criterio de calidad.
+3. Definir hipótesis, variables, controles, dispositivos y métricas antes de
+   recolectar datos.
+4. Ejecutar y guardar experimentos reproducibles, primero digitales y luego
+   físicos cuando exista un protocolo seguro y viable.
+5. Analizar los resultados, incluyendo fallos y límites, y redactar conclusiones
+   que no excedan la evidencia.
+
+El material de exposición se prepara fuera del repositorio. La pregunta
+científica sigue siendo provisional; la elección final corresponde al dueño del
+proyecto junto con el coordinador y el grupo.
+
+---
+
 # 3. Definición de éxito
 
 Antes de hablar de tecnologías debemos definir qué significa:
@@ -489,7 +517,8 @@ sin benchmark reproducible.
 
 ## Objetivo
 
-Poder retomar SONAR en cualquier momento sin depender de memoria humana ni conversación previa con una IA.
+Poder retomar SONAR en cualquier momento sin depender de conversaciones o
+explicaciones que no hayan quedado registradas.
 
 ## Entregables
 
@@ -504,12 +533,15 @@ GitHub Project
 ## Estado
 
 ```text
-AUDITORIA      ✅ preparado
-ARQUITECTURA   ✅ preparado
-ROADMAP        ✅ este documento
-PROGRESO       ⬜ crear
-PROJECT        ✅ estructura creada
+AUDITORIA       ✅ documento local creado
+ARQUITECTURA    ✅ documento local creado; descripción histórica de V1
+ROADMAP         ✅ creado; estado actualizado aquí
+PROGRESO        ✅ creado y actualizado hasta 2026-09-17
+PROJECT         ◻️ constaba como creado en el plan inicial; estado externo no verificado aquí
 ```
+
+La fundación documental local está cumplida. Publicar la versión actual del
+repositorio y comprobar el estado del GitHub Project son tareas separadas.
 
 ## Aprendizaje
 
@@ -526,7 +558,7 @@ El repositorio contiene estos documentos y el dueño sabe para qué sirve cada u
 
 # 6. MILESTONE 1 — Baseline reproducible
 
-## Estado al 2026-09-04
+## Estado revisado el 2026-09-17
 
 | Tarea | Estado | Evidencia actual |
 |---|---|---|
@@ -542,8 +574,10 @@ Evidencia principal:
 docs/experiments/E001-baseline-mensajes/
 ```
 
-Milestone 1 continúa abierto hasta incorporar las métricas pendientes y un
-registro adecuado de pruebas físicas.
+Milestone 1 continúa abierto en su **alcance original** hasta incorporar las
+métricas pendientes y un registro adecuado de pruebas físicas. Esto no impidió
+cerrar M2 en su alcance lógico: son criterios de cierre diferentes. E001 y E002
+son evidencia digital/histórica, no una tasa de éxito acústico entre dispositivos.
 
 ## Objetivo
 
@@ -783,6 +817,17 @@ las futuras pruebas acústicas.
 ## Objetivo
 
 Medir el diseño actual **antes de reemplazarlo**.
+
+La primera medición debe registrar la versión y los parámetros realmente
+ejecutados. El comportamiento actual de `frequencyToChar()` —elige el primer
+carácter dentro de ±80 Hz y no necesariamente el más cercano— es parte del
+baseline que se debe **medir**, no corregir silenciosamente antes del barrido.
+Después se podrá comparar, con los mismos vectores, una decisión por frecuencia
+más cercana. El barrido digital no demuestra rendimiento por aire.
+
+El riesgo de inserción HTML descrito en M13 se corrigió el 2026-09-19. Antes de
+pruebas con archivos enviados por terceros, verificar además la interfaz en un
+navegador real; la prueba automatizada cubre la construcción segura de los nodos.
 
 ## Experimentos
 
@@ -1360,6 +1405,24 @@ nombres
 estructura de carpetas
 ```
 
+## Observaciones externas contrastadas el 2026-09-17
+
+Son puntos para planificar, no cambios aprobados ni ejecutados en esta fecha.
+La revisión fue de código; no reemplaza la auditoría acústica ni sus mediciones.
+
+| Observación | Comprobación local | Prioridad y momento propuestos |
+|---|---|---|
+| Nombre recibido en `app_archivos.js` interpolado en `innerHTML` del enlace y del registro | Confirmado en la revisión del 2026-09-17; corregido el 2026-09-19 mediante nodos DOM y texto literal | Dos pruebas de regresión aprobadas; queda pendiente la verificación manual en navegador. Era un riesgo de inyección HTML/XSS; no hay explotación práctica documentada aquí. |
+| Bucle de micrófono y análisis espectral repetido en `app.js` y `app_archivos.js` | Confirmado: ambos capturan audio, calculan bins y buscan el pico por separado | Refactor posterior, con pruebas que protejan ambas rutas; no es condición previa para medir V1 tal como existe. |
+| Rangos, duraciones y tolerancias repartidos entre protocolo, emisor, receptor y apps | Confirmado: hay valores distintos, algunos por fase o modo; no todos deben hacerse idénticos | Inventariar significado de cada valor y tener una fuente explícita por protocolo antes de rediseñar el mapa V2; preservar los valores de V1 en sus mediciones. |
+| Log de frecuencias de archivos en `app_archivos.js` | Confirmado en la revisión: anunciaba START=18500, pero `PROTOCOLO_ARCHIVOS.START` vale 18700 | Corregido el 2026-09-19: el diagnóstico lee directamente las constantes; no modifica el protocolo. |
+| Selección del primer carácter dentro de tolerancia en `frequencyToChar()` | Confirmado en código; puede elegir un tono menos cercano cuando se solapan ventanas | Medir en E3-001 y comparar luego una alternativa; no cambiar el baseline antes de registrarlo. |
+
+La lógica pura de `core/receptor_mensajes_core.js`, `metricas_mensajes.js` y
+`generador_onda.js` ofrece patrones útiles para nuevas separaciones entre
+protocolo, navegador y pruebas. No implica reescribir de golpe el flujo de
+archivos ni declarar que todo su comportamiento ya está validado.
+
 ## Git histórico
 
 Evaluar limpieza de `venv` histórico.
@@ -1553,7 +1616,7 @@ No crear todos los issues del roadmap el primer día.
 
 El Project se volvería ruido.
 
-## Primero crear
+## Inicio histórico
 
 ```text
 Milestone 0
@@ -1561,7 +1624,10 @@ Milestone 1
 primeros bugs P0 de V1 Clean
 ```
 
-Cuando se acerque una fase, crear sus issues.
+Esas tareas ya se abordaron en el código local. Desde el estado actual, crear
+solo issues próximos y verificables: E3-001, verificación de la interfaz de
+archivos en navegador y, si se decide publicar el repositorio, decisión sobre
+historial/licencia. Cuando se acerque otra fase, crear sus issues.
 
 Regla:
 
@@ -1766,7 +1832,11 @@ No es necesario llenar todos los apartados cuando no correspondan.
 
 ---
 
-# 29. Ventana de trabajo intensivo 24–26 agosto 2026
+# 29. Registro histórico — ventana de trabajo intensivo 24–26 agosto 2026
+
+Esta sección conserva la planificación de aquellas fechas; las casillas que
+siguen son una instantánea antigua y **no** describen el estado de septiembre.
+Consultar la tabla inicial y las secciones M0–M3 para el estado actual.
 
 El objetivo de estos días **NO es terminar SONAR V2**.
 
@@ -1817,64 +1887,40 @@ Es mejor dejar una especificación buena que diez implementaciones incomprendida
 
 ---
 
-# 30. Orden inmediato desde el estado actual
+# 30. Orden próximo desde el estado del 2026-09-17
 
-## Paso 1
+## A — Compartir el repositorio sin perder contexto
 
-Crear:
+- Revisar los cambios locales de `README.md`, `.gitignore`, `PROGRESO.md` y este
+  roadmap antes de confirmarlos; no se ha hecho `commit` ni `push` en esta
+  actualización.
+- Revisar el historial que aún contiene un `venv` antiguo y decidir si limpiar
+  ese historial con un plan explícito. `.gitignore` no lo elimina retroactivamente.
+- Elegir una licencia si se desea autorizar reutilización y contribuciones.
+- Antes de abrirlo a terceros, revisar contenido sensible e instrucciones de
+  ejecución. Publicar el repositorio no equivale a alojar una demo web.
 
-```text
-PROGRESO.md
-```
+## B — Siguiente experimento técnico
 
-## Paso 2
+- Especificar E3-001: frecuencias emitidas, paso del barrido, detector usado,
+  versión de V1 Clean, resultado esperado y formato de la matriz de confusión.
+- Ejecutar primero el barrido sintético con el receptor actual sin cambiar su
+  regla de decisión; documentar errores y zonas ambiguas.
+- Comparar después alternativas de decisión con exactamente los mismos vectores
+  y métricas. Solo adoptar cambios con evidencia.
+- Verificar en navegador la descarga y el historial de archivos tras la
+  corrección de inserción HTML; no se necesita reestructurar todo el módem.
 
-Crear rama:
+## C — Trabajo con el equipo de investigación
 
-```text
-docs/project-foundation
-```
+- Preparar una explicación del prototipo, V1 Clean, evidencia y límites sin
+  guardar las diapositivas personales dentro del repositorio.
+- Acordar con el coordinador la pregunta científica y un protocolo de medición.
+- Repartir tareas concretas según disponibilidad, manteniendo trazabilidad en
+  `PROGRESO.md` y en las configuraciones/resultados de los experimentos.
 
-## Paso 3
-
-Agregar:
-
-```text
-docs/AUDITORIA.md
-docs/ARQUITECTURA.md
-docs/ROADMAP.md
-PROGRESO.md
-```
-
-## Paso 4
-
-Revisar contenido.
-
-## Paso 5
-
-Commit.
-
-## Paso 6
-
-Push.
-
-## Paso 7
-
-Pull Request a `main`.
-
-## Paso 8
-
-Crear en GitHub:
-
-```text
-Issue: Establish reproducible SONAR baseline
-Issue: Add protocol unit tests
-Issue: Fix duplicate message transmission
-Issue: Fix file header CRC16
-Issue: Fix file block CRC8
-```
-
-No más inicialmente.
+Estos frentes pueden avanzar en paralelo. Ninguno autoriza afirmar fiabilidad
+física antes de medirla.
 
 ---
 
@@ -2026,12 +2072,11 @@ sin convertir el proyecto en malware operativo ni perder su carácter de investi
 
 # 34. Próximo paso
 
-Crear `PROGRESO.md`, integrar los cuatro documentos mediante GitHub Flow y abrir el primer Pull Request puramente documental.
+Iniciar **E3-001 — barrido sintético y matriz de confusión de V1 Clean** como
+siguiente trabajo técnico. En paralelo, preparar la publicación del repositorio
+y definir con el coordinador la pregunta de investigación. Verificar en navegador
+la interfaz de archivos antes de pruebas con archivos de terceros.
 
-Después:
-
-```text
-Milestone 1 — Baseline reproducible
-```
-
-será el primer trabajo técnico.
+No comenzar por cambiar la modulación, sustituir el detector ni reestructurar
+todo `archivos`: primero registrar qué hace V1 Clean y distinguir los riesgos
+de seguridad de las limitaciones acústicas.

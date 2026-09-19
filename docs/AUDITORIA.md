@@ -1613,7 +1613,7 @@ Solo con comportamiento cubierto:
 
 ---
 
-# 15. Regla de aprendizaje: “Tony + JARVIS”
+# 15. Regla de revisión técnica
 
 Para cada cambio importante:
 
@@ -1631,7 +1631,7 @@ Para cada cambio importante:
 
 ## 4. Implementación
 
-Hermes/IA puede encargarse del trabajo mecánico o pesado.
+Implementar el cambio acotado y registrar los componentes afectados.
 
 ## 5. Revisión
 
@@ -1655,7 +1655,7 @@ El cambio no se considera terminado hasta poder explicar aproximadamente:
 
 Actualizar `PROGRESO.md` con la razón y el resultado.
 
-La IA puede acelerar la implementación. **La comprensión y la decisión permanecen en el dueño del proyecto.**
+**La comprensión y la decisión permanecen en el dueño del proyecto.**
 
 ---
 

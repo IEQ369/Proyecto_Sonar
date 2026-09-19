@@ -1,184 +1,91 @@
-# SONAR - transmision de datos por ultrasonido
+# SONAR
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Web Audio API](https://img.shields.io/badge/Web_Audio_API-Supported-green.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-[![Status](https://img.shields.io/badge/Status-Functional-brightgreen.svg)](STATUS)
-[![License](https://img.shields.io/badge/License-Educational-green.svg)](LICENSE)
+SONAR es un proyecto experimental de comunicación acústica y ciberseguridad. Explora si altavoces y micrófonos comunes pueden transportar datos mediante tonos de alta frecuencia, sin añadir hardware especializado. Las pantallas de mensajes y archivos sirven para estudiar y demostrar el canal.
 
-herramienta para enviar y recibir mensajes y archivos usando ultrasonido, funciona en navegadores modernos usando web audio api, multiplataforma, sin cables ni red
+La comunicación del contenido usa audio. El servidor HTTP solo entrega la aplicación web al navegador. Parte de las frecuencias empleadas está cerca del límite audible; por eso no se afirma que toda transmisión sea ultrasónica o inaudible.
 
-**estado actual:** funcional, sistema robusto con transmision de mensajes y archivos, optimizado para hardware de consumo
+## Estado actual
 
-## overview
+**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 66 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
 
-sonar permite transmitir mensajes de texto y archivos entre dispositivos usando solo audio, sin red ni cables, usando javascript puro y web audio api, soporta laptops y moviles, interfaz web responsive, protocolos robustos y documentacion completa de problemas y soluciones
+Esto **no demuestra fiabilidad acústica física**. Continúan pendientes la caracterización de frecuencias, la sincronización temporal y las pruebas controladas con altavoces y micrófonos reales. Tampoco se debe asumir que la transferencia de archivos por aire o un mecanismo de confirmación y reenvío ya sean fiables.
 
-## instalacion y uso
+El siguiente trabajo técnico es medir V1 Clean en simulación y después bajo condiciones físicas controladas. El enfoque de la investigación científica con el equipo todavía debe definirse.
 
-clona el repositorio:
-```
-git clone https://github.com/IEQ369/Proyecto_Sonar.git
-cd Proyecto_Sonar
-```
+## Ejecutar localmente
 
-opcion 1, servidor python recomendado:
-```
-python src/web/backend/servidor_estatico.py
-```
+Requisitos: Python 3 para servir la interfaz y un navegador con Web Audio API.
 
-opcion 2, servidor http simple:
-```
-cd src/web
-python -m http.server 8000
-```
+1. Desde la raíz del proyecto, ejecutar:
 
-accede desde el navegador:
-```
-http://localhost:8000/          # mensajes
-http://localhost:8000/archivos  # transmision de archivos
-```
+       python3 src/web/backend/servidor_estatico.py
 
-**importante para moviles:**
-- los navegadores moviles requieren https para permisos de microfono
-- para pruebas en moviles, usa ngrok o similar:
-```
-ngrok http 8000
-```
-- o configura un servidor con ssl:
-```
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
-python -m http.server 8000 --bind 0.0.0.0
-```
-- accede via https://tu-dominio.com o https://ngrok-url.ngrok.io
+2. Abrir http://localhost:8000/ para mensajes o http://localhost:8000/archivos para archivos.
 
-opcion 3, servidor con https (produccion):
-- usa nginx, apache, o cualquier servidor web con ssl
-- el archivo nginx.conf incluye configuracion de ejemplo
-- certificados ssl: letsencrypt (gratis) o autofirmados
-- cloudflare, heroku, vercel, o cualquier hosting con https
+El servidor sirve archivos estáticos; no procesa las señales ni los datos transmitidos. En otro dispositivo, el acceso por HTTP mediante la IP de la laptop puede cargar la página, pero el permiso del micrófono normalmente exige un contexto seguro, como HTTPS. Por ello, que la página abra en un celular no implica que pueda recibir audio.
 
-## sobre los protocolos y configuracion
+## Pruebas y experimentos
 
-- protocolo de mensajes: 18500-22300 hz, start, sync, datos, end, tolerancia 60 hz, simbolos 0.06s, marcadores 0.09s
-- protocolo de archivos: 17000-18000 hz, start, sync, end, bit_0, bit_1, ack, nack
-- mapeo ascii completo: a-z, 0-9, ñ, espacio
-- control de volumen por caracter: numeros y letras problematicas con mayor amplitud
-- generador de ondas: senoidal, cuadrada, sierra, triangular
-- deteccion automatica de conflictos de frecuencias
+Requisitos: Node.js y npm.
 
-## opciones y parametros principales
+    npm test
+    npm run experiment:e001
+    npm run experiment:e002
 
-- hardware: microfono y parlante que soporten mas de 18 khz
-- navegador moderno con soporte web audio api
-- python 3 para el servidor opcional
-- parametros de transmision ajustables en js (duracion, amplitud, tipo de onda)
+`npm test` verifica contratos lógicos y simulaciones deterministas sin requerir dos dispositivos. E001 estudia mensajes y E002 documenta defectos históricos del protocolo de archivos. Algunos tests imprimen conflictos conocidos de frecuencias: esos mensajes son evidencia de problemas pendientes, no fallos de la suite.
 
-## ejemplos de uso
+Los resultados y su interpretación están en [docs/experiments](docs/experiments/README.md). Los tests se conservan porque permiten detectar regresiones y sostener las afirmaciones técnicas del proyecto.
 
-- envia mensajes desde la interfaz web, escribe y presiona enter
-- recibe mensajes en otro dispositivo con la web abierta y microfono activo
-- para archivos, usa la seccion archivos y arrastra el archivo
-- debug en tiempo real con logs especificos
+## Estructura
 
-## caracteristicas principales
+    Proyecto_Sonar/
+    ├── README.md                 entrada y estado actual
+    ├── PROGRESO.md               bitácora de decisiones y resultados
+    ├── HISTORIA_TECNICA.md       evolución histórica
+    ├── docs/                    arquitectura, auditoría, roadmap y experimentos
+    ├── scripts/                 ejecución de experimentos reproducibles
+    ├── src/web/backend/         servidor estático local
+    ├── src/web/static/          mensajes: interfaz, protocolo y simulador
+    ├── src/web/archivos/        flujo de archivos
+    └── tests/                   pruebas automáticas
 
-- transmision de mensajes y archivos por ultrasonido
-- protocolo robusto con deteccion estable y control de volumen por caracter
-- generador de ondas personalizado, soporta senoidal, cuadrada, sierra, triangular
-- deteccion automatica de conflictos de frecuencias
-- interfaz web responsive con visualizacion fft en tiempo real
-- barra de progreso y descarga automática de archivos recibidos
-- documentacion de problemas y soluciones
+La distribución de `src/web` todavía refleja dos flujos parcialmente separados, mensajes y archivos. Reorganizar los módulos requerirá actualizar sus importaciones y rutas; no se han movido solo por estética.
 
-## tips y recomendaciones
+## Limitaciones conocidas
 
-- usa parlantes y microfonos de buena calidad para mejor alcance
-- en moviles, la emision es mas debil, prueba laptop a movil para mejores resultados
-- mantente cerca (1-3 metros) para mayor fiabilidad
-- revisa la consola para logs de debug y problemas de deteccion
+- Algunas ventanas de decisión de frecuencias se solapan.
+- El mapa de mensajes incluye tonos problemáticos para audio a 44,1 kHz.
+- El receptor de archivos aún tiene problemas de reloj y frecuencias de control que colisionan con datos.
+- El resultado real depende del hardware, el ruido, el eco y la posición de los dispositivos.
 
-## estructura del proyecto
+Ninguna distancia de alcance o tasa de éxito físico está validada como garantía. Las pruebas de seguridad deben realizarse únicamente con dispositivos propios o en entornos autorizados.
 
-```
-src/web/
-├── templates/
-│   ├── index.html          # interfaz de mensajes
-│   ├── emisor.html         # emisor de mensajes
-│   └── receptor.html       # receptor de mensajes
-├── static/
-│   ├── css/
-│   │   └── styles.css      # estilos cyberpunk
-│   └── js/
-│       ├── app.js          # receptor de mensajes
-│       ├── emisor_ultrasonico.js
-│       ├── protocolo_ultrasonico.js
-│       ├── generador_onda.js
-│       ├── fft_visualizer.js
-│       └── ui_archivo.js   # utilidades ui
-├── archivos/
-│   ├── templates/
-│   │   └── index.html      # interfaz de archivos
-│   └── static/
-│       └── js/
-│           ├── app_archivos.js      # receptor de archivos
-│           ├── emisor_archivos.js   # emisor de archivos
-│           ├── receptor_archivos.js # receptor robusto
-│           └── protocolo_archivos.js # protocolo de archivos
-└── backend/
-    └── servidor_estatico.py
-```
+## Documentación
 
-## limitaciones y consideraciones
+- [Arquitectura y funcionamiento](docs/ARQUITECTURA.md) — descripción de la base histórica, previa a los últimos cambios de V1 Clean.
+- [Auditoría técnica](docs/AUDITORIA.md) — problemas comprobados y evidencia.
+- [Roadmap](docs/ROADMAP.md) — dirección y límites del proyecto.
+- [Experimentos](docs/experiments/README.md) — configuraciones y resultados reproducibles.
+- [Progreso](PROGRESO.md) — secuencia de cambios, decisiones y pendientes.
+- [Historia técnica](HISTORIA_TECNICA.md) — evolución del prototipo.
 
-- parlantes moviles: distorsion en frecuencias altas, emision debil
-- microfonos: sensibilidad variable, atenuacion en ultrasonidos
-- distancia: limitada por atenuacion del aire (1-3 metros maximo)
-- **https obligatorio**: navegadores moviles requieren https para permisos de microfono
-- web audio api no disponible en navegadores antiguos
-- fft en tiempo real puede ser intensivo en dispositivos debiles
-- sensible a interferencias y eco
-- algunos antivirus pueden bloquear la generacion de audio
+## Referencias y antecedentes
 
-## problemas y soluciones recientes
+Estas fuentes ya figuraban en el README original del proyecto y se conservan
+para orientar la investigación. No todas son artículos científicos ni prueban
+por sí mismas los resultados de SONAR:
 
-- antes, los archivos recibidos solo se podían descargar manualmente, ahora la descarga es automática al finalizar la recepción
-- problemas de hardware: algunos parlantes/micrófonos no detectan bien ciertas frecuencias, se recomienda ajustar tolerancia y frecuencias según el dispositivo
-- si la transmisión de archivos falla, prueba aumentar la duración de símbolo, la tolerancia o usar hardware diferente
+- [SurfingAttack — sitio del proyecto](https://surfingattack.github.io/).
+- [SurfingAttack: Interactive Hidden Attack on Voice Assistants Using Ultrasonic Guided Waves — artículo](https://surfingattack.github.io/papers/NDSS-surfingattack.pdf).
+- [Web Audio API — documentación de MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
+- [Chirp: Sound-based Data Transfer — proyecto de código](https://github.com/solst-ice/chirp).
 
-## roadmap completado
+La [historia técnica](HISTORIA_TECNICA.md#referencias) conserva además el
+antecedente de BadBIOS, señalado allí como mito/leyenda y no como evidencia
+experimental del proyecto.
 
-- migracion de python a web audio api
-- protocolo robusto de mensajes con deteccion estable
-- protocolo binario para archivos con confirmacion
-- generador de ondas personalizado (senoidal, cuadrada, sierra, triangular)
-- control de volumen por caracter para maxima robustez
-- deteccion automatica de conflictos de frecuencias
-- interfaz web responsive con visualizacion fft
-- sistema de debug y logs en tiempo real
-- cancelacion automatica y limpieza de recursos
-- documentacion completa de problemas y soluciones
-- separacion de modos: mensajes y archivos con protocolos independientes
-- organizacion modular de archivos por funcionalidad
+## Licencia y autoría
 
-## referencias
+Autor: Isai Espinoza Quiroga.
 
-- surfingattack: https://surfingattack.github.io/
-- surfingattack: interactive hidden attack on voice assistants using ultrasonic guided waves: https://surfingattack.github.io/papers/NDSS-surfingattack.pdf
-- web audio api (mdn): https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
-- chirp: sound-based data transfer: https://github.com/solst-ice/chirp
-
-## contribuciones
-
-proyecto academico, contribuciones bienvenidas: optimizacion de algoritmos, mejoras de interfaz, documentacion de casos de uso, pruebas en diferentes dispositivos
-
-## licencia
-
-proyecto educativo, uso responsable requerido
-
-## autor
-
-Isai Espinoza
-
----
-
-**ver historia tecnica completa**: [HISTORIA_TECNICA.md](HISTORIA_TECNICA.md)
+Aún no se ha elegido una licencia de reutilización. Antes de abrir el repositorio a contribuciones o redistribuir el código, se debe tomar esa decisión y añadir el archivo de licencia correspondiente.
