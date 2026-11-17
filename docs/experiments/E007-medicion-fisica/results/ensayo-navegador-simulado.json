@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E007",
+  "tipo": "ensayo-de-la-herramienta",
+  "alcance": "Chromium sin interfaz con un WAV como micrófono simulado. No es una medición por aire ni con hardware real.",
+  "navegador": "Chromium 153.0.8010.12 (headless, Linux)",
+  "entrada": {
+    "descripcion": "Plan por defecto sintetizado a 48 kHz con +12 Hz de desvío en cada tono, ganancia 0,2 y ruido uniforme de amplitud 0,002",
+    "desvioAplicadoHz": 12
+  },
+  "capturas": {
+    "comoLaAplicacion": {
+      "audio": {
+        "sampleRateHz": 44100,
+        "fftSize": 2048,
+        "smoothingTimeConstant": 0.3,
+        "capturaComoLaAplicacion": true,
+        "ajustesPista": {
+          "autoGainControl": true,
+          "channelCount": 1,
+          "echoCancellation": true,
+          "latency": 0.01,
+          "noiseSuppression": true,
+          "sampleRate": 48000,
+          "sampleSize": 16,
+          "voiceIsolation": false
+        }
+      },
+      "magnitudMaximaEnBanda": 0,
+      "analisis": {
+        "cuadros": 1020,
+        "duracionCapturaS": 16.97,
+        "intervaloMedianoMs": 16.7,
+        "pisoRuidoMediano": 0,
+        "cuadrosConTono": 0,
+        "cuadrosConTonoFueraDelPlan": 0,
+        "tonosDetectados": 0,
+        "tonosDelPlan": 9,
+        "desvioAbsolutoMaximoHz": null,
+        "criterios": {
+          "margenSobrePiso": 55,
+          "ventanaHz": 150
+        },
+        "tonos": [
+          {
+            "frecuenciaHz": 18000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 18500,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 19000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 19500,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 20000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 20500,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 21000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 21500,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          },
+          {
+            "frecuenciaHz": 22000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          }
+        ]
+      }
+    },
+    "sinProcesamiento": {
+      "audio": {
+        "sampleRateHz": 44100,
+        "fftSize": 2048,
+        "smoothingTimeConstant": 0.3,
+        "capturaComoLaAplicacion": false,
+        "ajustesPista": {
+          "autoGainControl": false,
+          "channelCount": 2,
+          "echoCancellation": false,
+          "latency": 0.01,
+          "noiseSuppression": false,
+          "sampleRate": 44100,
+          "sampleSize": 16,
+          "voiceIsolation": false
+        }
+      },
+      "magnitudMaximaEnBanda": 203,
+      "analisis": {
+        "cuadros": 1022,
+        "duracionCapturaS": 16.99,
+        "intervaloMedianoMs": 16.7,
+        "pisoRuidoMediano": 0,
+        "cuadrosConTono": 496,
+        "cuadrosConTonoFueraDelPlan": 0,
+        "tonosDetectados": 8,
+        "tonosDelPlan": 9,
+        "desvioAbsolutoMaximoHz": 15.5,
+        "criterios": {
+          "margenSobrePiso": 55,
+          "ventanaHz": 150
+        },
+        "tonos": [
+          {
+            "frecuenciaHz": 18000,
+            "detectado": true,
+            "cuadros": 63,
+            "duracionObservadaS": 1.05,
+            "desvioMedianoHz": 11.9,
+            "desvioMinimoHz": 11.5,
+            "desvioMaximoHz": 12.5,
+            "desvioMedianoDelBinHz": 1.8,
+            "magnitudMediana": 200,
+            "sobrePisoDb": 54.9
+          },
+          {
+            "frecuenciaHz": 18500,
+            "detectado": true,
+            "cuadros": 63,
+            "duracionObservadaS": 1.05,
+            "desvioMedianoHz": 11.7,
+            "desvioMinimoHz": 11.6,
+            "desvioMaximoHz": 12.6,
+            "desvioMedianoDelBinHz": 18.5,
+            "magnitudMediana": 202,
+            "sobrePisoDb": 55.5
+          },
+          {
+            "frecuenciaHz": 19000,
+            "detectado": true,
+            "cuadros": 63,
+            "duracionObservadaS": 1.05,
+            "desvioMedianoHz": 11.8,
+            "desvioMinimoHz": 11.8,
+            "desvioMaximoHz": 12.6,
+            "desvioMedianoDelBinHz": 13.8,
+            "magnitudMediana": 202,
+            "sobrePisoDb": 55.5
+          },
+          {
+            "frecuenciaHz": 19500,
+            "detectado": true,
+            "cuadros": 63,
+            "duracionObservadaS": 1.05,
+            "desvioMedianoHz": 12.3,
+            "desvioMinimoHz": 11.9,
+            "desvioMaximoHz": 15.5,
+            "desvioMedianoDelBinHz": 9.1,
+            "magnitudMediana": 199,
+            "sobrePisoDb": 54.6
+          },
+          {
+            "frecuenciaHz": 20000,
+            "detectado": true,
+            "cuadros": 62,
+            "duracionObservadaS": 1.04,
+            "desvioMedianoHz": 12,
+            "desvioMinimoHz": 11.1,
+            "desvioMaximoHz": 12.5,
+            "desvioMedianoDelBinHz": 4.3,
+            "magnitudMediana": 188,
+            "sobrePisoDb": 51.6
+          },
+          {
+            "frecuenciaHz": 20500,
+            "detectado": true,
+            "cuadros": 62,
+            "duracionObservadaS": 1.04,
+            "desvioMedianoHz": 12.2,
+            "desvioMinimoHz": 10.4,
+            "desvioMaximoHz": 12.2,
+            "desvioMedianoDelBinHz": 21.1,
+            "magnitudMediana": 170,
+            "sobrePisoDb": 46.7
+          },
+          {
+            "frecuenciaHz": 21000,
+            "detectado": true,
+            "cuadros": 61,
+            "duracionObservadaS": 1.02,
+            "desvioMedianoHz": 12,
+            "desvioMinimoHz": 11.3,
+            "desvioMaximoHz": 12.2,
+            "desvioMedianoDelBinHz": 16.4,
+            "magnitudMediana": 143,
+            "sobrePisoDb": 39.3
+          },
+          {
+            "frecuenciaHz": 21500,
+            "detectado": true,
+            "cuadros": 59,
+            "duracionObservadaS": 0.99,
+            "desvioMedianoHz": 12,
+            "desvioMinimoHz": 11.2,
+            "desvioMaximoHz": 12,
+            "desvioMedianoDelBinHz": 11.7,
+            "magnitudMediana": 97,
+            "sobrePisoDb": 26.6
+          },
+          {
+            "frecuenciaHz": 22000,
+            "detectado": false,
+            "cuadros": 0,
+            "duracionObservadaS": 0,
+            "desvioMedianoHz": null,
+            "desvioMinimoHz": null,
+            "desvioMaximoHz": null,
+            "desvioMedianoDelBinHz": null,
+            "magnitudMediana": null,
+            "sobrePisoDb": null
+          }
+        ]
+      }
+    }
+  }
+}

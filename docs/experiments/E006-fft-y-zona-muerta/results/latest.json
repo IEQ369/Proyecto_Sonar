@@ -1,0 +1,884 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E006",
+  "titulo": "Tamaño de FFT y zona muerta",
+  "alcance": "Simulación digital determinista con ruido uniforme. No mide audio por aire.",
+  "configuracion": {
+    "sampleRateHz": 48000,
+    "amplitudTono": 0.1,
+    "amplitudRuido": 0.05,
+    "cuadrosPorSimbolo": 3,
+    "repeticionesPorCaracter": 5
+  },
+  "tamanoFft": [
+    {
+      "fftSize": 1024,
+      "cuadroMs": 21.3,
+      "binHz": 46.88,
+      "duracionSimboloMs": 60,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0.0895,
+          "equivocados": 0,
+          "perdidos": 17
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.8947,
+          "equivocados": 6,
+          "perdidos": 164
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.9842,
+          "equivocados": 11,
+          "perdidos": 176
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 12,
+          "perdidos": 178
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 12,
+          "perdidos": 178
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 12,
+          "perdidos": 178
+        }
+      ]
+    },
+    {
+      "fftSize": 1024,
+      "cuadroMs": 21.3,
+      "binHz": 46.88,
+      "duracionSimboloMs": 120,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0.1105,
+          "equivocados": 0,
+          "perdidos": 21
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.9053,
+          "equivocados": 4,
+          "perdidos": 168
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 8,
+          "perdidos": 182
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 9,
+          "perdidos": 181
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 9,
+          "perdidos": 181
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 9,
+          "perdidos": 181
+        }
+      ]
+    },
+    {
+      "fftSize": 1024,
+      "cuadroMs": 21.3,
+      "binHz": 46.88,
+      "duracionSimboloMs": 240,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0.1105,
+          "equivocados": 0,
+          "perdidos": 21
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.8947,
+          "equivocados": 7,
+          "perdidos": 163
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 9,
+          "perdidos": 181
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 11,
+          "perdidos": 179
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 11,
+          "perdidos": 179
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 11,
+          "perdidos": 179
+        }
+      ]
+    },
+    {
+      "fftSize": 2048,
+      "cuadroMs": 42.7,
+      "binHz": 23.44,
+      "duracionSimboloMs": 60,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.4895,
+          "equivocados": 5,
+          "perdidos": 88
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.9474,
+          "equivocados": 15,
+          "perdidos": 165
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.9947,
+          "equivocados": 18,
+          "perdidos": 171
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 18,
+          "perdidos": 172
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 18,
+          "perdidos": 172
+        }
+      ]
+    },
+    {
+      "fftSize": 2048,
+      "cuadroMs": 42.7,
+      "binHz": 23.44,
+      "duracionSimboloMs": 120,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.4737,
+          "equivocados": 4,
+          "perdidos": 86
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.9789,
+          "equivocados": 12,
+          "perdidos": 174
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 14,
+          "perdidos": 176
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 14,
+          "perdidos": 176
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 14,
+          "perdidos": 176
+        }
+      ]
+    },
+    {
+      "fftSize": 2048,
+      "cuadroMs": 42.7,
+      "binHz": 23.44,
+      "duracionSimboloMs": 240,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.4737,
+          "equivocados": 3,
+          "perdidos": 87
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.9789,
+          "equivocados": 7,
+          "perdidos": 179
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 8,
+          "perdidos": 182
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 8,
+          "perdidos": 182
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 9,
+          "perdidos": 181
+        }
+      ]
+    },
+    {
+      "fftSize": 4096,
+      "cuadroMs": 85.3,
+      "binHz": 11.72,
+      "duracionSimboloMs": 60,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.2316,
+          "equivocados": 1,
+          "perdidos": 43
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.9211,
+          "equivocados": 10,
+          "perdidos": 165
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.9842,
+          "equivocados": 17,
+          "perdidos": 170
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 17,
+          "perdidos": 173
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 17,
+          "perdidos": 173
+        }
+      ]
+    },
+    {
+      "fftSize": 4096,
+      "cuadroMs": 85.3,
+      "binHz": 11.72,
+      "duracionSimboloMs": 120,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.0105,
+          "equivocados": 0,
+          "perdidos": 2
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.6947,
+          "equivocados": 4,
+          "perdidos": 128
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.9579,
+          "equivocados": 16,
+          "perdidos": 166
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 0.9789,
+          "equivocados": 17,
+          "perdidos": 169
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 0.9895,
+          "equivocados": 17,
+          "perdidos": 171
+        }
+      ]
+    },
+    {
+      "fftSize": 4096,
+      "cuadroMs": 85.3,
+      "binHz": 11.72,
+      "duracionSimboloMs": 240,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.0421,
+          "equivocados": 0,
+          "perdidos": 8
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.7105,
+          "equivocados": 8,
+          "perdidos": 127
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.9474,
+          "equivocados": 19,
+          "perdidos": 161
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 0.9947,
+          "equivocados": 23,
+          "perdidos": 166
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 1,
+          "equivocados": 23,
+          "perdidos": 167
+        }
+      ]
+    },
+    {
+      "fftSize": 8192,
+      "cuadroMs": 170.7,
+      "binHz": 5.86,
+      "duracionSimboloMs": 60,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0.0895,
+          "equivocados": 2,
+          "perdidos": 15
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.7263,
+          "equivocados": 22,
+          "perdidos": 116
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.9474,
+          "equivocados": 30,
+          "perdidos": 150
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 0.9842,
+          "equivocados": 35,
+          "perdidos": 152
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 0.9947,
+          "equivocados": 38,
+          "perdidos": 151
+        }
+      ]
+    },
+    {
+      "fftSize": 8192,
+      "cuadroMs": 170.7,
+      "binHz": 5.86,
+      "duracionSimboloMs": 120,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.2632,
+          "equivocados": 4,
+          "perdidos": 46
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.7947,
+          "equivocados": 22,
+          "perdidos": 129
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 0.9737,
+          "equivocados": 31,
+          "perdidos": 154
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 0.9895,
+          "equivocados": 37,
+          "perdidos": 151
+        }
+      ]
+    },
+    {
+      "fftSize": 8192,
+      "cuadroMs": 170.7,
+      "binHz": 5.86,
+      "duracionSimboloMs": 240,
+      "curva": [
+        {
+          "snrDb": -12.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -18.2,
+          "tasaErrorSimbolo": 0,
+          "equivocados": 0,
+          "perdidos": 0
+        },
+        {
+          "snrDb": -22.7,
+          "tasaErrorSimbolo": 0.1474,
+          "equivocados": 5,
+          "perdidos": 23
+        },
+        {
+          "snrDb": -26.2,
+          "tasaErrorSimbolo": 0.6789,
+          "equivocados": 23,
+          "perdidos": 106
+        },
+        {
+          "snrDb": -29.3,
+          "tasaErrorSimbolo": 0.9316,
+          "equivocados": 37,
+          "perdidos": 140
+        },
+        {
+          "snrDb": -32.2,
+          "tasaErrorSimbolo": 0.9947,
+          "equivocados": 39,
+          "perdidos": 150
+        }
+      ]
+    }
+  ],
+  "zonaMuerta": [
+    {
+      "distanciaMaximaHz": 40,
+      "zonaMuertaEntreSimbolosHz": 0,
+      "porDesvio": [
+        {
+          "desvioHz": -50,
+          "correctos": 3,
+          "equivocados": 34,
+          "perdidos": 1,
+          "total": 38
+        },
+        {
+          "desvioHz": -40,
+          "correctos": 19,
+          "equivocados": 17,
+          "perdidos": 2,
+          "total": 38
+        },
+        {
+          "desvioHz": -30,
+          "correctos": 36,
+          "equivocados": 2,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": -20,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": -10,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 0,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 10,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 20,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 30,
+          "correctos": 35,
+          "equivocados": 3,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 40,
+          "correctos": 18,
+          "equivocados": 19,
+          "perdidos": 1,
+          "total": 38
+        },
+        {
+          "desvioHz": 50,
+          "correctos": 2,
+          "equivocados": 35,
+          "perdidos": 1,
+          "total": 38
+        }
+      ],
+      "porAtenuacion": [
+        {
+          "snrDb": -12.2,
+          "correctos": 190,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 190
+        },
+        {
+          "snrDb": -18.2,
+          "correctos": 102,
+          "equivocados": 0,
+          "perdidos": 88,
+          "total": 190
+        },
+        {
+          "snrDb": -20.2,
+          "correctos": 39,
+          "equivocados": 0,
+          "perdidos": 151,
+          "total": 190
+        },
+        {
+          "snrDb": -22.7,
+          "correctos": 9,
+          "equivocados": 0,
+          "perdidos": 181,
+          "total": 190
+        }
+      ]
+    },
+    {
+      "distanciaMaximaHz": 30,
+      "zonaMuertaEntreSimbolosHz": 20,
+      "porDesvio": [
+        {
+          "desvioHz": -50,
+          "correctos": 0,
+          "equivocados": 19,
+          "perdidos": 19,
+          "total": 38
+        },
+        {
+          "desvioHz": -40,
+          "correctos": 3,
+          "equivocados": 2,
+          "perdidos": 33,
+          "total": 38
+        },
+        {
+          "desvioHz": -30,
+          "correctos": 20,
+          "equivocados": 0,
+          "perdidos": 18,
+          "total": 38
+        },
+        {
+          "desvioHz": -20,
+          "correctos": 36,
+          "equivocados": 0,
+          "perdidos": 2,
+          "total": 38
+        },
+        {
+          "desvioHz": -10,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 0,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 10,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 20,
+          "correctos": 35,
+          "equivocados": 0,
+          "perdidos": 3,
+          "total": 38
+        },
+        {
+          "desvioHz": 30,
+          "correctos": 19,
+          "equivocados": 0,
+          "perdidos": 19,
+          "total": 38
+        },
+        {
+          "desvioHz": 40,
+          "correctos": 2,
+          "equivocados": 3,
+          "perdidos": 33,
+          "total": 38
+        },
+        {
+          "desvioHz": 50,
+          "correctos": 0,
+          "equivocados": 19,
+          "perdidos": 19,
+          "total": 38
+        }
+      ],
+      "porAtenuacion": [
+        {
+          "snrDb": -12.2,
+          "correctos": 190,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 190
+        },
+        {
+          "snrDb": -18.2,
+          "correctos": 102,
+          "equivocados": 0,
+          "perdidos": 88,
+          "total": 190
+        },
+        {
+          "snrDb": -20.2,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 152,
+          "total": 190
+        },
+        {
+          "snrDb": -22.7,
+          "correctos": 9,
+          "equivocados": 0,
+          "perdidos": 181,
+          "total": 190
+        }
+      ]
+    },
+    {
+      "distanciaMaximaHz": 20,
+      "zonaMuertaEntreSimbolosHz": 40,
+      "porDesvio": [
+        {
+          "desvioHz": -50,
+          "correctos": 0,
+          "equivocados": 4,
+          "perdidos": 34,
+          "total": 38
+        },
+        {
+          "desvioHz": -40,
+          "correctos": 0,
+          "equivocados": 0,
+          "perdidos": 38,
+          "total": 38
+        },
+        {
+          "desvioHz": -30,
+          "correctos": 3,
+          "equivocados": 0,
+          "perdidos": 35,
+          "total": 38
+        },
+        {
+          "desvioHz": -20,
+          "correctos": 19,
+          "equivocados": 0,
+          "perdidos": 19,
+          "total": 38
+        },
+        {
+          "desvioHz": -10,
+          "correctos": 35,
+          "equivocados": 0,
+          "perdidos": 3,
+          "total": 38
+        },
+        {
+          "desvioHz": 0,
+          "correctos": 38,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 38
+        },
+        {
+          "desvioHz": 10,
+          "correctos": 36,
+          "equivocados": 0,
+          "perdidos": 2,
+          "total": 38
+        },
+        {
+          "desvioHz": 20,
+          "correctos": 20,
+          "equivocados": 0,
+          "perdidos": 18,
+          "total": 38
+        },
+        {
+          "desvioHz": 30,
+          "correctos": 4,
+          "equivocados": 0,
+          "perdidos": 34,
+          "total": 38
+        },
+        {
+          "desvioHz": 40,
+          "correctos": 0,
+          "equivocados": 0,
+          "perdidos": 38,
+          "total": 38
+        },
+        {
+          "desvioHz": 50,
+          "correctos": 0,
+          "equivocados": 3,
+          "perdidos": 35,
+          "total": 38
+        }
+      ],
+      "porAtenuacion": [
+        {
+          "snrDb": -12.2,
+          "correctos": 190,
+          "equivocados": 0,
+          "perdidos": 0,
+          "total": 190
+        },
+        {
+          "snrDb": -18.2,
+          "correctos": 100,
+          "equivocados": 0,
+          "perdidos": 90,
+          "total": 190
+        },
+        {
+          "snrDb": -20.2,
+          "correctos": 36,
+          "equivocados": 0,
+          "perdidos": 154,
+          "total": 190
+        },
+        {
+          "snrDb": -22.7,
+          "correctos": 7,
+          "equivocados": 0,
+          "perdidos": 183,
+          "total": 190
+        }
+      ]
+    }
+  ]
+}

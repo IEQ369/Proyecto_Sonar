@@ -1637,3 +1637,109 @@ externa a esta carpeta, ni código ejecutable, pruebas o resultados.
   66 pruebas siguen aprobadas.
 - La visibilidad del repositorio aún no cambió. Al hacerlo público, también
   quedarán visibles las versiones anteriores y sus metadatos de autor.
+
+## 2026-11-17 — Caracterización digital de V1 Clean (M3, primera parte)
+
+**Objetivo:** medir V1 Clean antes de cambiarlo, como pide M3, y dejar una
+comparación reproducible contra un mapa candidato.
+
+### Cambios
+
+- Librería `simulacion/caracterizacion.js`: decide con el `ReceptorMensajesCore`
+  real, mide ventanas de decisión, barre la banda y replica el detector de pico
+  de `app.js` (Blackman, FFT de 2048, conversión a byte).
+- Experimentos E003 (regiones de decisión), E004 (atenuación, duración y
+  muestreo) y E005 (V1 frente al candidato V2-A), con resultados deterministas.
+- Mapa candidato `simulacion/mapa_candidato_v2.js`, solo para simulación.
+- CI en GitHub Actions y corrección de `npm test`, que usaba una opción que
+  Node 22.23 rechaza.
+
+### Resultados
+
+- Región de decisión asimétrica: 59 Hz hacia arriba, 19 Hz hacia abajo.
+- El receptor emite el carácter vecino en el 4,2 % de la banda.
+- `7`, `8` y `9` quedan sobre Nyquist a 44,1 kHz.
+- Símbolos de 30 ms fallan; 120 ms no mejora respecto a 60 ms.
+- V2-A duplica el margen y funciona a 44,1 kHz, no mejora frente al ruido y
+  falla decidiendo el vecino.
+
+### Concepto aprendido
+
+El orden de recorrido de un mapa es parte del protocolo: con tolerancias que se
+solapan, «el primero que coincide» desplaza la frontera entre símbolos. Un
+margen simétrico exige decidir por distancia, no por orden.
+
+### Verificación y límites
+
+- `npm test`: 79 pruebas aprobadas, 0 fallidas.
+- Todo es simulación digital. No hubo pruebas en navegador ni por aire.
+- El flujo de CI aún no se ha ejecutado en GitHub.
+- No se modificó el protocolo, el receptor ni la interfaz.
+
+### Pendientes y próximo paso
+
+Revisar `docs/REVISION.md` y decidir sobre la asimetría, los caracteres sobre
+Nyquist y el candidato. Después, E3-004 (tamaño de FFT).
+
+## 2026-11-17 — E006: tamaño de FFT y zona muerta
+
+- **Pregunta A:** ¿de dónde sale el alcance? De agrandar la FFT **junto con**
+  el símbolo. FFT de 8192 con símbolos de 240 ms baja el error a −22,7 dB de
+  0,98 a 0,15; alargar el símbolo con FFT de 2048 no cambia nada.
+- **Pregunta B:** una zona muerta de 20 Hz en V2-A elimina los caracteres
+  equivocados hasta ±30 Hz de desvío, pero reduce la tolerancia y no ayuda
+  frente al ruido, donde el acuerdo de tres cuadros ya evita los equivocados.
+- **Concepto aprendido:** el ancho de cada bin fija cuánto ruido compite con
+  el tono. Integrar más tiempo solo sirve si el análisis lo usa.
+- `medirMapa()` permite medir cualquier mapa con cualquier regla de decisión.
+- `npm test`: 81 pruebas aprobadas. El CI pasó en GitHub (Node 22 y 24) para
+  los commits anteriores.
+- Sigue siendo simulación digital; nada se probó por aire.
+
+## 2026-11-17 — E007: herramienta para la primera medición física
+
+- **Objetivo:** dejar lista la medición que desbloquea las decisiones abiertas,
+  ya que la simulación no puede decir cuánto desvío ni cuánta atenuación hay
+  por aire.
+- **Cambios:** página `/laboratorio/` (emisor de 9 tonos aislados y receptor
+  que registra pico, pico interpolado, magnitud y piso de ruido), lógica pura
+  en `core/medicion_fisica.js`, `scripts/analizar_medicion.js` y protocolo en
+  `docs/experiments/E007-medicion-fisica/README.md`.
+- **Ensayo en Chromium 153 con micrófono simulado:** con `audio: true`, como
+  pide hoy la aplicación, la banda de 18–22 kHz llegó en cero; sin cancelación
+  de eco, supresión de ruido ni ganancia automática se detectaron 8 de 9 tonos
+  y se recuperó el desvío aplicado de 12 Hz (11,7 a 12,3 Hz).
+- **Concepto aprendido:** el navegador no entrega la señal del micrófono tal
+  cual. Por defecto la trata como voz, y ese tratamiento es parte del canal.
+- **Límites:** no es una medición por aire. `HISTORIA_TECNICA.md` registra
+  recepción real a 30 cm–1 m, así que el efecto depende del equipo. No se
+  cambió la aplicación.
+- `npm test`: 89 pruebas aprobadas.
+- **Próximo paso:** ejecutar el protocolo de E007 con dos dispositivos,
+  comparando la captura con y sin procesamiento.
+
+## 2026-11-17 — Protocolo de archivos V2 (fases 1 a 5 del plan)
+
+- **Objetivo:** completar la transferencia de archivos sobre una base que se
+  pueda verificar, sin tocar el protocolo anterior.
+- **En qué se basa:** las capas de un módem. MFSK de 16 tonos para la capa
+  física, paquetes con longitud y CRC para la trama, y bloques numerados con
+  reenvío, como XMODEM, para la transferencia.
+- **Cambios:** `core/trama_archivos.js`, `core/modem_mfsk.js`,
+  `core/transferencia_archivos.js`, `simulacion/simulador_archivos.js`, la
+  pantalla `/archivos_v2/` y el experimento E008.
+- **Resultados (simulación):** archivo íntegro en canal limpio a 48 y 44,1 kHz
+  y con ±35 Hz de desvío; completo en tres rondas con 42 % de paquetes
+  perdidos; ningún bloque dañado aceptado en ninguna condición.
+- **Resultado (Chromium, micrófono simulado):** transferencia con dos bloques
+  perdidos, reenvío y archivo descargado idéntico al original.
+- **Hallazgo durante la medición:** el umbral de detección de 55 bytes dejaba
+  al módem sin recibir nada a −14,7 dB. Con 20 bytes recibe 12 de 12 paquetes
+  y sigue sin aceptar nada con solo ruido, porque el CRC ya filtra.
+- **Corrección al plan:** V2 es unas 1,7 veces más rápido que el anterior
+  (3,7 frente a 2,2 bytes por segundo), no seis como se estimó.
+- **Concepto aprendido:** si dos símbolos seguidos nunca comparten tono, el
+  receptor no necesita reloj: le basta contar cambios.
+- **Límites:** nada probado por aire; el reenvío es manual.
+- `npm test`: 107 pruebas aprobadas.
+

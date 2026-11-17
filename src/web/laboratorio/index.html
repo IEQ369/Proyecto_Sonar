@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONAR // LABORATORIO DE MEDICIÓN</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <style>
+        .lab-campo { display: block; margin: 0.6rem 0 0.2rem; font-size: 0.85rem; }
+        .lab-texto { width: 100%; box-sizing: border-box; }
+        .lab-tabla { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
+        .lab-tabla th, .lab-tabla td { border-bottom: 1px solid var(--border-color); padding: 4px 6px; text-align: right; }
+        .lab-nota { font-size: 0.85rem; margin: 0.8rem auto; max-width: 60rem; padding: 0 1rem; }
+        .lab-resultado { overflow-x: auto; }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div class="section-title" style="text-align:center;margin-top:1rem;">&gt; LABORATORIO DE MEDICIÓN (E007)</div>
+        <p class="lab-nota">
+            Herramienta de diagnóstico: un equipo emite tonos aislados y otro registra lo que su micrófono
+            observa. No transmite mensajes. Usar solo con dispositivos propios y a volumen moderado.
+            Protocolo: <code>docs/experiments/E007-medicion-fisica/README.md</code>.
+        </p>
+        <div class="panels-row">
+            <div class="panel panel-left">
+                <div class="panel-header" style="color:#000">&gt; RECEPTOR</div>
+                <div class="panel-body">
+                    <label class="lab-campo" for="lab-procesamiento">
+                        <input type="checkbox" id="lab-procesamiento" checked />
+                        Captura como la aplicación (procesamiento del navegador activo)
+                    </label>
+                    <label class="lab-campo" for="lab-notas">Notas: equipos, distancia, volumen, lugar</label>
+                    <textarea id="lab-notas" class="message-input lab-texto" rows="3"></textarea>
+                    <button id="lab-capturar" class="transmit-btn">INICIAR CAPTURA</button>
+                    <button id="lab-detener" class="transmit-btn" disabled>DETENER Y DESCARGAR</button>
+                    <div id="lab-estado-receptor" class="messages-log" role="status">en espera</div>
+                    <div id="lab-resultado" class="lab-resultado"></div>
+                </div>
+            </div>
+            <div class="panel panel-right">
+                <div class="panel-header" style="color:#000">&gt; EMISOR</div>
+                <div class="panel-body">
+                    <div id="lab-plan" class="messages-log"></div>
+                    <button id="lab-emitir" class="transmit-btn">EMITIR PLAN</button>
+                    <div id="lab-estado-emisor" class="messages-log" role="status">en espera</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/laboratorio/laboratorio.js"></script>
+</body>
+
+</html>

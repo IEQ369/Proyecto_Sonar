@@ -1,0 +1,2797 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E003",
+  "titulo": "Regiones de decisión de V1 Clean",
+  "alcance": "Simulación digital determinista. No mide audio por aire.",
+  "mapa": "v1-clean",
+  "barrido": {
+    "desdeHz": 18000,
+    "hastaHz": 22500,
+    "pasoHz": 5
+  },
+  "politicas": {
+    "v1-receptor": {
+      "descripcion": "Receptor real de V1 Clean (frequencyToChar ±80 Hz, control ±60 Hz y filtro de estabilidad <60 Hz)",
+      "resumen": {
+        "simbolos": 40,
+        "margenMinimoHz": 19,
+        "margenMedioHz": 25.6,
+        "simbolosConMargenMinimo": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "Ñ",
+          "A",
+          "B",
+          "D",
+          "F",
+          "G",
+          "H",
+          "I",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ],
+        "simbolosAsimetricos": 33
+      },
+      "barrido": {
+        "puntos": 901,
+        "coincideConMasCercano": 606,
+        "sinDecision": 257,
+        "simboloEquivocado": 38,
+        "porcentajeEquivocado": 4.2
+      },
+      "confusiones": [
+        {
+          "masCercano": "D",
+          "decidido": "C",
+          "desdeHz": 18245,
+          "hastaHz": 18245
+        },
+        {
+          "masCercano": "I",
+          "decidido": "C",
+          "desdeHz": 18355,
+          "hastaHz": 18355
+        },
+        {
+          "masCercano": "Ñ",
+          "decidido": " ",
+          "desdeHz": 18655,
+          "hastaHz": 18655
+        },
+        {
+          "masCercano": "A",
+          "decidido": "Ñ",
+          "desdeHz": 18755,
+          "hastaHz": 18755
+        },
+        {
+          "masCercano": "B",
+          "decidido": "A",
+          "desdeHz": 18855,
+          "hastaHz": 18855
+        },
+        {
+          "masCercano": "F",
+          "decidido": "E",
+          "desdeHz": 19255,
+          "hastaHz": 19255
+        },
+        {
+          "masCercano": "G",
+          "decidido": "F",
+          "desdeHz": 19355,
+          "hastaHz": 19355
+        },
+        {
+          "masCercano": "H",
+          "decidido": "G",
+          "desdeHz": 19455,
+          "hastaHz": 19455
+        },
+        {
+          "masCercano": "H",
+          "decidido": "<END>",
+          "desdeHz": 19545,
+          "hastaHz": 19550
+        },
+        {
+          "masCercano": "J",
+          "decidido": "<END>",
+          "desdeHz": 19650,
+          "hastaHz": 19655
+        },
+        {
+          "masCercano": "K",
+          "decidido": "J",
+          "desdeHz": 19755,
+          "hastaHz": 19755
+        },
+        {
+          "masCercano": "L",
+          "decidido": "K",
+          "desdeHz": 19855,
+          "hastaHz": 19855
+        },
+        {
+          "masCercano": "M",
+          "decidido": "L",
+          "desdeHz": 19955,
+          "hastaHz": 19955
+        },
+        {
+          "masCercano": "N",
+          "decidido": "M",
+          "desdeHz": 20055,
+          "hastaHz": 20055
+        },
+        {
+          "masCercano": "O",
+          "decidido": "N",
+          "desdeHz": 20155,
+          "hastaHz": 20155
+        },
+        {
+          "masCercano": "P",
+          "decidido": "O",
+          "desdeHz": 20255,
+          "hastaHz": 20255
+        },
+        {
+          "masCercano": "Q",
+          "decidido": "P",
+          "desdeHz": 20355,
+          "hastaHz": 20355
+        },
+        {
+          "masCercano": "R",
+          "decidido": "Q",
+          "desdeHz": 20455,
+          "hastaHz": 20455
+        },
+        {
+          "masCercano": "S",
+          "decidido": "R",
+          "desdeHz": 20555,
+          "hastaHz": 20555
+        },
+        {
+          "masCercano": "T",
+          "decidido": "S",
+          "desdeHz": 20655,
+          "hastaHz": 20655
+        },
+        {
+          "masCercano": "U",
+          "decidido": "T",
+          "desdeHz": 20755,
+          "hastaHz": 20755
+        },
+        {
+          "masCercano": "V",
+          "decidido": "U",
+          "desdeHz": 20855,
+          "hastaHz": 20855
+        },
+        {
+          "masCercano": "W",
+          "decidido": "V",
+          "desdeHz": 20955,
+          "hastaHz": 20955
+        },
+        {
+          "masCercano": "X",
+          "decidido": "W",
+          "desdeHz": 21055,
+          "hastaHz": 21055
+        },
+        {
+          "masCercano": "Y",
+          "decidido": "X",
+          "desdeHz": 21155,
+          "hastaHz": 21155
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "Y",
+          "desdeHz": 21255,
+          "hastaHz": 21255
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "0",
+          "desdeHz": 21345,
+          "hastaHz": 21345
+        },
+        {
+          "masCercano": "1",
+          "decidido": "0",
+          "desdeHz": 21455,
+          "hastaHz": 21455
+        },
+        {
+          "masCercano": "2",
+          "decidido": "1",
+          "desdeHz": 21555,
+          "hastaHz": 21555
+        },
+        {
+          "masCercano": "3",
+          "decidido": "2",
+          "desdeHz": 21655,
+          "hastaHz": 21655
+        },
+        {
+          "masCercano": "4",
+          "decidido": "3",
+          "desdeHz": 21755,
+          "hastaHz": 21755
+        },
+        {
+          "masCercano": "5",
+          "decidido": "4",
+          "desdeHz": 21855,
+          "hastaHz": 21855
+        },
+        {
+          "masCercano": "6",
+          "decidido": "5",
+          "desdeHz": 21955,
+          "hastaHz": 21955
+        },
+        {
+          "masCercano": "7",
+          "decidido": "6",
+          "desdeHz": 22055,
+          "hastaHz": 22055
+        },
+        {
+          "masCercano": "8",
+          "decidido": "7",
+          "desdeHz": 22155,
+          "hastaHz": 22155
+        },
+        {
+          "masCercano": "9",
+          "decidido": "8",
+          "desdeHz": 22255,
+          "hastaHz": 22255
+        }
+      ],
+      "ventanas": [
+        {
+          "simbolo": "0",
+          "frecuenciaHz": 21400,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 59,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "1",
+          "frecuenciaHz": 21500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "2",
+          "frecuenciaHz": 21600,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "3",
+          "frecuenciaHz": 21700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "4",
+          "frecuenciaHz": 21800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "5",
+          "frecuenciaHz": 21900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "6",
+          "frecuenciaHz": 22000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "7",
+          "frecuenciaHz": 22100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "8",
+          "frecuenciaHz": 22200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "9",
+          "frecuenciaHz": 22300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": " ",
+          "frecuenciaHz": 18600,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 59,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Ñ",
+          "frecuenciaHz": 18700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "A",
+          "frecuenciaHz": 18800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "B",
+          "frecuenciaHz": 18900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "C",
+          "frecuenciaHz": 18300,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 59,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "D",
+          "frecuenciaHz": 18200,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 19,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "E",
+          "frecuenciaHz": 19200,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 59,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "F",
+          "frecuenciaHz": 19300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "G",
+          "frecuenciaHz": 19400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "H",
+          "frecuenciaHz": 19500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "<END>"
+        },
+        {
+          "simbolo": "I",
+          "frecuenciaHz": 18400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "J",
+          "frecuenciaHz": 19700,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 40,
+          "alSalirPorAbajo": "<END>",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "K",
+          "frecuenciaHz": 19800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "L",
+          "frecuenciaHz": 19900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "M",
+          "frecuenciaHz": 20000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "N",
+          "frecuenciaHz": 20100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "O",
+          "frecuenciaHz": 20200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "P",
+          "frecuenciaHz": 20300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Q",
+          "frecuenciaHz": 20400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "R",
+          "frecuenciaHz": 20500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "S",
+          "frecuenciaHz": 20600,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "T",
+          "frecuenciaHz": 20700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "U",
+          "frecuenciaHz": 20800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "V",
+          "frecuenciaHz": 20900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "W",
+          "frecuenciaHz": 21000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "X",
+          "frecuenciaHz": 21100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Y",
+          "frecuenciaHz": 21200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Z",
+          "frecuenciaHz": 21300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 19,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<SYNC>",
+          "frecuenciaHz": 19050,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<END>",
+          "frecuenciaHz": 19600,
+          "ventanaInferiorHz": 59,
+          "ventanaSuperiorHz": 59,
+          "margenHz": 59,
+          "alSalirPorAbajo": "H",
+          "alSalirPorArriba": "J"
+        }
+      ]
+    },
+    "primer-coincidente-80": {
+      "descripcion": "Primer coincidente ±80 Hz, sin filtro de estabilidad",
+      "resumen": {
+        "simbolos": 40,
+        "margenMinimoHz": 19,
+        "margenMedioHz": 27.6,
+        "simbolosConMargenMinimo": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "Ñ",
+          "A",
+          "B",
+          "D",
+          "F",
+          "G",
+          "H",
+          "I",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ],
+        "simbolosAsimetricos": 33
+      },
+      "barrido": {
+        "puntos": 901,
+        "coincideConMasCercano": 632,
+        "sinDecision": 57,
+        "simboloEquivocado": 212,
+        "porcentajeEquivocado": 23.5
+      },
+      "confusiones": [
+        {
+          "masCercano": "D",
+          "decidido": "C",
+          "desdeHz": 18220,
+          "hastaHz": 18245
+        },
+        {
+          "masCercano": "I",
+          "decidido": "C",
+          "desdeHz": 18355,
+          "hastaHz": 18380
+        },
+        {
+          "masCercano": "Ñ",
+          "decidido": " ",
+          "desdeHz": 18655,
+          "hastaHz": 18680
+        },
+        {
+          "masCercano": "A",
+          "decidido": "Ñ",
+          "desdeHz": 18755,
+          "hastaHz": 18780
+        },
+        {
+          "masCercano": "B",
+          "decidido": "A",
+          "desdeHz": 18855,
+          "hastaHz": 18880
+        },
+        {
+          "masCercano": "<SYNC>",
+          "decidido": "B",
+          "desdeHz": 18980,
+          "hastaHz": 18980
+        },
+        {
+          "masCercano": "<SYNC>",
+          "decidido": "E",
+          "desdeHz": 19120,
+          "hastaHz": 19120
+        },
+        {
+          "masCercano": "F",
+          "decidido": "E",
+          "desdeHz": 19255,
+          "hastaHz": 19280
+        },
+        {
+          "masCercano": "G",
+          "decidido": "F",
+          "desdeHz": 19355,
+          "hastaHz": 19380
+        },
+        {
+          "masCercano": "H",
+          "decidido": "G",
+          "desdeHz": 19455,
+          "hastaHz": 19480
+        },
+        {
+          "masCercano": "H",
+          "decidido": "<END>",
+          "desdeHz": 19540,
+          "hastaHz": 19550
+        },
+        {
+          "masCercano": "J",
+          "decidido": "<END>",
+          "desdeHz": 19650,
+          "hastaHz": 19660
+        },
+        {
+          "masCercano": "K",
+          "decidido": "J",
+          "desdeHz": 19755,
+          "hastaHz": 19780
+        },
+        {
+          "masCercano": "L",
+          "decidido": "K",
+          "desdeHz": 19855,
+          "hastaHz": 19880
+        },
+        {
+          "masCercano": "M",
+          "decidido": "L",
+          "desdeHz": 19955,
+          "hastaHz": 19980
+        },
+        {
+          "masCercano": "N",
+          "decidido": "M",
+          "desdeHz": 20055,
+          "hastaHz": 20080
+        },
+        {
+          "masCercano": "O",
+          "decidido": "N",
+          "desdeHz": 20155,
+          "hastaHz": 20180
+        },
+        {
+          "masCercano": "P",
+          "decidido": "O",
+          "desdeHz": 20255,
+          "hastaHz": 20280
+        },
+        {
+          "masCercano": "Q",
+          "decidido": "P",
+          "desdeHz": 20355,
+          "hastaHz": 20380
+        },
+        {
+          "masCercano": "R",
+          "decidido": "Q",
+          "desdeHz": 20455,
+          "hastaHz": 20480
+        },
+        {
+          "masCercano": "S",
+          "decidido": "R",
+          "desdeHz": 20555,
+          "hastaHz": 20580
+        },
+        {
+          "masCercano": "T",
+          "decidido": "S",
+          "desdeHz": 20655,
+          "hastaHz": 20680
+        },
+        {
+          "masCercano": "U",
+          "decidido": "T",
+          "desdeHz": 20755,
+          "hastaHz": 20780
+        },
+        {
+          "masCercano": "V",
+          "decidido": "U",
+          "desdeHz": 20855,
+          "hastaHz": 20880
+        },
+        {
+          "masCercano": "W",
+          "decidido": "V",
+          "desdeHz": 20955,
+          "hastaHz": 20980
+        },
+        {
+          "masCercano": "X",
+          "decidido": "W",
+          "desdeHz": 21055,
+          "hastaHz": 21080
+        },
+        {
+          "masCercano": "Y",
+          "decidido": "X",
+          "desdeHz": 21155,
+          "hastaHz": 21180
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "Y",
+          "desdeHz": 21255,
+          "hastaHz": 21280
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "0",
+          "desdeHz": 21320,
+          "hastaHz": 21345
+        },
+        {
+          "masCercano": "1",
+          "decidido": "0",
+          "desdeHz": 21455,
+          "hastaHz": 21480
+        },
+        {
+          "masCercano": "2",
+          "decidido": "1",
+          "desdeHz": 21555,
+          "hastaHz": 21580
+        },
+        {
+          "masCercano": "3",
+          "decidido": "2",
+          "desdeHz": 21655,
+          "hastaHz": 21680
+        },
+        {
+          "masCercano": "4",
+          "decidido": "3",
+          "desdeHz": 21755,
+          "hastaHz": 21780
+        },
+        {
+          "masCercano": "5",
+          "decidido": "4",
+          "desdeHz": 21855,
+          "hastaHz": 21880
+        },
+        {
+          "masCercano": "6",
+          "decidido": "5",
+          "desdeHz": 21955,
+          "hastaHz": 21980
+        },
+        {
+          "masCercano": "7",
+          "decidido": "6",
+          "desdeHz": 22055,
+          "hastaHz": 22080
+        },
+        {
+          "masCercano": "8",
+          "decidido": "7",
+          "desdeHz": 22155,
+          "hastaHz": 22180
+        },
+        {
+          "masCercano": "9",
+          "decidido": "8",
+          "desdeHz": 22255,
+          "hastaHz": 22280
+        }
+      ],
+      "ventanas": [
+        {
+          "simbolo": "0",
+          "frecuenciaHz": 21400,
+          "ventanaInferiorHz": 80,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 80,
+          "alSalirPorAbajo": "Z",
+          "alSalirPorArriba": "1"
+        },
+        {
+          "simbolo": "1",
+          "frecuenciaHz": 21500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "0",
+          "alSalirPorArriba": "2"
+        },
+        {
+          "simbolo": "2",
+          "frecuenciaHz": 21600,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "1",
+          "alSalirPorArriba": "3"
+        },
+        {
+          "simbolo": "3",
+          "frecuenciaHz": 21700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "2",
+          "alSalirPorArriba": "4"
+        },
+        {
+          "simbolo": "4",
+          "frecuenciaHz": 21800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "3",
+          "alSalirPorArriba": "5"
+        },
+        {
+          "simbolo": "5",
+          "frecuenciaHz": 21900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "4",
+          "alSalirPorArriba": "6"
+        },
+        {
+          "simbolo": "6",
+          "frecuenciaHz": 22000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "5",
+          "alSalirPorArriba": "7"
+        },
+        {
+          "simbolo": "7",
+          "frecuenciaHz": 22100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "6",
+          "alSalirPorArriba": "8"
+        },
+        {
+          "simbolo": "8",
+          "frecuenciaHz": 22200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "7",
+          "alSalirPorArriba": "9"
+        },
+        {
+          "simbolo": "9",
+          "frecuenciaHz": 22300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "8",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": " ",
+          "frecuenciaHz": 18600,
+          "ventanaInferiorHz": 80,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 80,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "Ñ"
+        },
+        {
+          "simbolo": "Ñ",
+          "frecuenciaHz": 18700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": " ",
+          "alSalirPorArriba": "A"
+        },
+        {
+          "simbolo": "A",
+          "frecuenciaHz": 18800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "Ñ",
+          "alSalirPorArriba": "B"
+        },
+        {
+          "simbolo": "B",
+          "frecuenciaHz": 18900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "A",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "C",
+          "frecuenciaHz": 18300,
+          "ventanaInferiorHz": 80,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 80,
+          "alSalirPorAbajo": "D",
+          "alSalirPorArriba": "I"
+        },
+        {
+          "simbolo": "D",
+          "frecuenciaHz": 18200,
+          "ventanaInferiorHz": 80,
+          "ventanaSuperiorHz": 19,
+          "margenHz": 19,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "C"
+        },
+        {
+          "simbolo": "E",
+          "frecuenciaHz": 19200,
+          "ventanaInferiorHz": 80,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 80,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "F"
+        },
+        {
+          "simbolo": "F",
+          "frecuenciaHz": 19300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "E",
+          "alSalirPorArriba": "G"
+        },
+        {
+          "simbolo": "G",
+          "frecuenciaHz": 19400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "F",
+          "alSalirPorArriba": "H"
+        },
+        {
+          "simbolo": "H",
+          "frecuenciaHz": 19500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 39,
+          "margenHz": 19,
+          "alSalirPorAbajo": "G",
+          "alSalirPorArriba": "<END>"
+        },
+        {
+          "simbolo": "I",
+          "frecuenciaHz": 18400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "C",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "J",
+          "frecuenciaHz": 19700,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 39,
+          "alSalirPorAbajo": "<END>",
+          "alSalirPorArriba": "K"
+        },
+        {
+          "simbolo": "K",
+          "frecuenciaHz": 19800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "J",
+          "alSalirPorArriba": "L"
+        },
+        {
+          "simbolo": "L",
+          "frecuenciaHz": 19900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "K",
+          "alSalirPorArriba": "M"
+        },
+        {
+          "simbolo": "M",
+          "frecuenciaHz": 20000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "L",
+          "alSalirPorArriba": "N"
+        },
+        {
+          "simbolo": "N",
+          "frecuenciaHz": 20100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "M",
+          "alSalirPorArriba": "O"
+        },
+        {
+          "simbolo": "O",
+          "frecuenciaHz": 20200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "N",
+          "alSalirPorArriba": "P"
+        },
+        {
+          "simbolo": "P",
+          "frecuenciaHz": 20300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "O",
+          "alSalirPorArriba": "Q"
+        },
+        {
+          "simbolo": "Q",
+          "frecuenciaHz": 20400,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "P",
+          "alSalirPorArriba": "R"
+        },
+        {
+          "simbolo": "R",
+          "frecuenciaHz": 20500,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "Q",
+          "alSalirPorArriba": "S"
+        },
+        {
+          "simbolo": "S",
+          "frecuenciaHz": 20600,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "R",
+          "alSalirPorArriba": "T"
+        },
+        {
+          "simbolo": "T",
+          "frecuenciaHz": 20700,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "S",
+          "alSalirPorArriba": "U"
+        },
+        {
+          "simbolo": "U",
+          "frecuenciaHz": 20800,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "T",
+          "alSalirPorArriba": "V"
+        },
+        {
+          "simbolo": "V",
+          "frecuenciaHz": 20900,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "U",
+          "alSalirPorArriba": "W"
+        },
+        {
+          "simbolo": "W",
+          "frecuenciaHz": 21000,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "V",
+          "alSalirPorArriba": "X"
+        },
+        {
+          "simbolo": "X",
+          "frecuenciaHz": 21100,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "W",
+          "alSalirPorArriba": "Y"
+        },
+        {
+          "simbolo": "Y",
+          "frecuenciaHz": 21200,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 80,
+          "margenHz": 19,
+          "alSalirPorAbajo": "X",
+          "alSalirPorArriba": "Z"
+        },
+        {
+          "simbolo": "Z",
+          "frecuenciaHz": 21300,
+          "ventanaInferiorHz": 19,
+          "ventanaSuperiorHz": 19,
+          "margenHz": 19,
+          "alSalirPorAbajo": "Y",
+          "alSalirPorArriba": "0"
+        },
+        {
+          "simbolo": "<SYNC>",
+          "frecuenciaHz": 19050,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<END>",
+          "frecuenciaHz": 19600,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": "H",
+          "alSalirPorArriba": "J"
+        }
+      ]
+    },
+    "primer-coincidente-60": {
+      "descripcion": "Primer coincidente ±60 Hz",
+      "resumen": {
+        "simbolos": 40,
+        "margenMinimoHz": 39,
+        "margenMedioHz": 42.1,
+        "simbolosConMargenMinimo": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "Ñ",
+          "A",
+          "B",
+          "D",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ],
+        "simbolosAsimetricos": 32
+      },
+      "barrido": {
+        "puntos": 901,
+        "coincideConMasCercano": 746,
+        "sinDecision": 81,
+        "simboloEquivocado": 74,
+        "porcentajeEquivocado": 8.2
+      },
+      "confusiones": [
+        {
+          "masCercano": "D",
+          "decidido": "C",
+          "desdeHz": 18240,
+          "hastaHz": 18245
+        },
+        {
+          "masCercano": "I",
+          "decidido": "C",
+          "desdeHz": 18355,
+          "hastaHz": 18360
+        },
+        {
+          "masCercano": "Ñ",
+          "decidido": " ",
+          "desdeHz": 18655,
+          "hastaHz": 18660
+        },
+        {
+          "masCercano": "A",
+          "decidido": "Ñ",
+          "desdeHz": 18755,
+          "hastaHz": 18760
+        },
+        {
+          "masCercano": "B",
+          "decidido": "A",
+          "desdeHz": 18855,
+          "hastaHz": 18860
+        },
+        {
+          "masCercano": "F",
+          "decidido": "E",
+          "desdeHz": 19255,
+          "hastaHz": 19260
+        },
+        {
+          "masCercano": "G",
+          "decidido": "F",
+          "desdeHz": 19355,
+          "hastaHz": 19360
+        },
+        {
+          "masCercano": "H",
+          "decidido": "G",
+          "desdeHz": 19455,
+          "hastaHz": 19460
+        },
+        {
+          "masCercano": "H",
+          "decidido": "<END>",
+          "desdeHz": 19540,
+          "hastaHz": 19550
+        },
+        {
+          "masCercano": "J",
+          "decidido": "<END>",
+          "desdeHz": 19650,
+          "hastaHz": 19660
+        },
+        {
+          "masCercano": "K",
+          "decidido": "J",
+          "desdeHz": 19755,
+          "hastaHz": 19760
+        },
+        {
+          "masCercano": "L",
+          "decidido": "K",
+          "desdeHz": 19855,
+          "hastaHz": 19860
+        },
+        {
+          "masCercano": "M",
+          "decidido": "L",
+          "desdeHz": 19955,
+          "hastaHz": 19960
+        },
+        {
+          "masCercano": "N",
+          "decidido": "M",
+          "desdeHz": 20055,
+          "hastaHz": 20060
+        },
+        {
+          "masCercano": "O",
+          "decidido": "N",
+          "desdeHz": 20155,
+          "hastaHz": 20160
+        },
+        {
+          "masCercano": "P",
+          "decidido": "O",
+          "desdeHz": 20255,
+          "hastaHz": 20260
+        },
+        {
+          "masCercano": "Q",
+          "decidido": "P",
+          "desdeHz": 20355,
+          "hastaHz": 20360
+        },
+        {
+          "masCercano": "R",
+          "decidido": "Q",
+          "desdeHz": 20455,
+          "hastaHz": 20460
+        },
+        {
+          "masCercano": "S",
+          "decidido": "R",
+          "desdeHz": 20555,
+          "hastaHz": 20560
+        },
+        {
+          "masCercano": "T",
+          "decidido": "S",
+          "desdeHz": 20655,
+          "hastaHz": 20660
+        },
+        {
+          "masCercano": "U",
+          "decidido": "T",
+          "desdeHz": 20755,
+          "hastaHz": 20760
+        },
+        {
+          "masCercano": "V",
+          "decidido": "U",
+          "desdeHz": 20855,
+          "hastaHz": 20860
+        },
+        {
+          "masCercano": "W",
+          "decidido": "V",
+          "desdeHz": 20955,
+          "hastaHz": 20960
+        },
+        {
+          "masCercano": "X",
+          "decidido": "W",
+          "desdeHz": 21055,
+          "hastaHz": 21060
+        },
+        {
+          "masCercano": "Y",
+          "decidido": "X",
+          "desdeHz": 21155,
+          "hastaHz": 21160
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "Y",
+          "desdeHz": 21255,
+          "hastaHz": 21260
+        },
+        {
+          "masCercano": "Z",
+          "decidido": "0",
+          "desdeHz": 21340,
+          "hastaHz": 21345
+        },
+        {
+          "masCercano": "1",
+          "decidido": "0",
+          "desdeHz": 21455,
+          "hastaHz": 21460
+        },
+        {
+          "masCercano": "2",
+          "decidido": "1",
+          "desdeHz": 21555,
+          "hastaHz": 21560
+        },
+        {
+          "masCercano": "3",
+          "decidido": "2",
+          "desdeHz": 21655,
+          "hastaHz": 21660
+        },
+        {
+          "masCercano": "4",
+          "decidido": "3",
+          "desdeHz": 21755,
+          "hastaHz": 21760
+        },
+        {
+          "masCercano": "5",
+          "decidido": "4",
+          "desdeHz": 21855,
+          "hastaHz": 21860
+        },
+        {
+          "masCercano": "6",
+          "decidido": "5",
+          "desdeHz": 21955,
+          "hastaHz": 21960
+        },
+        {
+          "masCercano": "7",
+          "decidido": "6",
+          "desdeHz": 22055,
+          "hastaHz": 22060
+        },
+        {
+          "masCercano": "8",
+          "decidido": "7",
+          "desdeHz": 22155,
+          "hastaHz": 22160
+        },
+        {
+          "masCercano": "9",
+          "decidido": "8",
+          "desdeHz": 22255,
+          "hastaHz": 22260
+        }
+      ],
+      "ventanas": [
+        {
+          "simbolo": "0",
+          "frecuenciaHz": 21400,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": "Z",
+          "alSalirPorArriba": "1"
+        },
+        {
+          "simbolo": "1",
+          "frecuenciaHz": 21500,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "0",
+          "alSalirPorArriba": "2"
+        },
+        {
+          "simbolo": "2",
+          "frecuenciaHz": 21600,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "1",
+          "alSalirPorArriba": "3"
+        },
+        {
+          "simbolo": "3",
+          "frecuenciaHz": 21700,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "2",
+          "alSalirPorArriba": "4"
+        },
+        {
+          "simbolo": "4",
+          "frecuenciaHz": 21800,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "3",
+          "alSalirPorArriba": "5"
+        },
+        {
+          "simbolo": "5",
+          "frecuenciaHz": 21900,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "4",
+          "alSalirPorArriba": "6"
+        },
+        {
+          "simbolo": "6",
+          "frecuenciaHz": 22000,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "5",
+          "alSalirPorArriba": "7"
+        },
+        {
+          "simbolo": "7",
+          "frecuenciaHz": 22100,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "6",
+          "alSalirPorArriba": "8"
+        },
+        {
+          "simbolo": "8",
+          "frecuenciaHz": 22200,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "7",
+          "alSalirPorArriba": "9"
+        },
+        {
+          "simbolo": "9",
+          "frecuenciaHz": 22300,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "8",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": " ",
+          "frecuenciaHz": 18600,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "Ñ"
+        },
+        {
+          "simbolo": "Ñ",
+          "frecuenciaHz": 18700,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": " ",
+          "alSalirPorArriba": "A"
+        },
+        {
+          "simbolo": "A",
+          "frecuenciaHz": 18800,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "Ñ",
+          "alSalirPorArriba": "B"
+        },
+        {
+          "simbolo": "B",
+          "frecuenciaHz": 18900,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "A",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "C",
+          "frecuenciaHz": 18300,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": "D",
+          "alSalirPorArriba": "I"
+        },
+        {
+          "simbolo": "D",
+          "frecuenciaHz": 18200,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 39,
+          "margenHz": 39,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "C"
+        },
+        {
+          "simbolo": "E",
+          "frecuenciaHz": 19200,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": "F"
+        },
+        {
+          "simbolo": "F",
+          "frecuenciaHz": 19300,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "E",
+          "alSalirPorArriba": "G"
+        },
+        {
+          "simbolo": "G",
+          "frecuenciaHz": 19400,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "F",
+          "alSalirPorArriba": "H"
+        },
+        {
+          "simbolo": "H",
+          "frecuenciaHz": 19500,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 39,
+          "margenHz": 39,
+          "alSalirPorAbajo": "G",
+          "alSalirPorArriba": "<END>"
+        },
+        {
+          "simbolo": "I",
+          "frecuenciaHz": 18400,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "C",
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "J",
+          "frecuenciaHz": 19700,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "<END>",
+          "alSalirPorArriba": "K"
+        },
+        {
+          "simbolo": "K",
+          "frecuenciaHz": 19800,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "J",
+          "alSalirPorArriba": "L"
+        },
+        {
+          "simbolo": "L",
+          "frecuenciaHz": 19900,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "K",
+          "alSalirPorArriba": "M"
+        },
+        {
+          "simbolo": "M",
+          "frecuenciaHz": 20000,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "L",
+          "alSalirPorArriba": "N"
+        },
+        {
+          "simbolo": "N",
+          "frecuenciaHz": 20100,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "M",
+          "alSalirPorArriba": "O"
+        },
+        {
+          "simbolo": "O",
+          "frecuenciaHz": 20200,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "N",
+          "alSalirPorArriba": "P"
+        },
+        {
+          "simbolo": "P",
+          "frecuenciaHz": 20300,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "O",
+          "alSalirPorArriba": "Q"
+        },
+        {
+          "simbolo": "Q",
+          "frecuenciaHz": 20400,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "P",
+          "alSalirPorArriba": "R"
+        },
+        {
+          "simbolo": "R",
+          "frecuenciaHz": 20500,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "Q",
+          "alSalirPorArriba": "S"
+        },
+        {
+          "simbolo": "S",
+          "frecuenciaHz": 20600,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "R",
+          "alSalirPorArriba": "T"
+        },
+        {
+          "simbolo": "T",
+          "frecuenciaHz": 20700,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "S",
+          "alSalirPorArriba": "U"
+        },
+        {
+          "simbolo": "U",
+          "frecuenciaHz": 20800,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "T",
+          "alSalirPorArriba": "V"
+        },
+        {
+          "simbolo": "V",
+          "frecuenciaHz": 20900,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "U",
+          "alSalirPorArriba": "W"
+        },
+        {
+          "simbolo": "W",
+          "frecuenciaHz": 21000,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "V",
+          "alSalirPorArriba": "X"
+        },
+        {
+          "simbolo": "X",
+          "frecuenciaHz": 21100,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "W",
+          "alSalirPorArriba": "Y"
+        },
+        {
+          "simbolo": "Y",
+          "frecuenciaHz": 21200,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 39,
+          "alSalirPorAbajo": "X",
+          "alSalirPorArriba": "Z"
+        },
+        {
+          "simbolo": "Z",
+          "frecuenciaHz": 21300,
+          "ventanaInferiorHz": 39,
+          "ventanaSuperiorHz": 39,
+          "margenHz": 39,
+          "alSalirPorAbajo": "Y",
+          "alSalirPorArriba": "0"
+        },
+        {
+          "simbolo": "<SYNC>",
+          "frecuenciaHz": 19050,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<END>",
+          "frecuenciaHz": 19600,
+          "ventanaInferiorHz": 60,
+          "ventanaSuperiorHz": 60,
+          "margenHz": 60,
+          "alSalirPorAbajo": "H",
+          "alSalirPorArriba": "J"
+        }
+      ]
+    },
+    "primer-coincidente-40": {
+      "descripcion": "Primer coincidente ±40 Hz (control ±40 Hz)",
+      "resumen": {
+        "simbolos": 40,
+        "margenMinimoHz": 40,
+        "margenMedioHz": 40,
+        "simbolosConMargenMinimo": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          " ",
+          "Ñ",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z",
+          "<SYNC>",
+          "<END>"
+        ],
+        "simbolosAsimetricos": 0
+      },
+      "barrido": {
+        "puntos": 901,
+        "coincideConMasCercano": 680,
+        "sinDecision": 221,
+        "simboloEquivocado": 0,
+        "porcentajeEquivocado": 0
+      },
+      "confusiones": [],
+      "ventanas": [
+        {
+          "simbolo": "0",
+          "frecuenciaHz": 21400,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "1",
+          "frecuenciaHz": 21500,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "2",
+          "frecuenciaHz": 21600,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "3",
+          "frecuenciaHz": 21700,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "4",
+          "frecuenciaHz": 21800,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "5",
+          "frecuenciaHz": 21900,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "6",
+          "frecuenciaHz": 22000,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "7",
+          "frecuenciaHz": 22100,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "8",
+          "frecuenciaHz": 22200,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "9",
+          "frecuenciaHz": 22300,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": " ",
+          "frecuenciaHz": 18600,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Ñ",
+          "frecuenciaHz": 18700,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "A",
+          "frecuenciaHz": 18800,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "B",
+          "frecuenciaHz": 18900,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "C",
+          "frecuenciaHz": 18300,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "D",
+          "frecuenciaHz": 18200,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "E",
+          "frecuenciaHz": 19200,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "F",
+          "frecuenciaHz": 19300,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "G",
+          "frecuenciaHz": 19400,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "H",
+          "frecuenciaHz": 19500,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "I",
+          "frecuenciaHz": 18400,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "J",
+          "frecuenciaHz": 19700,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "K",
+          "frecuenciaHz": 19800,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "L",
+          "frecuenciaHz": 19900,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "M",
+          "frecuenciaHz": 20000,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "N",
+          "frecuenciaHz": 20100,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "O",
+          "frecuenciaHz": 20200,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "P",
+          "frecuenciaHz": 20300,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Q",
+          "frecuenciaHz": 20400,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "R",
+          "frecuenciaHz": 20500,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "S",
+          "frecuenciaHz": 20600,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "T",
+          "frecuenciaHz": 20700,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "U",
+          "frecuenciaHz": 20800,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "V",
+          "frecuenciaHz": 20900,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "W",
+          "frecuenciaHz": 21000,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "X",
+          "frecuenciaHz": 21100,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Y",
+          "frecuenciaHz": 21200,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Z",
+          "frecuenciaHz": 21300,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<SYNC>",
+          "frecuenciaHz": 19050,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<END>",
+          "frecuenciaHz": 19600,
+          "ventanaInferiorHz": 40,
+          "ventanaSuperiorHz": 40,
+          "margenHz": 40,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        }
+      ]
+    },
+    "mas-cercano-50": {
+      "descripcion": "Frecuencia más cercana, distancia máxima 50 Hz",
+      "resumen": {
+        "simbolos": 40,
+        "margenMinimoHz": 49,
+        "margenMedioHz": 49,
+        "simbolosConMargenMinimo": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          " ",
+          "Ñ",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z",
+          "<END>"
+        ],
+        "simbolosAsimetricos": 6
+      },
+      "barrido": {
+        "puntos": 901,
+        "coincideConMasCercano": 768,
+        "sinDecision": 133,
+        "simboloEquivocado": 0,
+        "porcentajeEquivocado": 0
+      },
+      "confusiones": [],
+      "ventanas": [
+        {
+          "simbolo": "0",
+          "frecuenciaHz": 21400,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "1",
+          "frecuenciaHz": 21500,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "2",
+          "frecuenciaHz": 21600,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "3",
+          "frecuenciaHz": 21700,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "4",
+          "frecuenciaHz": 21800,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "5",
+          "frecuenciaHz": 21900,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "6",
+          "frecuenciaHz": 22000,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "7",
+          "frecuenciaHz": 22100,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "8",
+          "frecuenciaHz": 22200,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "9",
+          "frecuenciaHz": 22300,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 50,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": " ",
+          "frecuenciaHz": 18600,
+          "ventanaInferiorHz": 50,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Ñ",
+          "frecuenciaHz": 18700,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "A",
+          "frecuenciaHz": 18800,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "B",
+          "frecuenciaHz": 18900,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 50,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "C",
+          "frecuenciaHz": 18300,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "D",
+          "frecuenciaHz": 18200,
+          "ventanaInferiorHz": 50,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "E",
+          "frecuenciaHz": 19200,
+          "ventanaInferiorHz": 50,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "F",
+          "frecuenciaHz": 19300,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "G",
+          "frecuenciaHz": 19400,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "H",
+          "frecuenciaHz": 19500,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "I",
+          "frecuenciaHz": 18400,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 50,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "J",
+          "frecuenciaHz": 19700,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "K",
+          "frecuenciaHz": 19800,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "L",
+          "frecuenciaHz": 19900,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "M",
+          "frecuenciaHz": 20000,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "N",
+          "frecuenciaHz": 20100,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "O",
+          "frecuenciaHz": 20200,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "P",
+          "frecuenciaHz": 20300,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Q",
+          "frecuenciaHz": 20400,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "R",
+          "frecuenciaHz": 20500,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "S",
+          "frecuenciaHz": 20600,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "T",
+          "frecuenciaHz": 20700,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "U",
+          "frecuenciaHz": 20800,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "V",
+          "frecuenciaHz": 20900,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "W",
+          "frecuenciaHz": 21000,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "X",
+          "frecuenciaHz": 21100,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Y",
+          "frecuenciaHz": 21200,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "Z",
+          "frecuenciaHz": 21300,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<SYNC>",
+          "frecuenciaHz": 19050,
+          "ventanaInferiorHz": 50,
+          "ventanaSuperiorHz": 50,
+          "margenHz": 50,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        },
+        {
+          "simbolo": "<END>",
+          "frecuenciaHz": 19600,
+          "ventanaInferiorHz": 49,
+          "ventanaSuperiorHz": 49,
+          "margenHz": 49,
+          "alSalirPorAbajo": null,
+          "alSalirPorArriba": null
+        }
+      ]
+    }
+  },
+  "detectorDePicoEnFrecuenciaNominal": {
+    "44100": {
+      "binHz": 21.53,
+      "nyquistHz": 22050,
+      "caracteresCorrectos": 35,
+      "caracteresTotales": 38,
+      "fallos": [
+        {
+          "esperado": "7",
+          "decidido": "6"
+        },
+        {
+          "esperado": "8",
+          "decidido": "5"
+        },
+        {
+          "esperado": "9",
+          "decidido": "4"
+        }
+      ],
+      "errorMaximoDeEstimacionHz": 508.4
+    },
+    "48000": {
+      "binHz": 23.44,
+      "nyquistHz": 24000,
+      "caracteresCorrectos": 38,
+      "caracteresTotales": 38,
+      "fallos": [],
+      "errorMaximoDeEstimacionHz": 10.9
+    }
+  },
+  "equivalenciaDoppler": {
+    "nota": "Cálculo, no medición: velocidad relativa que desplaza un tono de 20 kHz tanto como el margen mínimo medido (c = 343 m/s).",
+    "margenMinimoV1Hz": 19,
+    "velocidadRelativaMs": 0.33
+  }
+}

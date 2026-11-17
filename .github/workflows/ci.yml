@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Pruebas (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Pruebas automatizadas
+        run: npm test
+      - name: Experimentos reproducibles
+        run: npm run experiments
+      - name: Los resultados versionados coinciden con una ejecución nueva
+        run: git diff --exit-code -- docs/experiments ':(exclude)docs/experiments/E001-baseline-mensajes' ':(exclude)docs/experiments/E002-baseline-archivos'

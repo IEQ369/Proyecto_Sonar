@@ -3,9 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test --test-isolation=none",
-    "test:baseline": "node --test --test-isolation=none",
+    "test": "node --test",
+    "test:baseline": "node --test",
     "experiment:e001": "node scripts/run_e001.js",
-    "experiment:e002": "node scripts/run_e002.js"
+    "experiment:e002": "node scripts/run_e002.js",
+    "experiment:e003": "node scripts/run_e003.js",
+    "experiment:e004": "node scripts/run_e004.js",
+    "experiment:e005": "node scripts/run_e005.js",
+    "experiments": "node scripts/run_e001.js && node scripts/run_e002.js && node scripts/run_e003.js && node scripts/run_e004.js && node scripts/run_e005.js && node scripts/run_e006.js && node scripts/run_e008.js",
+    "experiment:e006": "node scripts/run_e006.js",
+    "experiment:e008": "node scripts/run_e008.js"
   }
 }

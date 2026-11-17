@@ -6,7 +6,7 @@
 > **Fecha de inicio del roadmap:** 2026-08-24  
 > **Regla principal:** SONAR debe evolucionar sin perder su identidad, sin reescrituras impulsivas y sin introducir complejidad que no pueda justificarse con pruebas.
 
-## Lectura del estado actual — 2026-09-19
+## Lectura del estado actual — 2026-11-17
 
 Este documento nació como plan de V1 a V2 en agosto de 2026. Las secciones
 fechadas de agosto se conservan como registro histórico; para decidir el próximo
@@ -16,9 +16,9 @@ trabajo, usar este estado y las entradas recientes de `PROGRESO.md`.
 |---|---|---|
 | Fundación documental (M0) | Documentos integrados en `main` y enviados al repositorio remoto el 2026-09-19 | Cambiar la visibilidad cuando el propietario revise el alcance público del historial |
 | Baseline (M1) | E001 y E002 conservan resultados del baseline digital; faltan métricas y registro físico del alcance original | Ampliar medidas cuando corresponda, sin llamar "física" a la simulación |
-| V1 Clean (M2) | Alcance lógico cerrado; 66 pruebas aprobadas el 2026-09-19 | Conservar esta versión como referencia de comparación |
-| Caracterización (M3) | Pendiente | Empezar por E3-001: barrido sintético de frecuencias y matriz de confusión |
-| Investigación científica | Pregunta y alcance todavía provisionales | Acordarlos con el coordinador y el equipo; usar mediciones propias y fuentes trazables |
+| V1 Clean (M2) | Alcance lógico cerrado; 107 pruebas aprobadas el 2026-11-17 (66 de V1 Clean y 41 nuevas de caracterización, medición y archivos V2) | Conservar esta versión como referencia de comparación |
+| Caracterización (M3) | Parte digital de E3-001 a E3-006 medida en E003, E004 y E006 (2026-11-17). Faltan E3-007 (forma de onda) y toda la parte física, cuya herramienta y protocolo están en E007 | Ejecutar E007 con dos dispositivos; revisar E003–E006 y decidir sobre el candidato V2-A; ver `docs/REVISION.md` |
+| Investigación científica | Pregunta y alcance todavía provisionales | Definirlos; usar mediciones propias y fuentes trazables |
 
 La revisión externa recibida el 2026-09-17 figura como **observaciones
 contrastadas**, no como instrucciones de implementación. La inserción del nombre
@@ -352,15 +352,15 @@ Debe conservarse como **North Star histórico**, no como promesa actual.
 
 ---
 
-## 2.1 — Investigación científica para la feria (trabajo paralelo)
+## 2.1 — Investigación científica (trabajo paralelo)
 
-La investigación del equipo puede avanzar mientras se caracteriza el módem.
+La investigación científica puede avanzar mientras se caracteriza el módem.
 No necesita esperar a que SONAR sea un producto terminado, pero tampoco debe
 presentar las pruebas digitales como resultados físicos.
 
-Orden de trabajo propuesto, sujeto a acuerdo con el coordinador:
+Orden de trabajo propuesto:
 
-1. Delimitar una pregunta científica comprobable y el alcance de la feria.
+1. Delimitar una pregunta científica comprobable y su alcance.
 2. Revisar literatura pertinente y registrar las fuentes, sin fijar de antemano
    una cantidad de artículos como criterio de calidad.
 3. Definir hipótesis, variables, controles, dispositivos y métricas antes de
@@ -370,9 +370,9 @@ Orden de trabajo propuesto, sujeto a acuerdo con el coordinador:
 5. Analizar los resultados, incluyendo fallos y límites, y redactar conclusiones
    que no excedan la evidencia.
 
-El material de exposición se prepara fuera del repositorio. La pregunta
+Cualquier material de presentación se prepara fuera del repositorio. La pregunta
 científica sigue siendo provisional; la elección final corresponde al dueño del
-proyecto junto con el coordinador y el grupo.
+proyecto.
 
 ---
 
@@ -1911,13 +1911,13 @@ Es mejor dejar una especificación buena que diez implementaciones incomprendida
 - Verificar en navegador la descarga y el historial de archivos tras la
   corrección de inserción HTML; no se necesita reestructurar todo el módem.
 
-## C — Trabajo con el equipo de investigación
+## C — Investigación científica
 
 - Preparar una explicación del prototipo, V1 Clean, evidencia y límites sin
   guardar las diapositivas personales dentro del repositorio.
-- Acordar con el coordinador la pregunta científica y un protocolo de medición.
-- Repartir tareas concretas según disponibilidad, manteniendo trazabilidad en
-  `PROGRESO.md` y en las configuraciones/resultados de los experimentos.
+- Definir la pregunta científica y un protocolo de medición.
+- Mantener la trazabilidad en `PROGRESO.md` y en las configuraciones y
+  resultados de los experimentos.
 
 Estos frentes pueden avanzar en paralelo. Ninguno autoriza afirmar fiabilidad
 física antes de medirla.
@@ -2074,7 +2074,7 @@ sin convertir el proyecto en malware operativo ni perder su carácter de investi
 
 Iniciar **E3-001 — barrido sintético y matriz de confusión de V1 Clean** como
 siguiente trabajo técnico. En paralelo, decidir la visibilidad del repositorio
-y definir con el coordinador la pregunta de investigación. Verificar en navegador
+y definir la pregunta de investigación. Verificar en navegador
 la interfaz de archivos antes de pruebas con archivos de terceros.
 
 No comenzar por cambiar la modulación, sustituir el detector ni reestructurar

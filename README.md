@@ -6,11 +6,22 @@ La comunicación del contenido usa audio. El servidor HTTP solo entrega la aplic
 
 ## Estado actual
 
-**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 66 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
+**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 107 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
 
 Esto **no demuestra fiabilidad acústica física**. Continúan pendientes la caracterización de frecuencias, la sincronización temporal y las pruebas controladas con altavoces y micrófonos reales. Tampoco se debe asumir que la transferencia de archivos por aire o un mecanismo de confirmación y reenvío ya sean fiables.
 
-El siguiente trabajo técnico es medir V1 Clean en simulación y después bajo condiciones físicas controladas. El enfoque de la investigación científica con el equipo todavía debe definirse.
+La caracterización digital de V1 Clean ya tiene sus primeras mediciones (E003 a E006, en simulación):
+
+- cada carácter tolera 59 Hz de desvío hacia arriba pero solo 19 Hz hacia abajo;
+- con audio a 44,1 kHz, `7`, `8` y `9` quedan por encima de Nyquist y no se decodifican;
+- símbolos de 30 ms no alcanzan para el análisis actual, y alargarlos solo mejora el alcance si también crece el tamaño de FFT;
+- un mapa candidato (V2-A) corrige los dos primeros puntos, no mejora frente al ruido y falla de forma distinta. No está adoptado.
+
+Además existe una página de laboratorio, `/laboratorio/`, para la primera medición física ([E007](docs/experiments/E007-medicion-fisica/README.md)). En su ensayo con un micrófono simulado, la captura que usa hoy la aplicación (`getUserMedia({ audio: true })`) entregó la banda de 18–22 kHz en cero en Chromium, y sin el procesamiento de voz del navegador se detectaron 8 de 9 tonos. Falta comprobarlo con dispositivos reales.
+
+El **protocolo de archivos V2** (`/archivos_v2/`) transmite por paquetes con 16 tonos, comprueba cada bloque, muestra cuáles faltan y los recupera con un reenvío. En simulación completa un archivo con hasta 42 % de paquetes perdidos y nunca aceptó un bloque dañado ([E008](docs/experiments/E008-archivos-v2/README.md)). En Chromium con micrófono simulado recibió un archivo idéntico al original. No está probado por aire, y el protocolo anterior sigue disponible en `/archivos`.
+
+El siguiente trabajo técnico es revisar esos resultados ([guía de revisión](docs/REVISION.md)), completar la caracterización y repetirla bajo condiciones físicas controladas. El enfoque de la investigación científica todavía debe definirse.
 
 ## Ejecutar localmente
 
@@ -20,7 +31,7 @@ Requisitos: Python 3 para servir la interfaz y un navegador con Web Audio API.
 
        python3 src/web/backend/servidor_estatico.py
 
-2. Abrir http://localhost:8000/ para mensajes o http://localhost:8000/archivos para archivos.
+2. Abrir http://localhost:8000/ para mensajes, http://localhost:8000/archivos para archivos, http://localhost:8000/archivos_v2/ para el protocolo de archivos nuevo o http://localhost:8000/laboratorio/ para la herramienta de medición.
 
 El servidor sirve archivos estáticos; no procesa las señales ni los datos transmitidos. En otro dispositivo, el acceso por HTTP mediante la IP de la laptop puede cargar la página, pero el permiso del micrófono normalmente exige un contexto seguro, como HTTPS. Por ello, que la página abra en un celular no implica que pueda recibir audio.
 
@@ -31,8 +42,9 @@ Requisitos: Node.js y npm.
     npm test
     npm run experiment:e001
     npm run experiment:e002
+    npm run experiments
 
-`npm test` verifica contratos lógicos y simulaciones deterministas sin requerir dos dispositivos. E001 estudia mensajes y E002 documenta defectos históricos del protocolo de archivos. Algunos tests imprimen conflictos conocidos de frecuencias: esos mensajes son evidencia de problemas pendientes, no fallos de la suite.
+`npm test` verifica contratos lógicos y simulaciones deterministas sin requerir dos dispositivos. E001 estudia mensajes y E002 documenta defectos históricos del protocolo de archivos. `npm run experiments` ejecuta además E003 (regiones de decisión), E004 (robustez), E005 (comparación con un mapa candidato) E006 (tamaño de FFT y zona muerta) y E008 (protocolo de archivos V2). Cada envío se verifica en GitHub Actions con Node 22 y 24. Algunos tests imprimen conflictos conocidos de frecuencias: esos mensajes son evidencia de problemas pendientes, no fallos de la suite.
 
 Los resultados y su interpretación están en [docs/experiments](docs/experiments/README.md). Los tests se conservan porque permiten detectar regresiones y sostener las afirmaciones técnicas del proyecto.
 
@@ -47,6 +59,8 @@ Los resultados y su interpretación están en [docs/experiments](docs/experiment
     ├── src/web/backend/         servidor estático local
     ├── src/web/static/          mensajes: interfaz, protocolo y simulador
     ├── src/web/archivos/        flujo de archivos
+    ├── src/web/archivos_v2/     protocolo de archivos por paquetes (experimental)
+    ├── src/web/laboratorio/     herramienta de medición física (E007)
     └── tests/                   pruebas automáticas
 
 La distribución de `src/web` todavía refleja dos flujos parcialmente separados, mensajes y archivos. Reorganizar los módulos requerirá actualizar sus importaciones y rutas; no se han movido solo por estética.
@@ -66,6 +80,8 @@ Ninguna distancia de alcance o tasa de éxito físico está validada como garant
 - [Auditoría técnica](docs/AUDITORIA.md) — problemas comprobados y evidencia.
 - [Roadmap](docs/ROADMAP.md) — dirección y límites del proyecto.
 - [Experimentos](docs/experiments/README.md) — configuraciones y resultados reproducibles.
+- [Plan del protocolo de archivos](docs/PLAN_ARCHIVOS.md) — diseño por capas y fases; las fases 1 a 5 están implementadas.
+- [Guía de revisión](docs/REVISION.md) — qué cambió el 2026-11-17, qué se verificó y qué decisiones quedan abiertas.
 - [Progreso](PROGRESO.md) — secuencia de cambios, decisiones y pendientes.
 - [Historia técnica](HISTORIA_TECNICA.md) — evolución del prototipo.
 

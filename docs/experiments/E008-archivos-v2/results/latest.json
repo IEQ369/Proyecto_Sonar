@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E008",
+  "titulo": "Protocolo de archivos V2 de extremo a extremo",
+  "alcance": "Simulación digital determinista con ruido uniforme y el suavizado del AnalyserNode. No mide audio por aire.",
+  "configuracion": {
+    "archivoBytes": 128,
+    "bloques": 8,
+    "tamanoBloque": 16,
+    "tonos": 19,
+    "frecuenciaMinimaHz": 18200,
+    "frecuenciaMaximaHz": 19720,
+    "duracionSimboloPorDefectoMs": 80,
+    "amplitudTono": 0.15,
+    "amplitudRuido": 0.05,
+    "pausaEntrePaquetesS": 0.15,
+    "maximoDeRondas": 6
+  },
+  "velocidadNominal": [
+    {
+      "duracionSimboloMs": 40,
+      "segundosPorKilobyte": 144.4,
+      "bytesUtilesPorSegundo": 7.09
+    },
+    {
+      "duracionSimboloMs": 60,
+      "segundosPorKilobyte": 211.6,
+      "bytesUtilesPorSegundo": 4.84
+    },
+    {
+      "duracionSimboloMs": 80,
+      "segundosPorKilobyte": 278.7,
+      "bytesUtilesPorSegundo": 3.67
+    }
+  ],
+  "protocoloActual": {
+    "nota": "Cálculo a partir de las constantes de emisor_archivos.js: un bit cada 0,05 s y un byte de CRC por cada 8 de datos. No incluye preámbulo ni cabecera.",
+    "bytesUtilesPorSegundo": 2.22
+  },
+  "canalLimpio": {
+    "44100": {
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    "48000": {
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    "48000 a 30 cuadros por segundo": {
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    }
+  },
+  "atenuacion": [
+    {
+      "ganancia": 0.1,
+      "snrDb": -8.7,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "ganancia": 0.05,
+      "snrDb": -14.7,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "ganancia": 0.04,
+      "snrDb": -16.7,
+      "rondas": 2,
+      "paquetesEnviados": 17,
+      "paquetesValidos": 16,
+      "paquetesDescartados": 1,
+      "tasaDePerdida": 0.059,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 69.3,
+      "bytesUtilesPorSegundo": 1.85
+    },
+    {
+      "ganancia": 0.035,
+      "snrDb": -17.8,
+      "rondas": 3,
+      "paquetesEnviados": 26,
+      "paquetesValidos": 15,
+      "paquetesDescartados": 11,
+      "tasaDePerdida": 0.423,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 106,
+      "bytesUtilesPorSegundo": 1.21
+    },
+    {
+      "ganancia": 0.03,
+      "snrDb": -19.2,
+      "rondas": 6,
+      "paquetesEnviados": 68,
+      "paquetesValidos": 6,
+      "paquetesDescartados": 58,
+      "tasaDePerdida": 0.912,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": false,
+      "tiempoEnElAireS": 278.4,
+      "bytesUtilesPorSegundo": 0
+    },
+    {
+      "ganancia": 0.025,
+      "snrDb": -20.7,
+      "rondas": 6,
+      "paquetesEnviados": 72,
+      "paquetesValidos": 0,
+      "paquetesDescartados": 66,
+      "tasaDePerdida": 1,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": false,
+      "tiempoEnElAireS": 295,
+      "bytesUtilesPorSegundo": 0
+    }
+  ],
+  "duracionDeSimbolo": [
+    {
+      "duracionSimboloMs": 40,
+      "snrDb": -17.8,
+      "rondas": 6,
+      "paquetesEnviados": 72,
+      "paquetesValidos": 0,
+      "paquetesDescartados": 62,
+      "tasaDePerdida": 1,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": false,
+      "tiempoEnElAireS": 152.9,
+      "bytesUtilesPorSegundo": 0
+    },
+    {
+      "duracionSimboloMs": 60,
+      "snrDb": -17.8,
+      "rondas": 5,
+      "paquetesEnviados": 53,
+      "paquetesValidos": 13,
+      "paquetesDescartados": 41,
+      "tasaDePerdida": 0.755,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 164.6,
+      "bytesUtilesPorSegundo": 0.78
+    },
+    {
+      "duracionSimboloMs": 80,
+      "snrDb": -17.8,
+      "rondas": 3,
+      "paquetesEnviados": 26,
+      "paquetesValidos": 15,
+      "paquetesDescartados": 11,
+      "tasaDePerdida": 0.423,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 106,
+      "bytesUtilesPorSegundo": 1.21
+    },
+    {
+      "duracionSimboloMs": 120,
+      "snrDb": -17.8,
+      "rondas": 5,
+      "paquetesEnviados": 35,
+      "paquetesValidos": 18,
+      "paquetesDescartados": 17,
+      "tasaDePerdida": 0.486,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 210.4,
+      "bytesUtilesPorSegundo": 0.61
+    }
+  ],
+  "margenSobreElPiso": [
+    {
+      "margenSobrePisoBytes": 55,
+      "snrDb": -14.7,
+      "paquetesValidos": 0,
+      "paquetesEnviados": 12,
+      "paquetesValidosConSoloRuido": 0
+    },
+    {
+      "margenSobrePisoBytes": 40,
+      "snrDb": -14.7,
+      "paquetesValidos": 9,
+      "paquetesEnviados": 12,
+      "paquetesValidosConSoloRuido": 0
+    },
+    {
+      "margenSobrePisoBytes": 30,
+      "snrDb": -14.7,
+      "paquetesValidos": 12,
+      "paquetesEnviados": 12,
+      "paquetesValidosConSoloRuido": 0
+    },
+    {
+      "margenSobrePisoBytes": 20,
+      "snrDb": -14.7,
+      "paquetesValidos": 12,
+      "paquetesEnviados": 12,
+      "paquetesValidosConSoloRuido": 0
+    },
+    {
+      "margenSobrePisoBytes": 10,
+      "snrDb": -14.7,
+      "paquetesValidos": 12,
+      "paquetesEnviados": 12,
+      "paquetesValidosConSoloRuido": 0
+    }
+  ],
+  "desvioDeFrecuencia": [
+    {
+      "desvioHz": -35,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": -30,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": -20,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": 0,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": 20,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": 30,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    },
+    {
+      "desvioHz": 35,
+      "rondas": 1,
+      "paquetesEnviados": 12,
+      "paquetesValidos": 12,
+      "paquetesDescartados": 0,
+      "tasaDePerdida": 0,
+      "datosDanadosAceptados": 0,
+      "archivoIntegro": true,
+      "tiempoEnElAireS": 49.2,
+      "bytesUtilesPorSegundo": 2.6
+    }
+  ]
+}

@@ -1,0 +1,789 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E005",
+  "titulo": "V1 Clean frente al mapa candidato V2-A",
+  "alcance": "Simulación digital determinista. El candidato no está adoptado ni conectado a la interfaz.",
+  "candidato": {
+    "baseHz": 18200,
+    "pasoHz": 80,
+    "distanciaMaximaHz": 40,
+    "control": {
+      "START": 18200,
+      "SYNC": 18280,
+      "END": 18360
+    },
+    "caracteres": {
+      "0": 20760,
+      "1": 20840,
+      "2": 20920,
+      "3": 21000,
+      "4": 21080,
+      "5": 21160,
+      "6": 21240,
+      "7": 21320,
+      "8": 21400,
+      "9": 21480,
+      " ": 18520,
+      "A": 18600,
+      "B": 18680,
+      "C": 18760,
+      "D": 18840,
+      "E": 18920,
+      "F": 19000,
+      "G": 19080,
+      "H": 19160,
+      "I": 19240,
+      "J": 19320,
+      "K": 19400,
+      "L": 19480,
+      "M": 19560,
+      "N": 19640,
+      "Ñ": 19720,
+      "O": 19800,
+      "P": 19880,
+      "Q": 19960,
+      "R": 20040,
+      "S": 20120,
+      "T": 20200,
+      "U": 20280,
+      "V": 20360,
+      "W": 20440,
+      "X": 20520,
+      "Y": 20600,
+      "Z": 20680
+    }
+  },
+  "configuracion": {
+    "duracionSimboloS": 0.06,
+    "amplitudTono": 0.1,
+    "amplitudRuido": 0.05,
+    "repeticionesPorCaracterEnAtenuacion": 5
+  },
+  "sistemas": {
+    "v1-clean": {
+      "banda": {
+        "tonos": 41,
+        "minimaHz": 18200,
+        "maximaHz": 22300,
+        "anchoHz": 4100,
+        "separacionMinimaHz": 100,
+        "tonosSobreNyquistDe44100": 3
+      },
+      "regiones": {
+        "simbolos": 40,
+        "margenMinimoHz": 19,
+        "margenMedioHz": 25.6,
+        "simbolosConMargenMinimo": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "Ñ",
+          "A",
+          "B",
+          "D",
+          "F",
+          "G",
+          "H",
+          "I",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ],
+        "simbolosAsimetricos": 33,
+        "velocidadDopplerDelMargenMs": 0.33,
+        "porcentajeDeBandaConSimboloEquivocado": 4.2
+      },
+      "desvioDeFrecuencia": {
+        "44100": [
+          {
+            "desvioHz": -60,
+            "correctos": 2,
+            "equivocados": 32,
+            "perdidos": 4,
+            "total": 38
+          },
+          {
+            "desvioHz": -50,
+            "correctos": 4,
+            "equivocados": 32,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": -40,
+            "correctos": 5,
+            "equivocados": 17,
+            "perdidos": 16,
+            "total": 38
+          },
+          {
+            "desvioHz": -30,
+            "correctos": 5,
+            "equivocados": 5,
+            "perdidos": 28,
+            "total": 38
+          },
+          {
+            "desvioHz": -20,
+            "correctos": 19,
+            "equivocados": 3,
+            "perdidos": 16,
+            "total": 38
+          },
+          {
+            "desvioHz": -10,
+            "correctos": 33,
+            "equivocados": 3,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": 0,
+            "correctos": 35,
+            "equivocados": 3,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 10,
+            "correctos": 35,
+            "equivocados": 3,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 20,
+            "correctos": 35,
+            "equivocados": 1,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": 30,
+            "correctos": 33,
+            "equivocados": 0,
+            "perdidos": 5,
+            "total": 38
+          },
+          {
+            "desvioHz": 40,
+            "correctos": 33,
+            "equivocados": 1,
+            "perdidos": 4,
+            "total": 38
+          },
+          {
+            "desvioHz": 50,
+            "correctos": 31,
+            "equivocados": 5,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": 60,
+            "correctos": 16,
+            "equivocados": 6,
+            "perdidos": 16,
+            "total": 38
+          }
+        ],
+        "48000": [
+          {
+            "desvioHz": -60,
+            "correctos": 2,
+            "equivocados": 33,
+            "perdidos": 3,
+            "total": 38
+          },
+          {
+            "desvioHz": -50,
+            "correctos": 4,
+            "equivocados": 31,
+            "perdidos": 3,
+            "total": 38
+          },
+          {
+            "desvioHz": -40,
+            "correctos": 6,
+            "equivocados": 18,
+            "perdidos": 14,
+            "total": 38
+          },
+          {
+            "desvioHz": -30,
+            "correctos": 8,
+            "equivocados": 2,
+            "perdidos": 28,
+            "total": 38
+          },
+          {
+            "desvioHz": -20,
+            "correctos": 21,
+            "equivocados": 0,
+            "perdidos": 17,
+            "total": 38
+          },
+          {
+            "desvioHz": -10,
+            "correctos": 33,
+            "equivocados": 0,
+            "perdidos": 5,
+            "total": 38
+          },
+          {
+            "desvioHz": 0,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 10,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 20,
+            "correctos": 37,
+            "equivocados": 0,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": 30,
+            "correctos": 36,
+            "equivocados": 0,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": 40,
+            "correctos": 35,
+            "equivocados": 1,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": 50,
+            "correctos": 32,
+            "equivocados": 3,
+            "perdidos": 3,
+            "total": 38
+          },
+          {
+            "desvioHz": 60,
+            "correctos": 19,
+            "equivocados": 3,
+            "perdidos": 16,
+            "total": 38
+          }
+        ]
+      },
+      "atenuacion": {
+        "44100": [
+          {
+            "ganancia": 1,
+            "snrDb": 7.8,
+            "tasaErrorSimbolo": 0.0789,
+            "equivocados": 15,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.1,
+            "snrDb": -12.2,
+            "tasaErrorSimbolo": 0.0789,
+            "equivocados": 15,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.06,
+            "snrDb": -16.7,
+            "tasaErrorSimbolo": 0.2895,
+            "equivocados": 14,
+            "perdidos": 41,
+            "total": 190
+          },
+          {
+            "ganancia": 0.05,
+            "snrDb": -18.2,
+            "tasaErrorSimbolo": 0.5947,
+            "equivocados": 13,
+            "perdidos": 100,
+            "total": 190
+          },
+          {
+            "ganancia": 0.04,
+            "snrDb": -20.2,
+            "tasaErrorSimbolo": 0.8737,
+            "equivocados": 14,
+            "perdidos": 152,
+            "total": 190
+          },
+          {
+            "ganancia": 0.03,
+            "snrDb": -22.7,
+            "tasaErrorSimbolo": 0.9737,
+            "equivocados": 15,
+            "perdidos": 170,
+            "total": 190
+          },
+          {
+            "ganancia": 0.02,
+            "snrDb": -26.2,
+            "tasaErrorSimbolo": 1,
+            "equivocados": 17,
+            "perdidos": 173,
+            "total": 190
+          }
+        ],
+        "48000": [
+          {
+            "ganancia": 1,
+            "snrDb": 7.8,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.1,
+            "snrDb": -12.2,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.06,
+            "snrDb": -16.7,
+            "tasaErrorSimbolo": 0.2,
+            "equivocados": 1,
+            "perdidos": 37,
+            "total": 190
+          },
+          {
+            "ganancia": 0.05,
+            "snrDb": -18.2,
+            "tasaErrorSimbolo": 0.4895,
+            "equivocados": 5,
+            "perdidos": 88,
+            "total": 190
+          },
+          {
+            "ganancia": 0.04,
+            "snrDb": -20.2,
+            "tasaErrorSimbolo": 0.8263,
+            "equivocados": 7,
+            "perdidos": 150,
+            "total": 190
+          },
+          {
+            "ganancia": 0.03,
+            "snrDb": -22.7,
+            "tasaErrorSimbolo": 0.9474,
+            "equivocados": 15,
+            "perdidos": 165,
+            "total": 190
+          },
+          {
+            "ganancia": 0.02,
+            "snrDb": -26.2,
+            "tasaErrorSimbolo": 0.9947,
+            "equivocados": 18,
+            "perdidos": 171,
+            "total": 190
+          }
+        ]
+      }
+    },
+    "v2-candidato-a": {
+      "banda": {
+        "tonos": 41,
+        "minimaHz": 18200,
+        "maximaHz": 21480,
+        "anchoHz": 3280,
+        "separacionMinimaHz": 80,
+        "tonosSobreNyquistDe44100": 0
+      },
+      "regiones": {
+        "simbolos": 40,
+        "margenMinimoHz": 39,
+        "margenMedioHz": 39,
+        "simbolosConMargenMinimo": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          " ",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "Ñ",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z",
+          "<SYNC>",
+          "<END>"
+        ],
+        "simbolosAsimetricos": 4,
+        "velocidadDopplerDelMargenMs": 0.67,
+        "porcentajeDeBandaConSimboloEquivocado": 0
+      },
+      "desvioDeFrecuencia": {
+        "44100": [
+          {
+            "desvioHz": -60,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": -50,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": -40,
+            "correctos": 17,
+            "equivocados": 16,
+            "perdidos": 5,
+            "total": 38
+          },
+          {
+            "desvioHz": -30,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": -20,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": -10,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 0,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 10,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 20,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 30,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 40,
+            "correctos": 17,
+            "equivocados": 17,
+            "perdidos": 4,
+            "total": 38
+          },
+          {
+            "desvioHz": 50,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": 60,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          }
+        ],
+        "48000": [
+          {
+            "desvioHz": -60,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": -50,
+            "correctos": 3,
+            "equivocados": 34,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": -40,
+            "correctos": 19,
+            "equivocados": 17,
+            "perdidos": 2,
+            "total": 38
+          },
+          {
+            "desvioHz": -30,
+            "correctos": 36,
+            "equivocados": 2,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": -20,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": -10,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 0,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 10,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 20,
+            "correctos": 38,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 30,
+            "correctos": 35,
+            "equivocados": 3,
+            "perdidos": 0,
+            "total": 38
+          },
+          {
+            "desvioHz": 40,
+            "correctos": 18,
+            "equivocados": 19,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": 50,
+            "correctos": 2,
+            "equivocados": 35,
+            "perdidos": 1,
+            "total": 38
+          },
+          {
+            "desvioHz": 60,
+            "correctos": 0,
+            "equivocados": 37,
+            "perdidos": 1,
+            "total": 38
+          }
+        ]
+      },
+      "atenuacion": {
+        "44100": [
+          {
+            "ganancia": 1,
+            "snrDb": 7.8,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.1,
+            "snrDb": -12.2,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.06,
+            "snrDb": -16.7,
+            "tasaErrorSimbolo": 0.2,
+            "equivocados": 0,
+            "perdidos": 38,
+            "total": 190
+          },
+          {
+            "ganancia": 0.05,
+            "snrDb": -18.2,
+            "tasaErrorSimbolo": 0.5526,
+            "equivocados": 0,
+            "perdidos": 105,
+            "total": 190
+          },
+          {
+            "ganancia": 0.04,
+            "snrDb": -20.2,
+            "tasaErrorSimbolo": 0.8632,
+            "equivocados": 0,
+            "perdidos": 164,
+            "total": 190
+          },
+          {
+            "ganancia": 0.03,
+            "snrDb": -22.7,
+            "tasaErrorSimbolo": 0.9789,
+            "equivocados": 0,
+            "perdidos": 186,
+            "total": 190
+          },
+          {
+            "ganancia": 0.02,
+            "snrDb": -26.2,
+            "tasaErrorSimbolo": 1,
+            "equivocados": 0,
+            "perdidos": 190,
+            "total": 190
+          }
+        ],
+        "48000": [
+          {
+            "ganancia": 1,
+            "snrDb": 7.8,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.1,
+            "snrDb": -12.2,
+            "tasaErrorSimbolo": 0,
+            "equivocados": 0,
+            "perdidos": 0,
+            "total": 190
+          },
+          {
+            "ganancia": 0.06,
+            "snrDb": -16.7,
+            "tasaErrorSimbolo": 0.1632,
+            "equivocados": 0,
+            "perdidos": 31,
+            "total": 190
+          },
+          {
+            "ganancia": 0.05,
+            "snrDb": -18.2,
+            "tasaErrorSimbolo": 0.4632,
+            "equivocados": 0,
+            "perdidos": 88,
+            "total": 190
+          },
+          {
+            "ganancia": 0.04,
+            "snrDb": -20.2,
+            "tasaErrorSimbolo": 0.7947,
+            "equivocados": 0,
+            "perdidos": 151,
+            "total": 190
+          },
+          {
+            "ganancia": 0.03,
+            "snrDb": -22.7,
+            "tasaErrorSimbolo": 0.9526,
+            "equivocados": 0,
+            "perdidos": 181,
+            "total": 190
+          },
+          {
+            "ganancia": 0.02,
+            "snrDb": -26.2,
+            "tasaErrorSimbolo": 1,
+            "equivocados": 0,
+            "perdidos": 190,
+            "total": 190
+          }
+        ]
+      }
+    }
+  }
+}
