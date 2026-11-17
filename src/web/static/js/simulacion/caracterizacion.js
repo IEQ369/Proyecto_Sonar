@@ -365,12 +365,8 @@ function fftRadix2(real, imaginaria) {
     }
 }
 
-/**
- * Espectro en bytes como lo entrega `getByteFrequencyData`: ventana Blackman,
- * FFT y conversión de -100…-30 dB a 0…255. No aplica el suavizado temporal del
- * AnalyserNode (`smoothingTimeConstant`), que depende de cuadros anteriores.
- */
-export function calcularEspectroBytes(muestras, opciones = {}) {
+/** Magnitudes lineales por bin (ventana Blackman y FFT), como el AnalyserNode. */
+export function calcularMagnitudes(muestras, opciones = {}) {
     const fftSize = opciones.fftSize ?? 2048;
     const inicio = opciones.inicio ?? 0;
     const real = new Float64Array(fftSize);
@@ -386,11 +382,21 @@ export function calcularEspectroBytes(muestras, opciones = {}) {
 
     fftRadix2(real, imaginaria);
 
-    const bytes = new Uint8Array(fftSize / 2);
+    const magnitudes = new Float64Array(fftSize / 2);
+
+    for (let bin = 0; bin < magnitudes.length; bin++) {
+        magnitudes[bin] = Math.hypot(real[bin], imaginaria[bin]) / fftSize;
+    }
+
+    return magnitudes;
+}
+
+/** Conversión de `getByteFrequencyData`: de -100…-30 dB a 0…255. */
+export function magnitudesABytes(magnitudes) {
+    const bytes = new Uint8Array(magnitudes.length);
 
     for (let bin = 0; bin < bytes.length; bin++) {
-        const magnitud = Math.hypot(real[bin], imaginaria[bin]) / fftSize;
-        const decibelios = 20 * Math.log10(magnitud);
+        const decibelios = 20 * Math.log10(magnitudes[bin]);
 
         bytes[bin] = Math.max(
             0,
@@ -399,6 +405,15 @@ export function calcularEspectroBytes(muestras, opciones = {}) {
     }
 
     return bytes;
+}
+
+/**
+ * Espectro en bytes de un cuadro aislado. No aplica el suavizado temporal del
+ * AnalyserNode (`smoothingTimeConstant`), que depende de cuadros anteriores;
+ * para eso está `crearAnalizadorSimulado` en `simulador_archivos.js`.
+ */
+export function calcularEspectroBytes(muestras, opciones = {}) {
+    return magnitudesABytes(calcularMagnitudes(muestras, opciones));
 }
 
 /**
