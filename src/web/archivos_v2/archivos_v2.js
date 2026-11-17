@@ -19,7 +19,7 @@ import {
 } from '/static/js/core/transferencia_archivos.js';
 import { crearEnlaceDescarga } from '/archivos/static/js/ui_recepcion_archivos.js';
 
-// Límite deliberado: a unos 4 bytes útiles por segundo, 4 KB ya son ~17 min.
+// Límite deliberado: a unos 3,7 bytes útiles por segundo, 4 KB son ~19 min.
 const LIMITE_BYTES = 4096;
 const PAUSA_ENTRE_PAQUETES_S = 0.15;
 const FFT_SIZE = 2048;

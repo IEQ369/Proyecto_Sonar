@@ -42,6 +42,15 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
    medición con hardware real y tu historia técnica registra recepción real, así
    que depende del equipo. ([E007](experiments/E007-medicion-fisica/README.md))
 
+### Protocolo de archivos V2
+
+10. **Hay un protocolo de archivos nuevo, por paquetes, en `/archivos_v2/`.**
+    16 tonos, CRC16 por bloque, lista de faltantes, reenvío y CRC32 final. En
+    simulación completa el archivo con hasta 42 % de paquetes perdidos y nunca
+    aceptó un bloque dañado. Es unas 1,7 veces más rápido que el anterior, no
+    las seis veces que estimaba el plan. No está probado por aire.
+    ([E008](experiments/E008-archivos-v2/README.md))
+
 ## Qué cambió en el repositorio
 
 | Archivo | Cambio |
@@ -54,6 +63,12 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
 | `src/web/laboratorio/`, `src/web/static/js/core/medicion_fisica.js` | Nuevos. Página y lógica de la medición física E007 |
 | `scripts/analizar_medicion.js`, `scripts/ensayo_navegador/` | Nuevos. Análisis de capturas y ensayo en Chromium |
 | `tests/medicion_fisica.test.js` | Nuevo. 8 pruebas |
+| `core/trama_archivos.js`, `core/modem_mfsk.js`, `core/transferencia_archivos.js` | Nuevos. Las tres capas del protocolo de archivos V2 |
+| `simulacion/simulador_archivos.js`, `scripts/run_e008.js` | Nuevos. Simulación extremo a extremo y experimento E008 |
+| `src/web/archivos_v2/` | Nuevo. Pantalla del protocolo V2 |
+| `src/web/archivos/templates/index.html` | Un enlace nuevo a `/archivos_v2/`; nada más |
+| `tests/archivos_v2.test.js` | Nuevo. 18 pruebas |
+| `docs/PLAN_ARCHIVOS.md` | Nuevo. Plan por fases, con las correcciones tras implementarlo |
 | `.github/workflows/ci.yml` | Nuevo. Pruebas y experimentos con Node 22 y 24 |
 | `package.json` | `npm test` ya no usa `--test-isolation=none`; scripts de experimentos |
 | `README.md`, `docs/ROADMAP.md`, `PROGRESO.md`, `docs/experiments/README.md` | Estado actualizado |
@@ -61,17 +76,21 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
 **No se tocó** el protocolo, el receptor, el emisor ni las pantallas de mensajes
 y archivos. V1 Clean sigue siendo exactamente la misma referencia. La página
 `/laboratorio/` es nueva, usa la hoja de estilos existente y no está enlazada
-desde la interfaz principal.
+desde la interfaz principal. La pantalla `/archivos_v2/` también es nueva; la
+única modificación a una pantalla existente es un enlace hacia ella en
+`/archivos`.
 
 ## Qué se verificó
 
-- `npm test`: 89 pruebas aprobadas, 0 fallidas (Node 22.23).
-- `npm run experiments`: los seis experimentos se ejecutan; E003–E006 producen
-  el mismo archivo en ejecuciones repetidas.
+- `npm test`: 107 pruebas aprobadas, 0 fallidas (Node 22.23).
+- `npm run experiments`: los siete experimentos se ejecutan; E003–E006 y
+  E008 producen el mismo archivo en ejecuciones repetidas.
 - El flujo de CI pasó en GitHub con Node 22 y Node 24 en el PR #3, para los
   commits hasta E006.
 - `/laboratorio/` se ejecutó de extremo a extremo en Chromium 153 sin interfaz:
   captura, análisis, descarga del JSON y emisión, sin errores en consola.
+- `/archivos_v2/` recibió en Chromium 153 una transferencia con dos bloques
+  perdidos y su reenvío; el archivo descargado fue idéntico al original.
 - La política `v1-receptor` ejecuta el `ReceptorMensajesCore` real, y una prueba
   comprueba que la regla ±80 Hz coincide con `frequencyToChar()` en toda la
   banda.
@@ -105,7 +124,11 @@ desde la interfaz principal.
    cuesta tolerancia (E006). Depende de cuánto desvío haya por aire.
 4. **¿Velocidad o alcance?** FFT y símbolo mayores dan alcance y quitan
    velocidad (E006). Podría ser un modo seleccionable en vez de un cambio fijo.
-5. **Licencia y visibilidad del repositorio** siguen pendientes y son tuyas.
+5. **Parámetros de archivos V2.** Símbolo de 80 ms, bloques de 16 bytes y
+   límite de 4 096 bytes son valores conservadores elegidos en simulación.
+   Acortar el símbolo a 60 ms sube la velocidad un 30 %, pero pierde más
+   paquetes con señal débil (E008).
+6. **Licencia y visibilidad del repositorio** siguen pendientes y son tuyas.
 
 ## Siguientes pasos sugeridos
 

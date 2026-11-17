@@ -145,7 +145,9 @@ export function duracionPaqueteS(longitudDatos, opciones = {}) {
 export class DemoduladorMfsk {
     constructor(opciones = {}) {
         this.cuadrosEstables = opciones.cuadrosEstables ?? 2;
-        this.margenSobrePiso = opciones.margenSobrePiso ?? 55;
+        // 20 bytes ≈ 5,5 dB sobre la mediana de la banda. Es bajo a propósito:
+        // el CRC de cada paquete rechaza lo que el ruido haga pasar (E008).
+        this.margenSobrePiso = opciones.margenSobrePiso ?? 20;
         this.timeoutMs = opciones.timeoutMs ?? 1500;
         this.candidato = null;
         this.cuadrosDelCandidato = 0;

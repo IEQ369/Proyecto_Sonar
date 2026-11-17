@@ -187,7 +187,7 @@ test('el demodulador ignora cuadros que no superan el piso de ruido', () => {
         assert.equal(demodulador.procesarCuadro({
             tMs: i * 17,
             frecuenciaHz: frecuenciaDeSimbolo(i % 16),
-            magnitud: 40,
+            magnitud: 35,
             pisoRuido: 20
         }), null);
     }
@@ -310,6 +310,16 @@ test('un archivo cruza el canal simulado y llega íntegro', () => {
         assert.equal(resultado.recibidos.length, resultado.enviados);
         assert.deepEqual(receptor.obtenerArchivo().bytes, bytes);
     }
+});
+
+test('el ruido solo no produce ningún paquete válido', () => {
+    const paquetes = crearPaquetesArchivo(bytesDePrueba(32), 'nada.bin');
+    const resultado = transmitirPaquetes(ordenDeEnvio(paquetes), {
+        ganancia: 0,
+        amplitudRuido: 0.05
+    });
+
+    assert.equal(resultado.recibidos.length, 0);
 });
 
 test('con señal muy débil se pierden paquetes pero nunca se acepta uno dañado', () => {

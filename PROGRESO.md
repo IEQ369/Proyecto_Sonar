@@ -1718,3 +1718,28 @@ Nyquist y el candidato. Después, E3-004 (tamaño de FFT).
 - **Próximo paso:** ejecutar el protocolo de E007 con dos dispositivos,
   comparando la captura con y sin procesamiento.
 
+## 2026-11-17 — Protocolo de archivos V2 (fases 1 a 5 del plan)
+
+- **Objetivo:** completar la transferencia de archivos sobre una base que se
+  pueda verificar, sin tocar el protocolo anterior.
+- **En qué se basa:** las capas de un módem. MFSK de 16 tonos para la capa
+  física, paquetes con longitud y CRC para la trama, y bloques numerados con
+  reenvío, como XMODEM, para la transferencia.
+- **Cambios:** `core/trama_archivos.js`, `core/modem_mfsk.js`,
+  `core/transferencia_archivos.js`, `simulacion/simulador_archivos.js`, la
+  pantalla `/archivos_v2/` y el experimento E008.
+- **Resultados (simulación):** archivo íntegro en canal limpio a 48 y 44,1 kHz
+  y con ±35 Hz de desvío; completo en tres rondas con 42 % de paquetes
+  perdidos; ningún bloque dañado aceptado en ninguna condición.
+- **Resultado (Chromium, micrófono simulado):** transferencia con dos bloques
+  perdidos, reenvío y archivo descargado idéntico al original.
+- **Hallazgo durante la medición:** el umbral de detección de 55 bytes dejaba
+  al módem sin recibir nada a −14,7 dB. Con 20 bytes recibe 12 de 12 paquetes
+  y sigue sin aceptar nada con solo ruido, porque el CRC ya filtra.
+- **Corrección al plan:** V2 es unas 1,7 veces más rápido que el anterior
+  (3,7 frente a 2,2 bytes por segundo), no seis como se estimó.
+- **Concepto aprendido:** si dos símbolos seguidos nunca comparten tono, el
+  receptor no necesita reloj: le basta contar cambios.
+- **Límites:** nada probado por aire; el reenvío es manual.
+- `npm test`: 107 pruebas aprobadas.
+

@@ -1,10 +1,22 @@
 # Plan para completar el protocolo de archivos
 
-> **Estado:** plan de trabajo, redactado el 2026-11-17. **Nada de esto está
-> implementado.** Se basa en `protocolo_archivos.js`, en el baseline E002 y en
-> las mediciones E003–E007. No se revisó línea por línea el emisor ni el
-> receptor de archivos; antes de empezar la fase 1 hay que confirmar contra el
-> código las suposiciones marcadas como tal.
+> **Estado al 2026-11-17:** las fases 1 a 5 están implementadas y probadas en
+> simulación y en un navegador con micrófono simulado
+> ([E008](experiments/E008-archivos-v2/README.md)). Faltan la fase 0 (medición
+> por aire), la 6 (confirmación acústica) y la 7 (dos tonos simultáneos).
+>
+> **Correcciones a este plan tras implementarlo:**
+>
+> - El emisor anterior usa símbolos de 0,05 s, no de 0,12 s: su velocidad es de
+>   unos 2,2 bytes por segundo, no 1.
+> - La estimación de 6 bytes por segundo para V2 no contaba la sobrecarga de la
+>   trama. Medido, V2 da 3,7 bytes por segundo con símbolos de 80 ms: unas 1,7
+>   veces el anterior, no seis.
+> - El símbolo quedó en 80 ms sin pausa, no en 60 ms con 20 ms de pausa.
+> - El bloque quedó en 16 bytes con 7 de trama (se añadió un identificador de
+>   transferencia de un byte).
+>
+> El texto de abajo se conserva como se redactó, para que se vea qué cambió.
 
 ## Por qué no se «completó» directamente
 
@@ -91,6 +103,10 @@ que E003–E006. No se toca el protocolo actual hasta la fase 5.
 | 5 | Conectar a la pantalla de archivos como modo nuevo | El modo actual sigue disponible; prueba manual entre dos equipos |
 | 6 | ACK/NACK acústico | Solo si la fase 0 muestra canal en los dos sentidos |
 | 7 (opcional) | Dos tonos simultáneos por símbolo | Ver «Fase opcional» más abajo |
+
+**Avance:** fases 1 y 2 en `core/trama_archivos.js` y `core/modem_mfsk.js`;
+fases 3 y 4 en `simulacion/simulador_archivos.js` y E008 (se unieron en un solo
+experimento); fase 5 en `/archivos_v2/`.
 
 Las fases 1 a 4 son deterministas y no necesitan hardware: se pueden hacer en
 una o dos sesiones de trabajo.
