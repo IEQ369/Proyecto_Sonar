@@ -90,9 +90,54 @@ que E003–E006. No se toca el protocolo actual hasta la fase 5.
 | 4 | Receptor con reensamblado y lista de faltantes | Experimento E009: recuperación tras perder paquetes al azar |
 | 5 | Conectar a la pantalla de archivos como modo nuevo | El modo actual sigue disponible; prueba manual entre dos equipos |
 | 6 | ACK/NACK acústico | Solo si la fase 0 muestra canal en los dos sentidos |
+| 7 (opcional) | Dos tonos simultáneos por símbolo | Ver «Fase opcional» más abajo |
 
 Las fases 1 a 4 son deterministas y no necesitan hardware: se pueden hacer en
 una o dos sesiones de trabajo.
+
+## Fase opcional: dos tonos simultáneos por símbolo
+
+La telefonía ya resolvió cómo enviar más datos por símbolo sin acortarlo:
+emitir varias frecuencias a la vez. Hay tres variantes conocidas.
+
+| Técnica | Idea | Dónde se usa |
+|---|---|---|
+| FDM | Cada usuario ocupa su propia banda | Varias llamadas por un mismo cable |
+| DTMF | Dos tonos a la vez, uno de cada grupo | Teclado del teléfono: 4 + 4 tonos, 16 teclas |
+| Multiportadora (DMT, OFDM) | Un flujo repartido en muchas frecuencias simultáneas | ADSL, WiFi, 4G |
+
+La que encaja con SONAR es **DTMF**: dos grupos de 16 tonos y, en cada símbolo,
+un tono de cada grupo. Son 8 bits, un byte completo por símbolo.
+
+- **Velocidad estimada:** 8 bits cada 80 ms = 100 bits/s, unos 12 bytes por
+  segundo, el doble que con un solo tono. Es un cálculo; hay que medirlo.
+- **Banda:** 32 tonos a 80 Hz ocupan unos 2,6 kHz. Caben bajo 21,5 kHz con los
+  tonos de control, pero con menos holgura.
+
+### Costos que hay que medir antes de adoptarla
+
+1. **Menos alcance.** La amplitud se reparte entre los dos tonos, así que cada
+   uno llega más débil. E004 y E006 muestran que el error sube de golpe al bajar
+   la señal.
+2. **Puede volverse audible.** Los altavoces pequeños no son lineales: dos tonos
+   a 19 y 19,5 kHz pueden producir un tono de diferencia a 500 Hz, dentro del
+   rango audible. Es el fenómeno que aprovechan los ataques citados en el
+   README. **No está medido en este proyecto**; es un riesgo conocido.
+3. **Otro detector.** El receptor actual toma el bin más fuerte de la banda.
+   Con dos tonos debe buscar un pico por grupo, y las réplicas de simulación
+   (`estimarPicoAnalizador`) necesitan una variante equivalente.
+
+### Cómo evaluarla
+
+| Paso | Qué se hace | Condición para seguir |
+|---|---|---|
+| 7a | Experimento en simulación: tasa de error de uno y dos tonos con la misma amplitud total, frente a atenuación | La pérdida de alcance es aceptable frente a duplicar la velocidad |
+| 7b | Ampliar `/laboratorio/` para emitir pares de tonos y registrar la banda audible (por debajo de 18 kHz) | No aparecen tonos de diferencia por encima del piso de ruido |
+| 7c | Capa física alternativa en `core/modem_mfsk.js`, detrás de la misma interfaz bytes ↔ símbolos | Las pruebas de las fases 1 a 4 pasan sin cambios |
+
+Solo tiene sentido después de la fase 4: la trama y la transferencia no cambian,
+así que se puede adoptar o descartar sin rehacer nada. Si 7b falla, se descarta
+aunque 7a salga bien, porque el proyecto dejaría de ser inaudible.
 
 ## Decisiones que dependen de ti
 
@@ -103,6 +148,8 @@ una o dos sesiones de trabajo.
    por el principio de no reescribir desde cero.
 3. **¿Etapa 2 o no?** El ACK acústico duplica la complejidad. La etapa 1 ya
    permite completar una transferencia.
+4. **¿Velocidad o discreción?** La fase 7 duplica la velocidad si los dos tonos
+   no generan sonido audible en tus equipos. Si lo generan, hay que elegir.
 
 ## Riesgos conocidos
 
