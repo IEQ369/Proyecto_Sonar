@@ -6,15 +6,15 @@ La comunicación del contenido usa audio. El servidor HTTP solo entrega la aplic
 
 ## Estado actual
 
-**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 79 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
+**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 81 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
 
 Esto **no demuestra fiabilidad acústica física**. Continúan pendientes la caracterización de frecuencias, la sincronización temporal y las pruebas controladas con altavoces y micrófonos reales. Tampoco se debe asumir que la transferencia de archivos por aire o un mecanismo de confirmación y reenvío ya sean fiables.
 
-La caracterización digital de V1 Clean ya tiene sus primeras mediciones (E003, E004 y E005, en simulación):
+La caracterización digital de V1 Clean ya tiene sus primeras mediciones (E003 a E006, en simulación):
 
 - cada carácter tolera 59 Hz de desvío hacia arriba pero solo 19 Hz hacia abajo;
 - con audio a 44,1 kHz, `7`, `8` y `9` quedan por encima de Nyquist y no se decodifican;
-- símbolos de 30 ms no alcanzan para el análisis actual, y alargarlos a 120 ms casi no mejora;
+- símbolos de 30 ms no alcanzan para el análisis actual, y alargarlos solo mejora el alcance si también crece el tamaño de FFT;
 - un mapa candidato (V2-A) corrige los dos primeros puntos, no mejora frente al ruido y falla de forma distinta. No está adoptado.
 
 El siguiente trabajo técnico es revisar esos resultados ([guía de revisión](docs/REVISION.md)), completar la caracterización y repetirla bajo condiciones físicas controladas. El enfoque de la investigación científica con el equipo todavía debe definirse.
@@ -40,7 +40,7 @@ Requisitos: Node.js y npm.
     npm run experiment:e002
     npm run experiments
 
-`npm test` verifica contratos lógicos y simulaciones deterministas sin requerir dos dispositivos. E001 estudia mensajes y E002 documenta defectos históricos del protocolo de archivos. `npm run experiments` ejecuta además E003 (regiones de decisión), E004 (robustez) y E005 (comparación con un mapa candidato). Cada envío se verifica en GitHub Actions con Node 22 y 24. Algunos tests imprimen conflictos conocidos de frecuencias: esos mensajes son evidencia de problemas pendientes, no fallos de la suite.
+`npm test` verifica contratos lógicos y simulaciones deterministas sin requerir dos dispositivos. E001 estudia mensajes y E002 documenta defectos históricos del protocolo de archivos. `npm run experiments` ejecuta además E003 (regiones de decisión), E004 (robustez), E005 (comparación con un mapa candidato) y E006 (tamaño de FFT y zona muerta). Cada envío se verifica en GitHub Actions con Node 22 y 24. Algunos tests imprimen conflictos conocidos de frecuencias: esos mensajes son evidencia de problemas pendientes, no fallos de la suite.
 
 Los resultados y su interpretación están en [docs/experiments](docs/experiments/README.md). Los tests se conservan porque permiten detectar regresiones y sostener las afirmaciones técnicas del proyecto.
 

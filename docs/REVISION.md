@@ -25,6 +25,12 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
    decodifica todo a 44,1 kHz; no mejora frente al ruido, y cuando falla decide
    el vecino en vez de perder el símbolo.
    ([E005](experiments/E005-mapa-candidato-v2/README.md))
+7. **El alcance está en el tamaño de FFT.** Con FFT de 8192 y símbolos de
+   240 ms el error a −22,7 dB baja de 0,98 a 0,15, a costa de ir cuatro veces
+   más lento. Alargar el símbolo sin agrandar la FFT no cambia nada.
+   ([E006](experiments/E006-fft-y-zona-muerta/README.md))
+8. **Una zona muerta en V2-A elimina los caracteres equivocados** hasta ±30 Hz,
+   pero reduce la tolerancia al desvío y no aporta nada frente al ruido. (E006)
 
 ## Qué cambió en el repositorio
 
@@ -32,9 +38,9 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
 |---|---|
 | `src/web/static/js/simulacion/caracterizacion.js` | Nuevo. Políticas de decisión, ventanas, barrido, réplica del detector de pico y medición por sistema |
 | `src/web/static/js/simulacion/mapa_candidato_v2.js` | Nuevo. Mapa candidato, solo para simulación |
-| `scripts/run_e003.js`, `run_e004.js`, `run_e005.js`, `experimento_util.js` | Nuevos. Experimentos deterministas |
-| `docs/experiments/E003…`, `E004…`, `E005…` | Nuevos. README, resultados JSON y una figura SVG |
-| `tests/caracterizacion.test.js` | Nuevo. 13 pruebas; varias fijan el baseline medido |
+| `scripts/run_e003.js` a `run_e006.js`, `experimento_util.js` | Nuevos. Experimentos deterministas |
+| `docs/experiments/E003…` a `E006…` | Nuevos. README, resultados JSON y una figura SVG |
+| `tests/caracterizacion.test.js` | Nuevo. 15 pruebas; varias fijan el baseline medido |
 | `.github/workflows/ci.yml` | Nuevo. Pruebas y experimentos con Node 22 y 24 |
 | `package.json` | `npm test` ya no usa `--test-isolation=none`; scripts de experimentos |
 | `README.md`, `docs/ROADMAP.md`, `PROGRESO.md`, `docs/experiments/README.md` | Estado actualizado |
@@ -44,17 +50,17 @@ visual. V1 Clean sigue siendo exactamente la misma referencia.
 
 ## Qué se verificó
 
-- `npm test`: 79 pruebas aprobadas, 0 fallidas (Node 22.23).
-- `npm run experiments`: los cinco experimentos se ejecutan; E003–E005 producen
+- `npm test`: 81 pruebas aprobadas, 0 fallidas (Node 22.23).
+- `npm run experiments`: los seis experimentos se ejecutan; E003–E006 producen
   el mismo archivo en ejecuciones repetidas.
+- El flujo de CI pasó en GitHub con Node 22 y Node 24 en el PR #3, para los
+  commits hasta E005.
 - La política `v1-receptor` ejecuta el `ReceptorMensajesCore` real, y una prueba
   comprueba que la regla ±80 Hz coincide con `frequencyToChar()` en toda la
   banda.
 
 ## Qué no se verificó
 
-- **El flujo de CI no se ha ejecutado en GitHub.** Se escribió y los mismos
-  comandos pasan en local, pero su primera ejecución real será en el PR.
 - `npm test` fallaba en Node 22.23 con `--test-isolation=none` («bad option»).
   Se quitó la opción y las 66 pruebas originales pasan igual; no se investigó
   por qué se había añadido.
@@ -71,13 +77,16 @@ visual. V1 Clean sigue siendo exactamente la misma referencia.
 2. **¿Qué hacer con `7`, `8` y `9`?** Moverlos bajo Nyquist obliga a cambiar el
    mapa; V2-A es una forma de hacerlo, no la única.
 3. **¿Zona muerta o suma de verificación?** V2-A sin zona muerta cambia
-   pérdidas por caracteres equivocados (ver E005).
-4. **Licencia y visibilidad del repositorio** siguen pendientes y son tuyas.
+   pérdidas por caracteres equivocados (E005); la zona muerta lo evita pero
+   cuesta tolerancia (E006). Depende de cuánto desvío haya por aire.
+4. **¿Velocidad o alcance?** FFT y símbolo mayores dan alcance y quitan
+   velocidad (E006). Podría ser un modo seleccionable en vez de un cambio fijo.
+5. **Licencia y visibilidad del repositorio** siguen pendientes y son tuyas.
 
 ## Siguientes pasos sugeridos
 
-1. E3-004: comparar tamaños de FFT y número de cuadros, que es donde E004
-   indica que está el alcance.
-2. Repetir E005 con una variante de V2-A con zona muerta.
-3. Primera medición física controlada: un solo tono, dos dispositivos propios,
+1. Primera medición física controlada: un solo tono, dos dispositivos propios,
    desvío y magnitud observados, para saber cuánto se parece el modelo al aire.
+   Es lo que desbloquea las decisiones 3 y 4.
+2. Medir una suma de verificación por mensaje como alternativa a la zona muerta.
+3. E3-007 (forma de onda) y la parte de E3-004 que depende del navegador.

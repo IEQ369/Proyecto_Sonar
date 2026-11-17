@@ -11,8 +11,10 @@ import {
     barrerBanda,
     decidirFrecuenciaConReceptorV1,
     decidirMasCercano,
+    decidirPorAcuerdo,
     decidirPrimerCoincidente,
     estimarPicoAnalizador,
+    medirMapa,
     medirSistema,
     medirVentanas,
     observarTono,
@@ -160,4 +162,29 @@ test('la observación de un tono es determinista para la misma semilla', () => {
 
 test('equivalencia Doppler: 19 Hz a 20 kHz son unos 0,33 m/s', () => {
     assert.equal(velocidadDopplerEquivalente(19, 20000), 0.33);
+});
+
+test('una FFT mayor estima la frecuencia con un bin más fino', () => {
+    const [, fina] = observarTono({ frecuenciaHz: 19010, fftSize: 8192, duracion: 0.24 });
+    const [, gruesa] = observarTono({ frecuenciaHz: 19010, fftSize: 1024, duracion: 0.24 });
+
+    assert.ok(Math.abs(fina.frecuenciaHz - 19010) <= 48000 / 8192 / 2 + 1e-9);
+    assert.ok(Math.abs(gruesa.frecuenciaHz - 19010) <= 48000 / 1024 / 2 + 1e-9);
+    assert.ok(
+        Math.abs(fina.frecuenciaHz - 19010) < Math.abs(gruesa.frecuenciaHz - 19010)
+    );
+});
+
+test('con zona muerta el candidato pierde el símbolo en vez de equivocarlo', () => {
+    const medir = (distanciaMaximaHz) => medirMapa(
+        MAPA_V2_CANDIDATO,
+        (detecciones) => decidirPorAcuerdo(
+            detecciones, MAPA_V2_CANDIDATO, { distanciaMaximaHz }
+        ),
+        { desvioHz: 30 }
+    );
+
+    assert.ok(medir(40).equivocados > 0);
+    assert.equal(medir(30).equivocados, 0);
+    assert.ok(medir(30).perdidos > 0);
 });

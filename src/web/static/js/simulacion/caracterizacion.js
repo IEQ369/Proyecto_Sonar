@@ -479,11 +479,10 @@ export const SISTEMAS = Object.freeze({
 });
 
 /**
- * Transmite cada carácter del mapa por el canal simulado y cuenta aciertos,
- * símbolos equivocados y símbolos perdidos.
+ * Transmite cada carácter de un mapa por el canal simulado y cuenta aciertos,
+ * símbolos equivocados y símbolos perdidos, con la regla de decisión dada.
  */
-export function medirSistema(nombreSistema, condiciones = {}) {
-    const { mapa, decidir } = SISTEMAS[nombreSistema];
+export function medirMapa(mapa, decidir, condiciones = {}) {
     const repeticiones = condiciones.repeticiones ?? 1;
     const resultado = { total: 0, correctos: 0, equivocados: 0, perdidos: 0 };
     const fallos = new Map();
@@ -518,4 +517,11 @@ export function medirSistema(nombreSistema, condiciones = {}) {
             ([esperado, decidido]) => ({ esperado, decidido })
         )
     };
+}
+
+/** Atajo de `medirMapa` para los sistemas registrados en `SISTEMAS`. */
+export function medirSistema(nombreSistema, condiciones = {}) {
+    const { mapa, decidir } = SISTEMAS[nombreSistema];
+
+    return medirMapa(mapa, decidir, condiciones);
 }

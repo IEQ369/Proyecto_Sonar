@@ -1681,3 +1681,18 @@ margen simétrico exige decidir por distancia, no por orden.
 Revisar `docs/REVISION.md` y decidir sobre la asimetría, los caracteres sobre
 Nyquist y el candidato. Después, E3-004 (tamaño de FFT).
 
+## 2026-11-17 — E006: tamaño de FFT y zona muerta
+
+- **Pregunta A:** ¿de dónde sale el alcance? De agrandar la FFT **junto con**
+  el símbolo. FFT de 8192 con símbolos de 240 ms baja el error a −22,7 dB de
+  0,98 a 0,15; alargar el símbolo con FFT de 2048 no cambia nada.
+- **Pregunta B:** una zona muerta de 20 Hz en V2-A elimina los caracteres
+  equivocados hasta ±30 Hz de desvío, pero reduce la tolerancia y no ayuda
+  frente al ruido, donde el acuerdo de tres cuadros ya evita los equivocados.
+- **Concepto aprendido:** el ancho de cada bin fija cuánto ruido compite con
+  el tono. Integrar más tiempo solo sirve si el análisis lo usa.
+- `medirMapa()` permite medir cualquier mapa con cualquier regla de decisión.
+- `npm test`: 81 pruebas aprobadas. El CI pasó en GitHub (Node 22 y 24) para
+  los commits anteriores.
+- Sigue siendo simulación digital; nada se probó por aire.
+

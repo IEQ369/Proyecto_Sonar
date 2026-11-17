@@ -38,7 +38,8 @@ costo para el repositorio.
 - [E003 — Regiones de decisión de V1 Clean](E003-regiones-decision/README.md)
 - [E004 — Robustez: atenuación, duración y muestreo](E004-robustez-canal/README.md)
 - [E005 — V1 Clean frente al mapa candidato V2-A](E005-mapa-candidato-v2/README.md)
+- [E006 — Tamaño de FFT y zona muerta](E006-fft-y-zona-muerta/README.md)
 
-E003, E004 y E005 guardan resultados sin fecha ni versión de Node: la misma
+E003 a E006 guardan resultados sin fecha ni versión de Node: la misma
 versión del código produce el mismo archivo, y CI falla si no coinciden.
 Ejecutar todos: `npm run experiments`.
