@@ -21,7 +21,7 @@ Además existe una página de laboratorio, `/laboratorio/`, para la primera medi
 
 El **protocolo de archivos V2** (`/archivos_v2/`) transmite por paquetes con 16 tonos, comprueba cada bloque, muestra cuáles faltan y los recupera con un reenvío. En simulación completa un archivo con hasta 42 % de paquetes perdidos y nunca aceptó un bloque dañado ([E008](docs/experiments/E008-archivos-v2/README.md)). En Chromium con micrófono simulado recibió un archivo idéntico al original. No está probado por aire, y el protocolo anterior sigue disponible en `/archivos`.
 
-El siguiente trabajo técnico es revisar esos resultados ([guía de revisión](docs/REVISION.md)), completar la caracterización y repetirla bajo condiciones físicas controladas. El enfoque de la investigación científica con el equipo todavía debe definirse.
+El siguiente trabajo técnico es revisar esos resultados ([guía de revisión](docs/REVISION.md)), completar la caracterización y repetirla bajo condiciones físicas controladas. El enfoque de la investigación científica todavía debe definirse.
 
 ## Ejecutar localmente
 
