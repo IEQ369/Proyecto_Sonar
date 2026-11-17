@@ -1,0 +1,566 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "E004",
+  "titulo": "Robustez de V1 Clean: atenuación, duración y muestreo",
+  "alcance": "Simulación digital determinista con ruido uniforme. No mide audio por aire.",
+  "configuracion": {
+    "amplitudTono": 0.1,
+    "amplitudRuido": 0.05,
+    "fftSize": 2048,
+    "cuadrosPorSimbolo": 3,
+    "repeticionesPorCaracter": 5,
+    "semillaBase": 369
+  },
+  "casos": [
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 187,
+      "equivocados": 0,
+      "perdidos": 3,
+      "tasaErrorSimbolo": 0.0158
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 171,
+      "equivocados": 0,
+      "perdidos": 19,
+      "tasaErrorSimbolo": 0.1
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 28,
+      "equivocados": 6,
+      "perdidos": 156,
+      "tasaErrorSimbolo": 0.8526
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 3,
+      "equivocados": 11,
+      "perdidos": 176,
+      "tasaErrorSimbolo": 0.9842
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 3,
+      "equivocados": 11,
+      "perdidos": 176,
+      "tasaErrorSimbolo": 0.9842
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 11,
+      "perdidos": 178,
+      "tasaErrorSimbolo": 0.9947
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 0,
+      "equivocados": 14,
+      "perdidos": 176,
+      "tasaErrorSimbolo": 1
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 0,
+      "equivocados": 14,
+      "perdidos": 176,
+      "tasaErrorSimbolo": 1
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 152,
+      "equivocados": 1,
+      "perdidos": 37,
+      "tasaErrorSimbolo": 0.2
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 97,
+      "equivocados": 5,
+      "perdidos": 88,
+      "tasaErrorSimbolo": 0.4895
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 33,
+      "equivocados": 7,
+      "perdidos": 150,
+      "tasaErrorSimbolo": 0.8263
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 10,
+      "equivocados": 15,
+      "perdidos": 165,
+      "tasaErrorSimbolo": 0.9474
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 18,
+      "perdidos": 171,
+      "tasaErrorSimbolo": 0.9947
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 190,
+      "equivocados": 0,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 164,
+      "equivocados": 1,
+      "perdidos": 25,
+      "tasaErrorSimbolo": 0.1368
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 100,
+      "equivocados": 4,
+      "perdidos": 86,
+      "tasaErrorSimbolo": 0.4737
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 31,
+      "equivocados": 8,
+      "perdidos": 151,
+      "tasaErrorSimbolo": 0.8368
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 4,
+      "equivocados": 12,
+      "perdidos": 174,
+      "tasaErrorSimbolo": 0.9789
+    },
+    {
+      "sampleRateHz": 48000,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 0,
+      "equivocados": 14,
+      "perdidos": 176,
+      "tasaErrorSimbolo": 1
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 13,
+      "perdidos": 2,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 155,
+      "equivocados": 11,
+      "perdidos": 24,
+      "tasaErrorSimbolo": 0.1842
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 32,
+      "equivocados": 11,
+      "perdidos": 147,
+      "tasaErrorSimbolo": 0.8316
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 5,
+      "equivocados": 14,
+      "perdidos": 171,
+      "tasaErrorSimbolo": 0.9737
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 2,
+      "equivocados": 17,
+      "perdidos": 171,
+      "tasaErrorSimbolo": 0.9895
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 18,
+      "perdidos": 171,
+      "tasaErrorSimbolo": 0.9947
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 19,
+      "perdidos": 170,
+      "tasaErrorSimbolo": 0.9947
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.03,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 19,
+      "perdidos": 170,
+      "tasaErrorSimbolo": 0.9947
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 135,
+      "equivocados": 14,
+      "perdidos": 41,
+      "tasaErrorSimbolo": 0.2895
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 77,
+      "equivocados": 13,
+      "perdidos": 100,
+      "tasaErrorSimbolo": 0.5947
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 24,
+      "equivocados": 14,
+      "perdidos": 152,
+      "tasaErrorSimbolo": 0.8737
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 5,
+      "equivocados": 15,
+      "perdidos": 170,
+      "tasaErrorSimbolo": 0.9737
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.06,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 0,
+      "equivocados": 17,
+      "perdidos": 173,
+      "tasaErrorSimbolo": 1
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 1,
+      "snrDb": 7.8,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.3,
+      "snrDb": -2.7,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.1,
+      "snrDb": -12.2,
+      "total": 190,
+      "correctos": 175,
+      "equivocados": 15,
+      "perdidos": 0,
+      "tasaErrorSimbolo": 0.0789
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.06,
+      "snrDb": -16.7,
+      "total": 190,
+      "correctos": 143,
+      "equivocados": 13,
+      "perdidos": 34,
+      "tasaErrorSimbolo": 0.2474
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.05,
+      "snrDb": -18.2,
+      "total": 190,
+      "correctos": 95,
+      "equivocados": 12,
+      "perdidos": 83,
+      "tasaErrorSimbolo": 0.5
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.04,
+      "snrDb": -20.2,
+      "total": 190,
+      "correctos": 34,
+      "equivocados": 14,
+      "perdidos": 142,
+      "tasaErrorSimbolo": 0.8211
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.03,
+      "snrDb": -22.7,
+      "total": 190,
+      "correctos": 9,
+      "equivocados": 16,
+      "perdidos": 165,
+      "tasaErrorSimbolo": 0.9526
+    },
+    {
+      "sampleRateHz": 44100,
+      "duracionSimboloS": 0.12,
+      "ganancia": 0.02,
+      "snrDb": -26.2,
+      "total": 190,
+      "correctos": 1,
+      "equivocados": 15,
+      "perdidos": 174,
+      "tasaErrorSimbolo": 0.9947
+    }
+  ],
+  "umbralFijoFrenteARuido": [
+    {
+      "amplitudRuido": 0.001,
+      "magnitudPicoByte": 18,
+      "superaUmbralFijo12": true
+    },
+    {
+      "amplitudRuido": 0.005,
+      "magnitudPicoByte": 69,
+      "superaUmbralFijo12": true
+    },
+    {
+      "amplitudRuido": 0.02,
+      "magnitudPicoByte": 113,
+      "superaUmbralFijo12": true
+    },
+    {
+      "amplitudRuido": 0.05,
+      "magnitudPicoByte": 141,
+      "superaUmbralFijo12": true
+    }
+  ]
+}
