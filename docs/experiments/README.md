@@ -35,3 +35,10 @@ costo para el repositorio.
 
 - [E001 — Baseline reproducible de mensajes](E001-baseline-mensajes/README.md)
 - [E002 — Baseline lógico de archivos](E002-baseline-archivos/README.md)
+- [E003 — Regiones de decisión de V1 Clean](E003-regiones-decision/README.md)
+- [E004 — Robustez: atenuación, duración y muestreo](E004-robustez-canal/README.md)
+- [E005 — V1 Clean frente al mapa candidato V2-A](E005-mapa-candidato-v2/README.md)
+
+E003, E004 y E005 guardan resultados sin fecha ni versión de Node: la misma
+versión del código produce el mismo archivo, y CI falla si no coinciden.
+Ejecutar todos: `npm run experiments`.

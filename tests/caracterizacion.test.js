@@ -84,8 +84,8 @@ test('baseline medido: V1 emite un carácter vecino en parte de la banda', () =>
     );
 
     assert.ok(barrido.simboloEquivocado > 0);
-    // 18 750 Hz está más cerca de A (18 800), pero V1 decide Ñ (18 700).
-    assert.equal(decidirFrecuenciaConReceptorV1(18750), 'Ñ');
+    // 18 755 Hz está más cerca de A (18 800), pero V1 decide Ñ (18 700).
+    assert.equal(decidirFrecuenciaConReceptorV1(18755), 'Ñ');
 });
 
 test('más cercano nunca decide un símbolo distinto del más próximo', () => {

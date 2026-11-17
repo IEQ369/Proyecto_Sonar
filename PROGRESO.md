@@ -1637,3 +1637,47 @@ externa a esta carpeta, ni código ejecutable, pruebas o resultados.
   66 pruebas siguen aprobadas.
 - La visibilidad del repositorio aún no cambió. Al hacerlo público, también
   quedarán visibles las versiones anteriores y sus metadatos de autor.
+
+## 2026-11-17 — Caracterización digital de V1 Clean (M3, primera parte)
+
+**Objetivo:** medir V1 Clean antes de cambiarlo, como pide M3, y dejar una
+comparación reproducible contra un mapa candidato.
+
+### Cambios
+
+- Librería `simulacion/caracterizacion.js`: decide con el `ReceptorMensajesCore`
+  real, mide ventanas de decisión, barre la banda y replica el detector de pico
+  de `app.js` (Blackman, FFT de 2048, conversión a byte).
+- Experimentos E003 (regiones de decisión), E004 (atenuación, duración y
+  muestreo) y E005 (V1 frente al candidato V2-A), con resultados deterministas.
+- Mapa candidato `simulacion/mapa_candidato_v2.js`, solo para simulación.
+- CI en GitHub Actions y corrección de `npm test`, que usaba una opción que
+  Node 22.23 rechaza.
+
+### Resultados
+
+- Región de decisión asimétrica: 59 Hz hacia arriba, 19 Hz hacia abajo.
+- El receptor emite el carácter vecino en el 4,2 % de la banda.
+- `7`, `8` y `9` quedan sobre Nyquist a 44,1 kHz.
+- Símbolos de 30 ms fallan; 120 ms no mejora respecto a 60 ms.
+- V2-A duplica el margen y funciona a 44,1 kHz, no mejora frente al ruido y
+  falla decidiendo el vecino.
+
+### Concepto aprendido
+
+El orden de recorrido de un mapa es parte del protocolo: con tolerancias que se
+solapan, «el primero que coincide» desplaza la frontera entre símbolos. Un
+margen simétrico exige decidir por distancia, no por orden.
+
+### Verificación y límites
+
+- `npm test`: 79 pruebas aprobadas, 0 fallidas.
+- Todo es simulación digital. No hubo pruebas en navegador ni por aire.
+- El flujo de CI aún no se ha ejecutado en GitHub.
+- No se modificó el protocolo, el receptor ni la interfaz.
+
+### Pendientes y próximo paso
+
+Revisar `docs/REVISION.md` y decidir sobre la asimetría, los caracteres sobre
+Nyquist y el candidato. Después, E3-004 (tamaño de FFT).
+

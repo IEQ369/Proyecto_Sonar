@@ -6,7 +6,7 @@
 > **Fecha de inicio del roadmap:** 2026-08-24  
 > **Regla principal:** SONAR debe evolucionar sin perder su identidad, sin reescrituras impulsivas y sin introducir complejidad que no pueda justificarse con pruebas.
 
-## Lectura del estado actual — 2026-09-19
+## Lectura del estado actual — 2026-11-17
 
 Este documento nació como plan de V1 a V2 en agosto de 2026. Las secciones
 fechadas de agosto se conservan como registro histórico; para decidir el próximo
@@ -16,8 +16,8 @@ trabajo, usar este estado y las entradas recientes de `PROGRESO.md`.
 |---|---|---|
 | Fundación documental (M0) | Documentos integrados en `main` y enviados al repositorio remoto el 2026-09-19 | Cambiar la visibilidad cuando el propietario revise el alcance público del historial |
 | Baseline (M1) | E001 y E002 conservan resultados del baseline digital; faltan métricas y registro físico del alcance original | Ampliar medidas cuando corresponda, sin llamar "física" a la simulación |
-| V1 Clean (M2) | Alcance lógico cerrado; 66 pruebas aprobadas el 2026-09-19 | Conservar esta versión como referencia de comparación |
-| Caracterización (M3) | Pendiente | Empezar por E3-001: barrido sintético de frecuencias y matriz de confusión |
+| V1 Clean (M2) | Alcance lógico cerrado; 79 pruebas aprobadas el 2026-11-17 (66 de V1 Clean y 13 de caracterización) | Conservar esta versión como referencia de comparación |
+| Caracterización (M3) | Parte digital de E3-001, E3-002, E3-003, E3-005 y E3-006 medida en E003 y E004 (2026-11-17). Faltan E3-004 (tamaño de FFT), E3-007 (forma de onda) y toda la parte física | Revisar E003–E005 y decidir sobre el candidato V2-A; ver `docs/REVISION.md` |
 | Investigación científica | Pregunta y alcance todavía provisionales | Acordarlos con el coordinador y el equipo; usar mediciones propias y fuentes trazables |
 
 La revisión externa recibida el 2026-09-17 figura como **observaciones
