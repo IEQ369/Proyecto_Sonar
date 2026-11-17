@@ -352,7 +352,7 @@ Debe conservarse como **North Star histórico**, no como promesa actual.
 
 ---
 
-## 2.1 — Investigación científica para la feria (trabajo paralelo)
+## 2.1 — Investigación científica (trabajo paralelo)
 
 La investigación del equipo puede avanzar mientras se caracteriza el módem.
 No necesita esperar a que SONAR sea un producto terminado, pero tampoco debe
@@ -360,7 +360,7 @@ presentar las pruebas digitales como resultados físicos.
 
 Orden de trabajo propuesto, sujeto a acuerdo con el coordinador:
 
-1. Delimitar una pregunta científica comprobable y el alcance de la feria.
+1. Delimitar una pregunta científica comprobable y su alcance.
 2. Revisar literatura pertinente y registrar las fuentes, sin fijar de antemano
    una cantidad de artículos como criterio de calidad.
 3. Definir hipótesis, variables, controles, dispositivos y métricas antes de
@@ -370,7 +370,7 @@ Orden de trabajo propuesto, sujeto a acuerdo con el coordinador:
 5. Analizar los resultados, incluyendo fallos y límites, y redactar conclusiones
    que no excedan la evidencia.
 
-El material de exposición se prepara fuera del repositorio. La pregunta
+Cualquier material de presentación se prepara fuera del repositorio. La pregunta
 científica sigue siendo provisional; la elección final corresponde al dueño del
 proyecto junto con el coordinador y el grupo.
 
