@@ -33,7 +33,12 @@ export function crearAnalizadorSimulado(opciones = {}) {
         }
         previas = magnitudes;
 
-        return analizarCuadro(magnitudesABytes(magnitudes), { sampleRate, fftSize });
+        return analizarCuadro(magnitudesABytes(magnitudes), {
+            sampleRate,
+            fftSize,
+            minHz: MFSK.bandaMinHz,
+            maxHz: MFSK.bandaMaxHz
+        });
     };
 }
 

@@ -26,7 +26,10 @@ export const MFSK = Object.freeze({
     duracionSimboloS: 0.08,
     amplitud: 0.15,
     fadeS: 0.004,
-    paresDePreambulo: 2
+    paresDePreambulo: 2,
+    // Banda en la que el receptor busca el pico: los 19 tonos y un margen.
+    bandaMinHz: 18100,
+    bandaMaxHz: 19850
 });
 
 export const SIMBOLO_PRE_A = 'A';

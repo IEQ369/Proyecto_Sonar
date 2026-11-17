@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONAR // ARCHIVOS V2 (EXPERIMENTAL)</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <style>
+        .v2-nota { font-size: 0.85rem; margin: 0.8rem auto; max-width: 60rem; padding: 0 1rem; }
+        .v2-campo { display: block; margin: 0.8rem 0 0.2rem; font-size: 0.85rem; }
+        .v2-texto { width: 100%; box-sizing: border-box; }
+        .v2-barra { width: 100%; background: #333; height: 18px; border-radius: 6px; overflow: hidden; margin: 0.6rem 0; }
+        .v2-barra > div { height: 100%; width: 0%; background: var(--terminal-green); transition: width 0.2s ease; }
+        .v2-enlaces { text-align: center; margin: 1rem 0; }
+        .v2-enlaces a { color: #00ff41; text-decoration: none; font-family: monospace; font-size: 0.9rem; border: 1px solid #00ff41; padding: 8px 16px; border-radius: 4px; }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div class="section-title" style="text-align:center;margin-top:1rem;">&gt; TRANSMISIÓN DE ARCHIVOS V2 (EXPERIMENTAL)</div>
+        <p class="v2-nota">
+            Protocolo nuevo por paquetes: 16 tonos, comprobación por bloque y reenvío de lo que falte.
+            Probado en simulación y en un navegador con micrófono simulado; aún no por aire.
+            Mantén esta pestaña visible mientras recibes. Usar solo con dispositivos propios.
+        </p>
+        <div class="v2-enlaces">
+            <a href="/archivos">&gt; ARCHIVOS (PROTOCOLO ACTUAL)</a>
+            <a href="/">&gt; MENSAJES</a>
+        </div>
+        <div class="panels-row">
+            <div class="panel panel-left">
+                <div class="panel-header" style="color:#000">&gt; RECIBIR ARCHIVO</div>
+                <div class="panel-body">
+                    <button id="v2-escuchar" class="transmit-btn">ESCUCHAR</button>
+                    <button id="v2-detener" class="transmit-btn" disabled>DETENER</button>
+                    <div id="v2-estado-receptor" class="messages-log" role="status">en espera</div>
+                    <div class="v2-barra" aria-hidden="true"><div id="v2-barra-receptor"></div></div>
+                    <label class="v2-campo" for="v2-faltantes">Bloques que faltan (copiar en el emisor)</label>
+                    <input id="v2-faltantes" class="message-input v2-texto" type="text" readonly />
+                    <div id="v2-descarga" style="margin-top:0.8rem;"></div>
+                </div>
+            </div>
+            <div class="panel panel-right">
+                <div class="panel-header" style="color:#000">&gt; TRANSMITIR ARCHIVO</div>
+                <div class="panel-body">
+                    <label class="v2-campo" for="v2-archivo">Archivo a enviar</label>
+                    <input id="v2-archivo" type="file" />
+                    <div id="v2-info" class="messages-log">ningún archivo seleccionado</div>
+                    <button id="v2-transmitir" class="transmit-btn" disabled>TRANSMITIR</button>
+                    <label class="v2-campo" for="v2-reenviar-lista">Reenviar solo estos bloques (ejemplo: 3,7-9)</label>
+                    <input id="v2-reenviar-lista" class="message-input v2-texto" type="text" />
+                    <button id="v2-reenviar" class="transmit-btn" disabled>REENVIAR FALTANTES</button>
+                    <button id="v2-cancelar" class="transmit-btn" disabled>CANCELAR</button>
+                    <div class="v2-barra" aria-hidden="true"><div id="v2-barra-emisor"></div></div>
+                    <div id="v2-estado-emisor" class="messages-log" role="status">en espera</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/archivos_v2/archivos_v2.js"></script>
+</body>
+
+</html>
