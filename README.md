@@ -77,6 +77,7 @@ Ninguna distancia de alcance o tasa de éxito físico está validada como garant
 - [Auditoría técnica](docs/AUDITORIA.md) — problemas comprobados y evidencia.
 - [Roadmap](docs/ROADMAP.md) — dirección y límites del proyecto.
 - [Experimentos](docs/experiments/README.md) — configuraciones y resultados reproducibles.
+- [Plan del protocolo de archivos](docs/PLAN_ARCHIVOS.md) — diseño por capas y fases para completarlo; aún sin implementar.
 - [Guía de revisión](docs/REVISION.md) — qué cambió el 2026-11-17, qué se verificó y qué decisiones quedan abiertas.
 - [Progreso](PROGRESO.md) — secuencia de cambios, decisiones y pendientes.
 - [Historia técnica](HISTORIA_TECNICA.md) — evolución del prototipo.
