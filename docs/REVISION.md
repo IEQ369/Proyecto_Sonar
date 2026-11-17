@@ -32,6 +32,16 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
 8. **Una zona muerta en V2-A elimina los caracteres equivocados** hasta ±30 Hz,
    pero reduce la tolerancia al desvío y no aporta nada frente al ruido. (E006)
 
+### Fuera de la simulación
+
+9. **El procesamiento de voz del navegador puede borrar la banda completa.**
+   La aplicación pide el micrófono con `getUserMedia({ audio: true })`. En un
+   ensayo en Chromium 153 con micrófono simulado, eso activó cancelación de eco,
+   supresión de ruido y ganancia automática, y la banda de 18–22 kHz llegó en
+   cero; con las tres desactivadas se detectaron 8 de 9 tonos. No es una
+   medición con hardware real y tu historia técnica registra recepción real, así
+   que depende del equipo. ([E007](experiments/E007-medicion-fisica/README.md))
+
 ## Qué cambió en el repositorio
 
 | Archivo | Cambio |
@@ -41,20 +51,27 @@ Todo es **simulación digital**; nada de esto demuestra rendimiento por aire.
 | `scripts/run_e003.js` a `run_e006.js`, `experimento_util.js` | Nuevos. Experimentos deterministas |
 | `docs/experiments/E003…` a `E006…` | Nuevos. README, resultados JSON y una figura SVG |
 | `tests/caracterizacion.test.js` | Nuevo. 15 pruebas; varias fijan el baseline medido |
+| `src/web/laboratorio/`, `src/web/static/js/core/medicion_fisica.js` | Nuevos. Página y lógica de la medición física E007 |
+| `scripts/analizar_medicion.js`, `scripts/ensayo_navegador/` | Nuevos. Análisis de capturas y ensayo en Chromium |
+| `tests/medicion_fisica.test.js` | Nuevo. 8 pruebas |
 | `.github/workflows/ci.yml` | Nuevo. Pruebas y experimentos con Node 22 y 24 |
 | `package.json` | `npm test` ya no usa `--test-isolation=none`; scripts de experimentos |
 | `README.md`, `docs/ROADMAP.md`, `PROGRESO.md`, `docs/experiments/README.md` | Estado actualizado |
 
-**No se tocó** el protocolo, el receptor, el emisor, la interfaz ni el diseño
-visual. V1 Clean sigue siendo exactamente la misma referencia.
+**No se tocó** el protocolo, el receptor, el emisor ni las pantallas de mensajes
+y archivos. V1 Clean sigue siendo exactamente la misma referencia. La página
+`/laboratorio/` es nueva, usa la hoja de estilos existente y no está enlazada
+desde la interfaz principal.
 
 ## Qué se verificó
 
-- `npm test`: 81 pruebas aprobadas, 0 fallidas (Node 22.23).
+- `npm test`: 89 pruebas aprobadas, 0 fallidas (Node 22.23).
 - `npm run experiments`: los seis experimentos se ejecutan; E003–E006 producen
   el mismo archivo en ejecuciones repetidas.
 - El flujo de CI pasó en GitHub con Node 22 y Node 24 en el PR #3, para los
-  commits hasta E005.
+  commits hasta E006.
+- `/laboratorio/` se ejecutó de extremo a extremo en Chromium 153 sin interfaz:
+  captura, análisis, descarga del JSON y emisión, sin errores en consola.
 - La política `v1-receptor` ejecuta el `ReceptorMensajesCore` real, y una prueba
   comprueba que la regla ±80 Hz coincide con `frequencyToChar()` en toda la
   banda.
@@ -64,10 +81,17 @@ visual. V1 Clean sigue siendo exactamente la misma referencia.
 - `npm test` fallaba en Node 22.23 con `--test-isolation=none` («bad option»).
   Se quitó la opción y las 66 pruebas originales pasan igual; no se investigó
   por qué se había añadido.
-- Nada se probó en un navegador ni con audio real.
+- Nada se probó con audio real. La página de laboratorio solo se probó en
+  Chromium sin interfaz con un micrófono simulado; las pantallas de mensajes y
+  archivos no se abrieron en un navegador.
 - La réplica del detector no incluye el suavizado temporal del `AnalyserNode`.
 
 ## Decisiones que te tocan
+
+0. **Antes que nada: ¿la aplicación debe pedir el micrófono sin procesamiento
+   de voz?** Es un cambio de una línea en `app.js` y `app_archivos.js`, pero
+   modifica la recepción de V1 Clean, así que no lo hice. El paso 6 del
+   protocolo de E007 lo mide con tus equipos en dos minutos.
 
 1. **¿Cómo corregir la asimetría de V1?** La opción de menor riesgo que
    muestran los datos es decidir por frecuencia más cercana manteniendo el mapa
@@ -85,8 +109,7 @@ visual. V1 Clean sigue siendo exactamente la misma referencia.
 
 ## Siguientes pasos sugeridos
 
-1. Primera medición física controlada: un solo tono, dos dispositivos propios,
-   desvío y magnitud observados, para saber cuánto se parece el modelo al aire.
-   Es lo que desbloquea las decisiones 3 y 4.
+1. Ejecutar E007 con dos dispositivos propios: la herramienta y el protocolo ya
+   están listos. Es lo que desbloquea las decisiones 0, 3 y 4.
 2. Medir una suma de verificación por mensaje como alternativa a la zona muerta.
 3. E3-007 (forma de onda) y la parte de E3-004 que depende del navegador.

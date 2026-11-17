@@ -39,6 +39,7 @@ costo para el repositorio.
 - [E004 — Robustez: atenuación, duración y muestreo](E004-robustez-canal/README.md)
 - [E005 — V1 Clean frente al mapa candidato V2-A](E005-mapa-candidato-v2/README.md)
 - [E006 — Tamaño de FFT y zona muerta](E006-fft-y-zona-muerta/README.md)
+- [E007 — Primera medición física: tonos aislados](E007-medicion-fisica/README.md) — herramienta lista; medición por aire pendiente
 
 E003 a E006 guardan resultados sin fecha ni versión de Node: la misma
 versión del código produce el mismo archivo, y CI falla si no coinciden.

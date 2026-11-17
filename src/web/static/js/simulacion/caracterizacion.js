@@ -366,17 +366,13 @@ function fftRadix2(real, imaginaria) {
 }
 
 /**
- * Reproduce la estimación de `app.js`: ventana Blackman, FFT, conversión a
- * byte como `getByteFrequencyData` (-100 a -30 dB) y primer bin de magnitud
- * máxima entre 18 000 y 22 500 Hz. No aplica el suavizado temporal del
+ * Espectro en bytes como lo entrega `getByteFrequencyData`: ventana Blackman,
+ * FFT y conversión de -100…-30 dB a 0…255. No aplica el suavizado temporal del
  * AnalyserNode (`smoothingTimeConstant`), que depende de cuadros anteriores.
  */
-export function estimarPicoAnalizador(muestras, opciones = {}) {
-    const sampleRate = opciones.sampleRate ?? 48000;
+export function calcularEspectroBytes(muestras, opciones = {}) {
     const fftSize = opciones.fftSize ?? 2048;
     const inicio = opciones.inicio ?? 0;
-    const minHz = opciones.minHz ?? 18000;
-    const maxHz = opciones.maxHz ?? 22500;
     const real = new Float64Array(fftSize);
     const imaginaria = new Float64Array(fftSize);
 
@@ -390,6 +386,31 @@ export function estimarPicoAnalizador(muestras, opciones = {}) {
 
     fftRadix2(real, imaginaria);
 
+    const bytes = new Uint8Array(fftSize / 2);
+
+    for (let bin = 0; bin < bytes.length; bin++) {
+        const magnitud = Math.hypot(real[bin], imaginaria[bin]) / fftSize;
+        const decibelios = 20 * Math.log10(magnitud);
+
+        bytes[bin] = Math.max(
+            0,
+            Math.min(255, Math.floor(255 * (decibelios + 100) / 70))
+        );
+    }
+
+    return bytes;
+}
+
+/**
+ * Reproduce la estimación de `app.js`: primer bin de magnitud máxima entre
+ * 18 000 y 22 500 Hz sobre el espectro en bytes.
+ */
+export function estimarPicoAnalizador(muestras, opciones = {}) {
+    const sampleRate = opciones.sampleRate ?? 48000;
+    const fftSize = opciones.fftSize ?? 2048;
+    const minHz = opciones.minHz ?? 18000;
+    const maxHz = opciones.maxHz ?? 22500;
+    const bytes = calcularEspectroBytes(muestras, opciones);
     const binHz = sampleRate / fftSize;
     const minBin = Math.floor(minHz / binHz);
     const maxBin = Math.min(Math.ceil(maxHz / binHz), fftSize / 2 - 1);
@@ -397,15 +418,8 @@ export function estimarPicoAnalizador(muestras, opciones = {}) {
     let mejorByte = 0;
 
     for (let bin = minBin; bin <= maxBin; bin++) {
-        const magnitud = Math.hypot(real[bin], imaginaria[bin]) / fftSize;
-        const decibelios = 20 * Math.log10(magnitud);
-        const byte = Math.max(
-            0,
-            Math.min(255, Math.floor(255 * (decibelios + 100) / 70))
-        );
-
-        if (byte > mejorByte) {
-            mejorByte = byte;
+        if (bytes[bin] > mejorByte) {
+            mejorByte = bytes[bin];
             mejorBin = bin;
         }
     }

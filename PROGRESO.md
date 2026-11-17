@@ -1696,3 +1696,25 @@ Nyquist y el candidato. Después, E3-004 (tamaño de FFT).
   los commits anteriores.
 - Sigue siendo simulación digital; nada se probó por aire.
 
+## 2026-11-17 — E007: herramienta para la primera medición física
+
+- **Objetivo:** dejar lista la medición que desbloquea las decisiones abiertas,
+  ya que la simulación no puede decir cuánto desvío ni cuánta atenuación hay
+  por aire.
+- **Cambios:** página `/laboratorio/` (emisor de 9 tonos aislados y receptor
+  que registra pico, pico interpolado, magnitud y piso de ruido), lógica pura
+  en `core/medicion_fisica.js`, `scripts/analizar_medicion.js` y protocolo en
+  `docs/experiments/E007-medicion-fisica/README.md`.
+- **Ensayo en Chromium 153 con micrófono simulado:** con `audio: true`, como
+  pide hoy la aplicación, la banda de 18–22 kHz llegó en cero; sin cancelación
+  de eco, supresión de ruido ni ganancia automática se detectaron 8 de 9 tonos
+  y se recuperó el desvío aplicado de 12 Hz (11,7 a 12,3 Hz).
+- **Concepto aprendido:** el navegador no entrega la señal del micrófono tal
+  cual. Por defecto la trata como voz, y ese tratamiento es parte del canal.
+- **Límites:** no es una medición por aire. `HISTORIA_TECNICA.md` registra
+  recepción real a 30 cm–1 m, así que el efecto depende del equipo. No se
+  cambió la aplicación.
+- `npm test`: 89 pruebas aprobadas.
+- **Próximo paso:** ejecutar el protocolo de E007 con dos dispositivos,
+  comparando la captura con y sin procesamiento.
+

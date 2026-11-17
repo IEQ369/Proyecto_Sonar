@@ -6,7 +6,7 @@ La comunicación del contenido usa audio. El servidor HTTP solo entrega la aplic
 
 ## Estado actual
 
-**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 81 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
+**V1 Clean** tiene corregidos los contratos lógicos de mensajes y archivos que impedían comparaciones reproducibles. La suite automatizada cuenta con 89 pruebas aprobadas. Los experimentos E001 y E002 conservan resultados y fallos del prototipo como línea base.
 
 Esto **no demuestra fiabilidad acústica física**. Continúan pendientes la caracterización de frecuencias, la sincronización temporal y las pruebas controladas con altavoces y micrófonos reales. Tampoco se debe asumir que la transferencia de archivos por aire o un mecanismo de confirmación y reenvío ya sean fiables.
 
@@ -16,6 +16,8 @@ La caracterización digital de V1 Clean ya tiene sus primeras mediciones (E003 a
 - con audio a 44,1 kHz, `7`, `8` y `9` quedan por encima de Nyquist y no se decodifican;
 - símbolos de 30 ms no alcanzan para el análisis actual, y alargarlos solo mejora el alcance si también crece el tamaño de FFT;
 - un mapa candidato (V2-A) corrige los dos primeros puntos, no mejora frente al ruido y falla de forma distinta. No está adoptado.
+
+Además existe una página de laboratorio, `/laboratorio/`, para la primera medición física ([E007](docs/experiments/E007-medicion-fisica/README.md)). En su ensayo con un micrófono simulado, la captura que usa hoy la aplicación (`getUserMedia({ audio: true })`) entregó la banda de 18–22 kHz en cero en Chromium, y sin el procesamiento de voz del navegador se detectaron 8 de 9 tonos. Falta comprobarlo con dispositivos reales.
 
 El siguiente trabajo técnico es revisar esos resultados ([guía de revisión](docs/REVISION.md)), completar la caracterización y repetirla bajo condiciones físicas controladas. El enfoque de la investigación científica con el equipo todavía debe definirse.
 
@@ -27,7 +29,7 @@ Requisitos: Python 3 para servir la interfaz y un navegador con Web Audio API.
 
        python3 src/web/backend/servidor_estatico.py
 
-2. Abrir http://localhost:8000/ para mensajes o http://localhost:8000/archivos para archivos.
+2. Abrir http://localhost:8000/ para mensajes, http://localhost:8000/archivos para archivos o http://localhost:8000/laboratorio/ para la herramienta de medición.
 
 El servidor sirve archivos estáticos; no procesa las señales ni los datos transmitidos. En otro dispositivo, el acceso por HTTP mediante la IP de la laptop puede cargar la página, pero el permiso del micrófono normalmente exige un contexto seguro, como HTTPS. Por ello, que la página abra en un celular no implica que pueda recibir audio.
 
@@ -55,6 +57,7 @@ Los resultados y su interpretación están en [docs/experiments](docs/experiment
     ├── src/web/backend/         servidor estático local
     ├── src/web/static/          mensajes: interfaz, protocolo y simulador
     ├── src/web/archivos/        flujo de archivos
+    ├── src/web/laboratorio/     herramienta de medición física (E007)
     └── tests/                   pruebas automáticas
 
 La distribución de `src/web` todavía refleja dos flujos parcialmente separados, mensajes y archivos. Reorganizar los módulos requerirá actualizar sus importaciones y rutas; no se han movido solo por estética.
